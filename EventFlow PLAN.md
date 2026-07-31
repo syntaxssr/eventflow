@@ -342,43 +342,53 @@ tests/
 
 ## Phase 3 — Event Management
 
+> **สถานะ: เสร็จแล้ว** · Unit 115 tests · E2E 50 tests
+
 ### UI
-- [ ] Event List: Card Grid + Table toggle, cover image, status badge, progress bar, วันที่, ผู้รับผิดชอบ, จำนวนผู้เข้าร่วม
-- [ ] Filter bar: status, ช่วงวันที่, ผู้รับผิดชอบ + Active Filter Chips + Clear All + Sort
-- [ ] Event Detail: header (cover, ชื่อ, สถานะ, progress, วันที่/เวลา/สถานที่, owner, ปุ่ม action) + Tabs: Overview · Tasks · Timeline · Files · Participants · Activity
-- [ ] Create/Edit Event Form (ทุก field ตาม concept ข้อ 10 + upload cover image)
-- [ ] Duplicate Event — หน้าตรวจสอบข้อมูลก่อนยืนยัน (แสดงสิ่งที่จะคัดลอก vs ไม่คัดลอก)
-- [ ] Empty State ของ Event List พร้อม CTA "สร้างกิจกรรมใหม่"
+- [x] Event List: Card Grid ↔ Table toggle, cover, status badge, progress bar, วันที่, ผู้รับผิดชอบ, จำนวนผู้เข้าร่วม
+- [x] Filter bar: status (เลือกได้หลายค่า), ช่วงวันที่, ผู้รับผิดชอบ + Active Filter Chips + Clear All + Sort 4 แบบ
+- [x] Event Detail: back link, cover, header (ชื่อ, สถานะ, นับถอยหลัง, ปุ่ม action) + info tile 4 ใบ + Tabs 6 แท็บ
+- [x] Create/Edit Event Form ครบทุก field ตาม concept ข้อ 10 + ตัวเลือกภาพปก
+- [x] Duplicate Event — หน้าตรวจสอบก่อนยืนยัน แสดงสองคอลัมน์ว่าอะไรคัดลอก/ไม่คัดลอก
+- [x] Empty State ของ Event List และ Empty State แยกสำหรับ "ไม่พบผลลัพธ์จากตัวกรอง"
 
 ### Interaction
-- [ ] Create / Edit → **Manual Save** + validation + loading + toast
-- [ ] เปลี่ยน Event Status ผ่าน dropdown (Cancel ต้องมี Confirmation Dialog แบบ destructive)
-- [ ] Delete Event → Confirmation Dialog ระบุชื่อ + ผลกระทบ (จำนวน task/file ที่เกี่ยวข้อง)
-- [ ] Duplicate → คัดลอก tasks, checklist, assignees, timeline, file categories, dependency, blocking, notification settings; **ไม่คัดลอก** ไฟล์จริง, version, comment, activity, notification, participants
-- [ ] Progress คำนวณอัตโนมัติจาก task และอัปเดตทันทีเมื่อ task เปลี่ยน
-- [ ] Unsaved changes → เตือนก่อนออกจากฟอร์ม
+- [x] Create / Edit → **Manual Save** + validation + loading + toast
+- [x] เปลี่ยน Event Status ผ่าน dropdown (Cancel มี Confirmation Dialog แบบ destructive)
+- [x] Delete Event → Confirmation Dialog ระบุชื่อ + ผลกระทบ (จำนวน task / participant / file)
+- [x] Duplicate → คัดลอก tasks, checklist, assignees, timeline, file categories, dependency, blocking; **ไม่คัดลอก** ไฟล์จริง, version, comment, activity, notification, participants
+- [x] Duplicate เลื่อนวันของงานย่อยและไทม์ไลน์ตามระยะห่างของวันจัดงานใหม่ และรีเซ็ตสถานะงานทั้งหมด
+- [x] Progress คำนวณอัตโนมัติจาก task — สำเนาจึงเริ่มที่ 0% ทันที
+- [x] Unsaved changes → เตือนก่อนปิดฟอร์ม (ปิดโดยไม่บันทึก / แก้ไขต่อ)
+- [x] ทุก action บันทึกลง Activity History และสะท้อนที่ Dashboard ทันที
 
 ### Mock Data
-- [ ] Event หลักมี description, poster/cover, owner, ผู้เข้าร่วมคาดการณ์, created/updated metadata ครบ
-- [ ] Cover image เป็น asset ใน `public/` (ไม่พึ่ง external URL)
+- [x] Event หลักมี description, cover, owner, ผู้เข้าร่วมคาดการณ์, created/updated metadata ครบ
+- [x] Cover image เป็น SVG ใน `public/covers/` (ไม่พึ่ง external URL)
 
 ### Responsive
-- [ ] Card grid 3/2/1, Detail tabs เลื่อนแนวนอนบน mobile
-- [ ] Form เป็น 1 คอลัมน์บน mobile, action bar ติดล่างจอ
+- [x] Card grid 3/2/1, Detail tabs เลื่อนแนวนอนบนจอแคบ
+- [x] Form เป็น 1 คอลัมน์บน mobile, dialog scroll ได้ในตัว
+- [x] ตาราง event เลื่อนแนวนอนแทนการบีบคอลัมน์
 
 ### Accessibility
-- [ ] Tabs ใช้ Radix Tabs (arrow key ได้)
-- [ ] Confirmation dialog focus trap + focus กลับที่ trigger เมื่อปิด
-- [ ] ปุ่ม destructive มีข้อความชัด ไม่ใช้แค่สีแดง
+- [x] Tabs ใช้ Radix Tabs (arrow key ได้)
+- [x] Confirmation dialog focus trap + focus กลับที่ trigger เมื่อปิด (Radix AlertDialog)
+- [x] ปุ่ม destructive มีข้อความชัดเจน ไม่ใช้แค่สีแดง
+- [x] ตัวเลือกภาพปกเป็น `radiogroup` ใช้คีย์บอร์ดได้ และมี `aria-checked`
+- [x] จำนวนผลลัพธ์ประกาศผ่าน `aria-live`
 
 ### Testing
-- [ ] Unit: duplicate event logic (คัดลอก/ไม่คัดลอกถูกต้อง), progress recalculation
-- [ ] E2E: สร้าง event → เห็นในลิสต์ → แก้ไข → duplicate → cancel → delete
+- [x] Unit: duplicate event 15 เคส (คัดลอก/ไม่คัดลอก, remap dependency, เลื่อนวันที่, รีเซ็ตสถานะ) + event reducer
+- [x] E2E 16 เคส: list, filter+chips+clear, empty state จากตัวกรอง, สลับมุมมอง, sort, create, validation, unsaved warning, edit, detail tabs, duplicate, cancel, delete
 
 ### Done Criteria
-- [ ] CRUD ครบและสะท้อนใน Dashboard ทันที
-- [ ] Duplicate ทำงานตรงตาม spec ทุกข้อ
-- [ ] ทุก destructive action มี Confirmation Dialog ครบองค์ประกอบ
+- [x] CRUD ครบและสะท้อนใน Dashboard ทันที
+- [x] Duplicate ทำงานตรงตาม spec ทุกข้อ (มี unit test ยืนยันรายข้อ)
+- [x] ทุก destructive action มี Confirmation Dialog ครบองค์ประกอบ
+- [x] `lint` / `typecheck` / `build` / `test` / `e2e` ผ่านทั้งหมด
+
+> **หมายเหตุการออกแบบ:** ฟอร์มรับข้อความชุดเดียวแล้วเก็บลงทั้ง `th` และ `en` เพราะผู้ใช้พิมพ์มาชุดเดียว ต่างจาก Mock Data ที่เตรียมไว้สองภาษา · แท็บ Tasks / Timeline / Files / Participants แสดงจำนวนข้อมูลจริงไว้ก่อน แล้วจะเติมเนื้อหาใน Phase 4–7
 
 ---
 

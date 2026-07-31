@@ -71,9 +71,10 @@ export function TaskStatusChart({
       </CardHeader>
 
       <CardContent className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-center">
+        {/* ขนาดคงที่ + shrink-0 กันไม่ให้โดนบีบจนชาร์ตยุบเมื่อการ์ดแคบ */}
         <ChartContainer
           config={config}
-          className="mx-auto aspect-square w-full max-w-[180px]"
+          className="mx-auto aspect-square w-40 shrink-0"
         >
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent nameKey="label" hideLabel />} />

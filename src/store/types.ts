@@ -50,6 +50,13 @@ export type EventAction =
   | { type: "event/update"; id: Id; changes: Partial<EventItem>; by: Id; at: string }
   | { type: "event/delete"; id: Id; by: Id; at: string }
   | { type: "event/restore"; id: Id }
+  | {
+      type: "event/duplicate"
+      event: EventItem
+      tasks: Task[]
+      timeline: TimelineItem[]
+      fileCategories: FileCategory[]
+    }
 
 export type TaskAction =
   | { type: "task/create"; task: Task }
