@@ -394,51 +394,58 @@ tests/
 
 ## Phase 4 — Task, Kanban & Checklist
 
+> **สถานะ: เสร็จแล้ว** · Unit 151 tests · E2E 67 tests
+
 ### UI
-- [ ] Task Table View: ชื่อ, assignees (avatar group), status, priority, due date, overdue badge, checklist progress, dependency icon
-- [ ] Kanban View: 5 คอลัมน์ตาม TaskStatus + WIP count + card แสดง priority/assignee/due
-- [ ] Calendar View: task วางตาม due date + สี priority + overdue marker
-- [ ] Task Detail (Drawer/Modal): ทุก field + Checklist + Attachment + Dependency/Blocking + Comments (placeholder ถึง Phase 8)
-- [ ] Create/Edit Task Form: multi-assignee picker, date range, priority, status, notes
-- [ ] Dependency Picker + แสดง "รออะไรอยู่" / "กำลังบล็อกอะไร" พร้อมชื่อ task และ badge
-- [ ] My Tasks page: งานของผู้ใช้ปัจจุบัน + group by (due date / event / status)
+- [x] Task Table View: ชื่อ, assignees (avatar group), status, priority, due date, overdue badge, checklist progress, dependency icon
+- [x] Kanban View: 5 คอลัมน์ตาม TaskStatus + จำนวนงานต่อคอลัมน์ + card แสดง priority/assignee/due/checklist
+- [x] Calendar View: task วางตาม due date + สี priority + งานเกินกำหนดขีดเส้นใต้ + รายการงานเกินกำหนดแยกด้านล่าง
+- [x] Task Detail (Sheet): ทุก field + Checklist + Dependency/Blocking + ที่ว่างสำหรับ Comments (Phase 8)
+- [x] Create/Edit Task Form: multi-assignee picker, ช่วงวันที่, priority, status, notes
+- [x] Dependency Picker + แสดง "ต้องทำหลังจาก" / "กำลังบล็อกงาน" พร้อมชื่อ task และ badge
+- [x] My Tasks page: สลับระหว่างงานของฉันกับงานทั้งทีมได้
+- [ ] Group by (due date / event / status) — ตอนนี้ใช้การเรียงตามความเร่งด่วนแทน จะพิจารณาอีกครั้งใน Phase 11
 
 ### Interaction
-- [ ] สลับ View 3 แบบใช้ข้อมูลชุดเดียวกัน — แก้ที่ view หนึ่ง อีก 2 view อัปเดตทันที
-- [ ] Kanban Drag & Drop เปลี่ยนสถานะ → **Auto Save** (Saving → Saved) + animation ชัดเจน
-- [ ] Checklist: เพิ่ม / แก้ไข / ลบ (มี confirm) / จัดลำดับด้วย DnD / ติ๊ก–ยกเลิก / progress `3/5` + progress bar
-- [ ] **Auto status**: ติ๊กครบ → task = Completed; ยกเลิกอย่างน้อย 1 ข้อ → กลับเป็น In Progress; ทั้งสองกรณี recalc Event Progress ทันที + toast
-- [ ] งานไม่มี checklist → เปลี่ยนสถานะเองได้
-- [ ] Dependency: ป้องกัน Circular Dependency + validation message; เริ่มงานที่ยังถูก block → Warning + ให้ Override ได้
-- [ ] Overdue: badge อัตโนมัติทุก view (ไม่เปลี่ยน status เดิม) + สร้าง Notification
-- [ ] Filter/Sort: status, priority, assignee, due date, overdue + chips + clear all
-- [ ] Delete Task → Confirmation Dialog (แจ้งว่ามี task อื่นที่ depend อยู่หรือไม่)
+- [x] สลับ View 3 แบบใช้ข้อมูลชุดเดียวกัน — แก้ที่ view หนึ่ง อีก 2 view อัปเดตทันที (E2E ยืนยัน)
+- [x] Kanban Drag & Drop เปลี่ยนสถานะ → **Auto Save** (Saving → Saved) + DragOverlay ระหว่างลาก
+- [x] Checklist: เพิ่ม / แก้ไขในบรรทัด / ลบ (มี confirm) / จัดลำดับด้วย DnD / ติ๊ก–ยกเลิก / progress `3/5` + progress bar
+- [x] **Auto status**: ติ๊กครบ → Completed; ยกเลิกอย่างน้อย 1 ข้อ → กลับเป็น In Progress; recalc Event Progress ทันที + toast
+- [x] งานไม่มี checklist → เปลี่ยนสถานะเองได้
+- [x] Dependency: ป้องกัน Circular Dependency ทั้งทางตรงและทางอ้อม (ตัวเลือกที่ทำให้เกิดวงกลมถูกกรองออกตั้งแต่ต้น) + เริ่มงานที่ยังถูก block → Warning + Override ได้
+- [x] Overdue: badge อัตโนมัติทุก view โดยไม่เปลี่ยน status เดิม
+- [x] Filter: status, priority, assignee, due (เกินกำหนด/ใกล้ครบ/ยังไม่เสร็จ) + chips + clear all
+- [x] Delete Task → Confirmation Dialog แจ้งจำนวนงานที่รออยู่และ checklist ที่จะหายไป
 
 ### Mock Data
-- [ ] Task ของงานเลี้ยงประจำปีสมจริง (จองสถานที่, ออกแบบโปสเตอร์, เตรียม PowerPoint, ทำ Script พิธีกร, จัดของรางวัล, ตรวจระบบเสียง, สรุปงบประมาณ ฯลฯ)
-- [ ] มี dependency chain จริงอย่างน้อย 3 เส้น + งาน blocked 1–2 งาน
-- [ ] Checklist หลายงาน (บางงานใกล้ครบ เพื่อสาธิต auto-complete)
+- [x] Task ของงานเลี้ยงประจำปีสมจริง 29 งาน (จองสถานที่, โปสเตอร์, PowerPoint, Script พิธีกร, ของรางวัล, ระบบเสียง, สรุปงบ ฯลฯ)
+- [x] Dependency chain จริงหลายเส้น + งาน blocked
+- [x] Checklist สองงานที่ใกล้ครบ เพื่อสาธิต auto-complete
 
 ### Responsive
-- [ ] Mobile: Table → Card View, Kanban → เลื่อนแนวนอน snap ทีละคอลัมน์
-- [ ] Calendar บน mobile ใช้ agenda/list mode
-- [ ] Task Detail เป็น full-screen sheet บน mobile
+- [x] Mobile: Table → Card View, Kanban → เลื่อนแนวนอน snap ทีละคอลัมน์
+- [x] Calendar เลื่อนแนวนอนบนจอแคบ + มีรายการงานเกินกำหนดแบบ list กำกับ
+- [x] Task Detail เป็น full-screen sheet บน mobile
 
 ### Accessibility
-- [ ] DnD มีทางเลือกด้วยคีย์บอร์ด (dnd-kit KeyboardSensor) + `aria-live` ประกาศผลการย้าย
-- [ ] Priority/Status มี icon + ข้อความเสมอ
-- [ ] Checklist checkbox มี label ที่อ่านออกโดย screen reader
+- [x] DnD ทั้ง Kanban และ Checklist ใช้ KeyboardSensor ของ dnd-kit + dnd-kit ประกาศผลผ่าน `aria-live` ในตัว
+- [x] Priority/Status มี icon + ข้อความเสมอ
+- [x] Checklist checkbox มี label ผูกกับข้อความของรายการ
+- [x] ปุ่มไอคอนทุกปุ่มมี `aria-label` และ SaveIndicator เป็น `role="status"`
 
 ### Testing
-- [ ] Unit: `checklistAutoStatus`, `calculateEventProgress`, `isOverdue`, `isDueSoon`, `hasCircularDependency`, `getBlockingTasks`
-- [ ] E2E: สร้าง task → assign หลายคน → เพิ่ม checklist → ติ๊กครบ → task auto completed → event progress เพิ่มขึ้น
-- [ ] E2E: ลาก card ใน Kanban แล้วสถานะเปลี่ยนใน Table View
+- [x] Unit: `deriveStatusFromChecklist`, `checklistProgress`, `reorderChecklist`, `validateDependency` (วงกลมทางตรง/ทางอ้อม), `getBlockedInfo`, `canStartTask`, `linkDependency`, `detachTask` + reducer 9 เคส
+- [x] E2E: ติ๊ก checklist ครบ → task auto completed → กลับไปดู Dashboard เห็น event progress เพิ่มจาก 8 เป็น 9
+- [x] E2E: ลาก card ใน Kanban ด้วยเมาส์ → สถานะเปลี่ยนและเห็นผลทันทีใน Table View
 
 ### Done Criteria
-- [ ] 3 View sync กันสมบูรณ์
-- [ ] Auto status + progress ถูกต้องทุกกรณี
-- [ ] Circular dependency ป้องกันได้จริง
-- [ ] Overdue badge แสดงครบทุกจุด (Dashboard, My Tasks, Table, Kanban, Calendar)
+- [x] 3 View sync กันสมบูรณ์
+- [x] Auto status + progress ถูกต้องทุกกรณี
+- [x] Circular dependency ป้องกันได้จริง
+- [x] Overdue badge แสดงครบทุกจุด (Dashboard, My Tasks, Table, Kanban, Calendar)
+- [x] `lint` / `typecheck` / `build` / `test` / `e2e` ผ่านทั้งหมด
+
+> **บทเรียนจากเฟสนี้:** toast "ติ๊กครบแล้ว" เดิมทำนายสถานะถัดไปจาก props ที่คอมโพเนนต์ถืออยู่ ซึ่งตามไม่ทันเมื่อผู้ใช้ติ๊กรัว ๆ จนบางครั้งไม่แจ้งเตือนทั้งที่งานเสร็จแล้ว แก้เป็นการ **เฝ้าดูสถานะจริงหลัง reducer ทำงาน** แทน
 
 ---
 

@@ -46,6 +46,7 @@ import {
   selectTasksByEvent,
   summariseRsvp,
 } from "@/store/selectors"
+import { TasksView } from "@/features/tasks/tasks-view"
 import { EventActionsMenu } from "./event-actions-menu"
 
 export function EventDetailView({ eventId }: { eventId: string }) {
@@ -279,10 +280,9 @@ export function EventDetailView({ eventId }: { eventId: string }) {
         </TabsContent>
 
         <TabsContent value="tasks" className="pt-4">
-          <PendingTab
-            countLabel={`${t("dashboard.totalTasks")}: ${data.tasks.length}`}
-            phase="Phase 4 — Task, Kanban & Checklist"
-          />
+          <React.Suspense fallback={<Skeleton className="h-64 w-full" />}>
+            <TasksView eventId={event.id} />
+          </React.Suspense>
         </TabsContent>
 
         <TabsContent value="timeline" className="pt-4">

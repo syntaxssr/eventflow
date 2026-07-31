@@ -72,6 +72,9 @@ export type TaskAction =
     }
   | { type: "task/removeChecklistItem"; taskId: Id; itemId: Id }
   | { type: "task/reorderChecklist"; taskId: Id; orderedIds: Id[] }
+  | { type: "task/addDependency"; taskId: Id; dependencyId: Id }
+  | { type: "task/removeDependency"; taskId: Id; dependencyId: Id }
+  | { type: "task/overrideBlock"; taskId: Id }
 
 export type TimelineAction =
   | { type: "timeline/create"; item: TimelineItem }

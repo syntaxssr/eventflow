@@ -1,4 +1,25 @@
+import { applyChecklistRules, reorderChecklist } from "@/lib/checklist"
+import {
+  detachTask,
+  linkDependency,
+  unlinkDependency,
+} from "@/lib/dependency"
+import type { Task } from "@/types/task"
 import type { AppAction, AppState } from "./types"
+
+/**
+ * แก้ไขงานหนึ่งงานแล้วให้กฎ Checklist ทำงานทุกครั้ง
+ * เพื่อไม่ให้สถานะงานกับ Checklist ขัดแย้งกันเอง
+ */
+function updateTask(
+  tasks: Task[],
+  taskId: string,
+  updater: (task: Task) => Task
+): Task[] {
+  return tasks.map((task) =>
+    task.id === taskId ? applyChecklistRules(updater(task)) : task
+  )
+}
 
 /**
  * Reducer หลักของ EventFlow
@@ -73,6 +94,97 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         tasks: [...state.tasks, ...action.tasks],
         timeline: [...state.timeline, ...action.timeline],
         fileCategories: [...state.fileCategories, ...action.fileCategories],
+      }
+
+    /* ---- Task ---- */
+    case "task/create":
+      return { ...state, tasks: [...state.tasks, action.task] }
+
+    case "task/update":
+      return {
+        ...state,
+        tasks: updateTask(state.tasks, action.id, (task) => ({
+          ...task,
+          ...action.changes,
+          updatedAt: action.at,
+          updatedBy: action.by,
+        })),
+      }
+
+    case "task/setStatus":
+      return {
+        ...state,
+        tasks: state.tasks.map((task) =>
+          task.id === action.id
+            ? {
+                ...task,
+                status: action.status,
+                updatedAt: action.at,
+                updatedBy: action.by,
+              }
+            : task
+        ),
+      }
+
+    case "task/delete":
+      return { ...state, tasks: detachTask(state.tasks, action.id) }
+
+    case "task/addChecklistItem":
+      return {
+        ...state,
+        tasks: updateTask(state.tasks, action.taskId, (task) => ({
+          ...task,
+          checklist: [...task.checklist, action.item],
+        })),
+      }
+
+    case "task/updateChecklistItem":
+      return {
+        ...state,
+        tasks: updateTask(state.tasks, action.taskId, (task) => ({
+          ...task,
+          checklist: task.checklist.map((item) =>
+            item.id === action.itemId ? { ...item, ...action.changes } : item
+          ),
+        })),
+      }
+
+    case "task/removeChecklistItem":
+      return {
+        ...state,
+        tasks: updateTask(state.tasks, action.taskId, (task) => ({
+          ...task,
+          checklist: task.checklist.filter((item) => item.id !== action.itemId),
+        })),
+      }
+
+    case "task/reorderChecklist":
+      return {
+        ...state,
+        tasks: updateTask(state.tasks, action.taskId, (task) => ({
+          ...task,
+          checklist: reorderChecklist(task.checklist, action.orderedIds),
+        })),
+      }
+
+    case "task/addDependency":
+      return {
+        ...state,
+        tasks: linkDependency(state.tasks, action.taskId, action.dependencyId),
+      }
+
+    case "task/removeDependency":
+      return {
+        ...state,
+        tasks: unlinkDependency(state.tasks, action.taskId, action.dependencyId),
+      }
+
+    case "task/overrideBlock":
+      return {
+        ...state,
+        tasks: state.tasks.map((task) =>
+          task.id === action.taskId ? { ...task, blockOverridden: true } : task
+        ),
       }
 
     /* ---- Activity & Notification ---- */

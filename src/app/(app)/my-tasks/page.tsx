@@ -1,11 +1,16 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 
-import { PagePlaceholder } from "@/components/common/page-placeholder"
+import { MyTasksView } from "@/features/tasks/my-tasks-view"
 
 export const metadata: Metadata = {
   title: "งานของฉัน",
 }
 
-export default function Page() {
-  return <PagePlaceholder titleKey="nav.myTasks" phase="Phase 4 — Task, Kanban & Checklist" />
+export default function MyTasksPage() {
+  return (
+    <Suspense>
+      <MyTasksView />
+    </Suspense>
+  )
 }
