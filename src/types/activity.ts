@@ -24,6 +24,8 @@ export const ACTIVITY_ACTIONS = [
   "timeline_deleted",
   "participant_added",
   "participant_updated",
+  "participant_deleted",
+  "participant_rsvp_changed",
   "participant_imported",
   "participant_conflict_resolved",
   "comment_added",

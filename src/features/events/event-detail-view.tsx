@@ -8,7 +8,6 @@ import {
   CalendarOffIcon,
   ChevronLeftIcon,
   ClockIcon,
-  HardHatIcon,
   MapPinIcon,
   UsersIcon,
   type LucideIcon,
@@ -47,6 +46,7 @@ import {
   summariseRsvp,
 } from "@/store/selectors"
 import { FilesView } from "@/features/files/files-view"
+import { ParticipantsView } from "@/features/participants/participants-view"
 import { TasksView } from "@/features/tasks/tasks-view"
 import { TimelineView } from "@/features/timeline/timeline-view"
 import { EventActionsMenu } from "./event-actions-menu"
@@ -296,10 +296,7 @@ export function EventDetailView({ eventId }: { eventId: string }) {
         </TabsContent>
 
         <TabsContent value="participants" className="pt-4">
-          <PendingTab
-            countLabel={`${t("nav.participants")}: ${data.participants.length}`}
-            phase="Phase 7 — Participants & Excel Import"
-          />
+          <ParticipantsView eventId={event.id} />
         </TabsContent>
 
         <TabsContent value="activity" className="pt-4">
@@ -349,32 +346,5 @@ function Metric({ label, value }: { label: string; value: number }) {
       </p>
       <p className="text-muted-foreground text-xs">{label}</p>
     </div>
-  )
-}
-
-/** แท็บที่เนื้อหาจะถูกเติมใน Phase ถัดไป — แสดงจำนวนข้อมูลจริงไว้ก่อน */
-function PendingTab({
-  countLabel,
-  phase,
-}: {
-  countLabel: string
-  phase: string
-}) {
-  const { t } = useLocale()
-  return (
-    <Card>
-      <CardContent>
-        <EmptyState
-          icon={HardHatIcon}
-          title={countLabel}
-          description={t("page.comingSoonDescription")}
-          action={
-            <p className="text-muted-foreground bg-muted rounded-full px-3 py-1 font-mono text-xs">
-              {t("page.comingSoonPhase", { phase })}
-            </p>
-          }
-        />
-      </CardContent>
-    </Card>
   )
 }

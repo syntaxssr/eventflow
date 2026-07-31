@@ -327,6 +327,60 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       }
     }
 
+    /* ---- Participant ---- */
+    case "participant/add":
+      return {
+        ...state,
+        participants: [action.participant, ...state.participants],
+      }
+
+    case "participant/update":
+      return {
+        ...state,
+        participants: state.participants.map((participant) =>
+          participant.id === action.id
+            ? { ...participant, ...action.changes }
+            : participant
+        ),
+      }
+
+    case "participant/delete": {
+      const ids = new Set(action.ids)
+      return {
+        ...state,
+        participants: state.participants.filter(
+          (participant) => !ids.has(participant.id)
+        ),
+      }
+    }
+
+    case "participant/bulkRsvp": {
+      const ids = new Set(action.ids)
+      return {
+        ...state,
+        participants: state.participants.map((participant) =>
+          ids.has(participant.id)
+            ? { ...participant, rsvpStatus: action.rsvpStatus }
+            : participant
+        ),
+      }
+    }
+
+    case "participant/import": {
+      const updatedById = new Map(
+        action.updated.map((participant) => [participant.id, participant])
+      )
+      return {
+        ...state,
+        participants: [
+          ...action.created,
+          ...state.participants.map(
+            (participant) => updatedById.get(participant.id) ?? participant
+          ),
+        ],
+      }
+    }
+
     /* ---- Activity & Notification ---- */
     case "activity/add":
       return {

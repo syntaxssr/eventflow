@@ -554,56 +554,60 @@ tests/
 - [x] `lint` / `typecheck` / `build` / `test` / `e2e` ผ่านทั้งหมด
 
 > **หมายเหตุการออกแบบ:** การกู้คืนเวอร์ชัน **ไม่ได้ย้อนไปทับของเดิม** แต่สร้างเวอร์ชันใหม่จากเนื้อหาของเวอร์ชันที่เลือก ประวัติจึงครบเสมอและย้อนกลับได้อีก · ไฟล์รูปที่ผู้ใช้อัปโหลดเองพรีวิวได้จริงผ่าน `URL.createObjectURL`
-- [ ] Preview ดูสมจริงทุกประเภทไฟล์
 
 ---
 
 ## Phase 7 — Participants & Excel Import
 
+> **สถานะ: เสร็จแล้ว** · Unit 221 tests · E2E 102 tests
+
 ### UI
-- [ ] Participants page (ต่อ Event): Table + Summary Cards (ทั้งหมด / เข้าร่วม / ไม่เข้าร่วม / ยังไม่ตอบรับ)
-- [ ] Table columns: ชื่อ-นามสกุล, อีเมล, แผนก, เบอร์โทร, สถานะตอบรับ, ประเภทผู้เข้าร่วม, หมายเหตุ
-- [ ] Badge ประเภทผู้เข้าร่วม (พนักงาน/ผู้บริหาร/วิทยากร/แขกภายนอก/ทีมงานจัดงาน) — สี + ข้อความ
-- [ ] Add/Edit Participant Form
-- [ ] Bulk selection toolbar (เลือกกี่รายการ / Bulk change RSVP / Bulk delete)
-- [ ] **Import Wizard** 5 ขั้น: Upload → Column Mapping → Preview & Validation → Conflict Resolution → Summary & Confirm
-- [ ] **Conflict Resolution Screen**: เปรียบเทียบซ้าย (ข้อมูลเดิม) – ขวา (ข้อมูลใหม่จาก Excel), highlight field ที่ต่างกัน, ปุ่มเลือก "ใช้ข้อมูลเดิมทั้งชุด / ใช้ข้อมูลใหม่ทั้งชุด" เท่านั้น
-- [ ] Conflict navigation: Previous / Next / Apply to All / Progress `2 จาก 8`
-- [ ] Export Excel dialog
+- [x] Participants page (ต่อ Event): Table + Summary Cards (ทั้งหมด / เข้าร่วม / ไม่เข้าร่วม / ยังไม่ตอบรับ)
+- [x] Table columns: ชื่อ-นามสกุล, อีเมล, แผนก, เบอร์โทร, สถานะตอบรับ, ประเภทผู้เข้าร่วม, หมายเหตุ
+- [x] Badge ประเภทผู้เข้าร่วม (พนักงาน/ผู้บริหาร/วิทยากร/แขกภายนอก/ทีมงานจัดงาน) — สี + ข้อความ
+- [x] Add/Edit Participant Form
+- [x] Bulk selection toolbar (เลือกกี่รายการ / Bulk change RSVP / Bulk delete)
+- [x] **Import Wizard** 5 ขั้น: Upload → Column Mapping → Preview & Validation → Conflict Resolution → Summary & Confirm
+- [x] **Conflict Resolution Screen**: เปรียบเทียบซ้าย (ข้อมูลเดิม) – ขวา (ข้อมูลใหม่จาก Excel), highlight field ที่ต่างกัน, ปุ่มเลือก "ใช้ข้อมูลเดิมทั้งชุด / ใช้ข้อมูลใหม่ทั้งชุด" เท่านั้น
+- [x] Conflict navigation: Previous / Next / Apply to All / Progress `2 จาก 8`
+- [x] Export Excel dialog
 
 ### Interaction
-- [ ] Search / Filter (type, RSVP, department) / Sort ทุกคอลัมน์ + chips + clear all
-- [ ] Bulk Change RSVP → Confirmation Dialog ระบุจำนวนรายการที่กระทบ
-- [ ] Import flow: อ่านไฟล์ Excel จริงด้วย SheetJS → map column → ตรวจ required fields → error รายแถว (ระบุแถว/คอลัมน์) → ตรวจ email ซ้ำ → conflict resolution → summary (เพิ่มใหม่ X / อัปเดต Y / ข้าม Z / error N) → Confirm → ผลลัพธ์
-- [ ] ห้ามเลือกผสมทีละ field ใน conflict (บังคับเลือกทั้งชุด)
-- [ ] Import สำเร็จ → Activity log + toast + ตารางอัปเดต
-- [ ] Export Excel รายชื่อ + สถานะตอบรับ (ไฟล์จริงจากข้อมูล mock)
-- [ ] Manual Save ทั้ง Import และ Bulk operation
+- [x] Search / Filter (type, RSVP, department) / Sort ทุกคอลัมน์ + chips + clear all
+- [x] Bulk Change RSVP → Confirmation Dialog ระบุจำนวนรายการที่กระทบ
+- [x] Import flow: อ่านไฟล์ Excel จริงด้วย SheetJS → map column → ตรวจ required fields → error รายแถว (ระบุแถว/คอลัมน์) → ตรวจ email ซ้ำ → conflict resolution → summary (เพิ่มใหม่ X / อัปเดต Y / ข้าม Z / error N) → Confirm → ผลลัพธ์
+- [x] ห้ามเลือกผสมทีละ field ใน conflict (บังคับเลือกทั้งชุด) — ปุ่มถัดไปถูกปิดจนกว่าจะเลือกครบทุกรายการ
+- [x] Import สำเร็จ → Activity log + toast + ตารางอัปเดต
+- [x] Export Excel รายชื่อ + สถานะตอบรับ (ไฟล์จริงจากข้อมูล mock — เลือกทั้งหมดหรือเฉพาะที่กรองอยู่ได้)
+- [x] Manual Save ทั้ง Import และ Bulk operation
 
 ### Mock Data
-- [ ] ผู้เข้าร่วม ≥ 60 คน กระจายแผนก/ประเภท/สถานะตอบรับ
-- [ ] ไฟล์ Excel ตัวอย่างใน `public/samples/participants-sample.xlsx` (มีทั้งแถวปกติ, แถว error, email ซ้ำ) สำหรับทดสอบ import
-- [ ] ปุ่มดาวน์โหลด Template Excel
+- [x] ผู้เข้าร่วม ≥ 60 คน กระจายแผนก/ประเภท/สถานะตอบรับ (งานหลัก 83 คน มีตั้งแต่ Phase 2)
+- [x] ไฟล์ Excel ตัวอย่างใน `public/samples/participants-sample.xlsx` (แถวปกติ 3, แถว error 4 แบบ, email ซ้ำกับข้อมูลเดิม 2) สำหรับทดสอบ import
+- [x] ปุ่มดาวน์โหลด Template Excel (หัวคอลัมน์ภาษาไทย ระบบเดา mapping กลับได้อัตโนมัติ)
 
 ### Responsive
-- [ ] Mobile: table → card view, summary cards 2 คอลัมน์
-- [ ] **Conflict comparison บน mobile เปลี่ยนจากซ้าย–ขวาเป็นบน–ล่าง** พร้อม label ชัดเจนว่าอันไหนข้อมูลเดิม/ข้อมูลใหม่
-- [ ] Import wizard step indicator ย่อบน mobile
+- [x] Mobile: table → card view, summary cards 2 คอลัมน์
+- [x] **Conflict comparison บน mobile เปลี่ยนจากซ้าย–ขวาเป็นบน–ล่าง** พร้อม label ชัดเจนว่าอันไหนข้อมูลเดิม/ข้อมูลใหม่
+- [x] Import wizard step indicator ย่อบน mobile (เหลือเฉพาะตัวเลข)
 
 ### Accessibility
-- [ ] Table มี `<caption>` / `scope` ที่ถูกต้อง
-- [ ] Bulk select checkbox มี label "เลือกทั้งหมด" / รายแถวระบุชื่อ
-- [ ] Wizard step ประกาศด้วย `aria-live` เมื่อเปลี่ยนขั้น
-- [ ] Conflict comparison ไม่พึ่งสีอย่างเดียวในการชี้ field ที่ต่าง (มี icon/ข้อความ "แตกต่าง")
+- [x] Table มี `<caption>` / `scope` ที่ถูกต้อง + header จัดเรียงมี `aria-sort`
+- [x] Bulk select checkbox มี label "เลือกทั้งหมด" / รายแถวระบุชื่อ
+- [x] Wizard step ประกาศด้วย `aria-live` เมื่อเปลี่ยนขั้น
+- [x] Conflict comparison ไม่พึ่งสีอย่างเดียวในการชี้ field ที่ต่าง (มี icon + ป้าย "แตกต่าง")
 
 ### Testing
-- [ ] Unit: `detectDuplicateEmails`, `validateImportRow`, `mapColumns`, `resolveConflicts`, `buildImportSummary`
-- [ ] E2E: import ไฟล์ตัวอย่าง → mapping → เห็น error รายแถว → resolve conflict → apply to all → confirm → ตารางอัปเดตถูกต้อง
+- [x] Unit: `detectDuplicateEmails`, `validateImportRow`, `guessColumnMapping`, `parseImportRows`, `resolveConflicts`, `buildImportSummary`, filter/sort utilities, Excel round-trip (28 tests ใหม่)
+- [x] E2E 10 เคส: การ์ดสรุป, ค้นหา/กรอง/ชิป, เพิ่มรายชื่อ + ตรวจอีเมลซ้ำ, bulk RSVP, ลบพร้อมยืนยัน, **import ไฟล์ตัวอย่างครบ 5 ขั้น (เห็น error รายแถว → resolve conflict → apply to all → confirm → ตารางอัปเดต)**, ปฏิเสธไฟล์ที่ไม่ใช่ Excel, ดาวน์โหลด template, export Excel ได้ไฟล์จริง, แท็บในหน้ากิจกรรม
 
 ### Done Criteria
-- [ ] Import flow ครบ 11 ขั้นตามสเปก
-- [ ] Conflict resolution บังคับเลือกทั้งชุด และรองรับ Apply to All
-- [ ] Export Excel ดาวน์โหลดได้จริง
+- [x] Import flow ครบ 11 ขั้นตามสเปก
+- [x] Conflict resolution บังคับเลือกทั้งชุด และรองรับ Apply to All
+- [x] Export Excel ดาวน์โหลดได้จริง
+- [x] `lint` / `typecheck` / `build` / `test` / `e2e` ผ่านทั้งหมด
+
+> **หมายเหตุการออกแบบ:** แถวที่อีเมลซ้ำกันเอง "ภายในไฟล์" นับแถวแรกเป็นหลัก แถวถัดไปเป็น error (ไม่ใช่ conflict) · conflict ที่ผู้ใช้ยังไม่ได้ตัดสินใจจะเก็บข้อมูลเดิมไว้เสมอ แต่ UI บังคับให้เลือกครบก่อนไปขั้นสรุป · ฟิลด์สองภาษา (ชื่อ/แผนก/หมายเหตุ) ถือว่า "ตรงกัน" เมื่อค่าที่นำเข้าตรงกับภาษาใดภาษาหนึ่งของข้อมูลเดิม เพื่อไม่ให้ไฟล์ภาษาไทยชนกับข้อมูล mock ที่เก็บสองภาษา
 
 ---
 

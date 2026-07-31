@@ -64,6 +64,14 @@ export const ACTIVITY_META: Record<ActivityAction, ActivityMeta> = {
     labelKey: "activityAction.participantUpdated",
     icon: PencilIcon,
   },
+  participant_deleted: {
+    labelKey: "activityAction.participantDeleted",
+    icon: Trash2Icon,
+  },
+  participant_rsvp_changed: {
+    labelKey: "activityAction.participantRsvpChanged",
+    icon: ShuffleIcon,
+  },
   participant_imported: {
     labelKey: "activityAction.participantImported",
     icon: UploadIcon,
