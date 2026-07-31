@@ -99,14 +99,22 @@ export function TasksView({
       : []
   })
   const [priorities, setPriorities] = React.useState<Priority[]>([])
-  const [assigneeId, setAssigneeId] = React.useState("all")
+  const [assigneeId, setAssigneeId] = React.useState(
+    () => searchParams.get("assignee") ?? "all"
+  )
   const [due, setDue] = React.useState<DueFilter>(() => {
     const value = searchParams.get("due")
     if (value === "overdue" || value === "soon") return value
     return searchParams.get("status") === "incomplete" ? "incomplete" : "all"
   })
 
-  const [detailTask, setDetailTask] = React.useState<Task | null>(null)
+  // เปิดรายละเอียดงานทันทีเมื่อมาจากลิงก์ Global Search (?task=...)
+  const [detailTask, setDetailTask] = React.useState<Task | null>(() => {
+    const taskId = searchParams.get("task")
+    return taskId
+      ? (state.tasks.find((task) => task.id === taskId) ?? null)
+      : null
+  })
   const [formTask, setFormTask] = React.useState<Task | null>(null)
   const [formOpen, setFormOpen] = React.useState(false)
 

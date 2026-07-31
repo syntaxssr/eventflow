@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useSearchParams } from "next/navigation"
 import {
   FilterIcon,
   FolderOpenIcon,
@@ -61,10 +62,23 @@ export function FilesView({ eventId }: { eventId?: string }) {
   const { t, tl, locale } = useLocale()
   const state = useAppState()
   const actions = useFileActions()
+  const searchParams = useSearchParams()
+
+  // เปิดไฟล์ทันทีเมื่อมาจากลิงก์ Global Search (?file=...)
+  const linkedFile = React.useMemo(() => {
+    const fileId = searchParams.get("file")
+    return fileId
+      ? (state.files.find(
+          (file) => file.id === fileId && file.deletedAt === null
+        ) ?? null)
+      : null
+    // อ่านเฉพาะตอน mount — การเปิด/ปิดหลังจากนั้นเป็นของผู้ใช้
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const events = selectActiveEvents(state)
   const [selectedEventId, setSelectedEventId] = React.useState(
-    () => eventId ?? events[0]?.id ?? ""
+    () => eventId ?? linkedFile?.eventId ?? events[0]?.id ?? ""
   )
   const activeEventId = eventId ?? selectedEventId
 
@@ -72,7 +86,7 @@ export function FilesView({ eventId }: { eventId?: string }) {
   const [categoryId, setCategoryId] = React.useState("all")
   const [fileType, setFileType] = React.useState<FileType | "all">("all")
   const [uploaderId, setUploaderId] = React.useState("all")
-  const [detailFile, setDetailFile] = React.useState<FileItem | null>(null)
+  const [detailFile, setDetailFile] = React.useState<FileItem | null>(linkedFile)
   const [categoryDialogOpen, setCategoryDialogOpen] = React.useState(false)
 
   const categories = React.useMemo(

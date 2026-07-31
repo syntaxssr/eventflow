@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useSearchParams } from "next/navigation"
 import {
   DownloadIcon,
   FilterIcon,
@@ -54,14 +55,20 @@ export function ParticipantsView({ eventId }: { eventId?: string }) {
   const { t, locale } = useLocale()
   const state = useAppState()
   const actions = useParticipantActions()
+  const searchParams = useSearchParams()
 
   const events = selectActiveEvents(state)
   const [selectedEventId, setSelectedEventId] = React.useState(
-    () => eventId ?? events[0]?.id ?? ""
+    () =>
+      eventId ?? searchParams.get("event") ?? events[0]?.id ?? ""
   )
   const activeEventId = eventId ?? selectedEventId
 
-  const [filters, setFilters] = React.useState(EMPTY_PARTICIPANT_FILTERS)
+  // เติมคำค้นจากลิงก์ Global Search (?q=...)
+  const [filters, setFilters] = React.useState(() => ({
+    ...EMPTY_PARTICIPANT_FILTERS,
+    query: searchParams.get("q") ?? "",
+  }))
   const [sortKey, setSortKey] = React.useState<ParticipantSortKey>("name")
   const [sortDirection, setSortDirection] = React.useState<SortDirection>("asc")
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set())

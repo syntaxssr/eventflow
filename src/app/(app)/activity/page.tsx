@@ -1,11 +1,11 @@
 import type { Metadata } from "next"
 
-import { PagePlaceholder } from "@/components/common/page-placeholder"
+import { ActivityPageView } from "@/features/activity/activity-page-view"
 
 export const metadata: Metadata = {
   title: "ประวัติการใช้งาน",
 }
 
 export default function Page() {
-  return <PagePlaceholder titleKey="nav.activity" phase="Phase 9 — Activity History" />
+  return <ActivityPageView />
 }

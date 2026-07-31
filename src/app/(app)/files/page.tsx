@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import type { Metadata } from "next"
 
 import { FilesPageView } from "@/features/files/files-page-view"
@@ -7,5 +8,9 @@ export const metadata: Metadata = {
 }
 
 export default function FilesPage() {
-  return <FilesPageView />
+  return (
+    <Suspense>
+      <FilesPageView />
+    </Suspense>
+  )
 }

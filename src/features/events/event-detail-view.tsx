@@ -8,6 +8,7 @@ import {
   CalendarOffIcon,
   ChevronLeftIcon,
   ClockIcon,
+  DownloadIcon,
   MapPinIcon,
   UsersIcon,
   type LucideIcon,
@@ -45,6 +46,7 @@ import {
   selectTasksByEvent,
   summariseRsvp,
 } from "@/store/selectors"
+import { ExportEventDialog } from "@/features/export/export-event-dialog"
 import { FilesView } from "@/features/files/files-view"
 import { ParticipantsView } from "@/features/participants/participants-view"
 import { TasksView } from "@/features/tasks/tasks-view"
@@ -58,6 +60,7 @@ export function EventDetailView({ eventId }: { eventId: string }) {
 
   const event = selectEventById(state, eventId)
   const { state: pageState, retry } = usePageState(false)
+  const [exportOpen, setExportOpen] = React.useState(false)
 
   const data = React.useMemo(() => {
     if (!event) return null
@@ -169,7 +172,26 @@ export function EventDetailView({ eventId }: { eventId: string }) {
           </span>
         }
         description={tl(event.description)}
-        actions={<EventActionsMenu event={event} />}
+        actions={
+          <span className="flex items-center gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setExportOpen(true)}
+              data-testid="open-event-export"
+            >
+              <DownloadIcon className="size-4" aria-hidden="true" />
+              {t("export.action")}
+            </Button>
+            <EventActionsMenu event={event} />
+          </span>
+        }
+      />
+
+      <ExportEventDialog
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        eventId={event.id}
       />
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

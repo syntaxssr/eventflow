@@ -664,45 +664,51 @@ tests/
 
 ## Phase 9 — Search, Export, Activity History & Profile
 
+> **สถานะ: เสร็จแล้ว** · Unit 249 tests · E2E 123 tests
+
 ### UI
-- [ ] Global Search (Command Palette style, `Ctrl/Cmd + K`) + ผลลัพธ์แยกกลุ่ม: Events, Tasks, Files, Participants, People
-- [ ] Search result item แสดง context (event, สถานะ, วันที่) + highlight คำค้น
-- [ ] Activity History page: timeline list + filter (actor, action type, event, date range) + search
-- [ ] Activity item: ผู้ดำเนินการ, action, target, event, date/time, before → after summary
-- [ ] Export Dialog: เลือกรูปแบบ (PDF/Excel) + เลือกข้อมูลที่ต้องการ (checkbox)
-- [ ] User Profile page: avatar, ชื่อ, ตำแหน่ง, ทีม, email, งานที่ได้รับมอบหมาย, งานใกล้ครบกำหนด, งานที่เสร็จล่าสุด, recent activity + ลิงก์ไป Notification Settings / Language / Theme
+- [x] Global Search (Command Palette style, `Ctrl/Cmd + K`) + ผลลัพธ์แยกกลุ่ม: Events, Tasks, Files, Participants, People
+- [x] Search result item แสดง context (event, สถานะ, วันที่) + highlight คำค้นด้วย `<mark>`
+- [x] Activity History page: timeline list + filter (actor, action type, event, date range) + search
+- [x] Activity item: ผู้ดำเนินการ, action, target, event, date/time, before → after summary
+- [x] Export Dialog: เลือกรูปแบบ (PDF/Excel) + เลือกข้อมูลที่ต้องการ (checkbox) — ปุ่ม "ส่งออก" บนหน้ารายละเอียดกิจกรรม
+- [x] User Profile page: avatar, ชื่อ, ตำแหน่ง, ทีม, email, งานที่ได้รับมอบหมาย, งานใกล้ครบกำหนด, งานที่เสร็จล่าสุด, recent activity + ลิงก์ไป Notification Settings / Language / Theme
 
 ### Interaction
-- [ ] Global Search ค้นจาก: ชื่อกิจกรรม, วันที่กิจกรรม, ผู้รับผิดชอบ, สถานะงาน, ชื่องาน, ชื่อไฟล์, ประเภทไฟล์, ผู้เข้าร่วม, แผนก, อีเมล
-- [ ] Debounce + Empty result state + Recent search (in-memory)
-- [ ] คลิกผลลัพธ์ → ไปหน้าเป้าหมายพร้อม highlight
-- [ ] PDF Export: สร้างไฟล์จริงจากข้อมูล mock (ข้อมูลกิจกรรม, progress, task summary, timeline, participant summary, file summary)
-- [ ] Excel Export: รายการงาน, timeline, ผู้เข้าร่วม, สถานะตอบรับ, รายการไฟล์, activity history
-- [ ] Export มี loading state + toast + ดาวน์โหลดจริง
-- [ ] Profile: เปลี่ยน Language / Theme ได้จากหน้านี้
+- [x] Global Search ค้นจาก: ชื่อกิจกรรม, วันที่กิจกรรม, ผู้รับผิดชอบ, สถานะงาน (ป้ายไทย/อังกฤษ), ชื่องาน, ชื่อไฟล์, ประเภทไฟล์, ผู้เข้าร่วม, แผนก, อีเมล
+- [x] Debounce 200ms + Empty result state + Recent search (in-memory, หายเมื่อ refresh)
+- [x] คลิกผลลัพธ์ → ไปหน้าเป้าหมายแบบเปิดของจริงให้เลย: งาน → เปิด Task Detail (`?task=`), ไฟล์ → เปิดกล่องรายละเอียด (`?file=`), ผู้เข้าร่วม → เลือกกิจกรรม+กรองอีเมลให้ (`?event=&q=`), สมาชิก → งานทั้งทีมกรองตามผู้รับผิดชอบ
+- [x] PDF Export: สร้างไฟล์จริงจากข้อมูล mock (ข้อมูลกิจกรรม, progress, task summary, timeline, participant summary, file summary)
+- [x] Excel Export: รายการงาน, timeline, ผู้เข้าร่วม, สถานะตอบรับ, รายการไฟล์, activity history — แยกชีตตามที่เลือก
+- [x] Export มี loading state + toast + ดาวน์โหลดจริง
+- [x] Profile: เปลี่ยน Language / Theme ได้จากหน้านี้
+- [x] เก็บงานค้าง Phase 6: ปุ่มดาวน์โหลดไฟล์สร้างไฟล์จริงแล้ว (PDF/Excel สร้างตามประเภท, รูปใช้ตัวอย่างจริง, Word/PPT เป็นไฟล์สรุปข้อความ)
 
 ### Mock Data
-- [ ] Activity ≥ 60 รายการครอบคลุมทุก action type พร้อม before/after ที่มีความหมาย
-- [ ] ข้อมูลย้อนหลังกระจายหลายวัน เพื่อทดสอบ date filter
+- [x] Activity 100+ รายการครอบคลุม action ทุกกลุ่ม พร้อม before/after (มีตั้งแต่ Phase 2, เพิ่มต่อเนื่องทุกเฟส)
+- [x] ข้อมูลย้อนหลังกระจายหลายวัน — E2E ยืนยัน date filter ตัดผลได้จริง
 
 ### Responsive
-- [ ] Command palette เป็น full-screen บน mobile
-- [ ] Activity list เป็น card, filter อยู่ใน sheet
-- [ ] Export dialog scroll ได้บนจอเล็ก
+- [x] Command palette เต็มจอบน mobile (top-0 h-dvh) + ปุ่มไอคอนค้นหาแยกบนจอเล็ก
+- [x] Activity list เป็นรายการการ์ด, ตัวกรอง wrap ลงบรรทัดบนจอแคบ
+- [x] Export dialog scroll ได้บนจอเล็ก
 
 ### Accessibility
-- [ ] Command palette: `role="dialog"` + combobox pattern + คีย์บอร์ดครบ
-- [ ] ผลการค้นหาประกาศจำนวนผ่าน `aria-live`
-- [ ] Export progress มี status ที่ screen reader อ่านได้
+- [x] Command palette: `role="dialog"` + combobox ของ cmdk + คีย์บอร์ดครบ (arrow/Enter/Esc)
+- [x] ผลการค้นหาประกาศจำนวนผ่าน `aria-live`
+- [x] Export ระหว่างสร้างไฟล์ปุ่มแสดงสถานะและ disabled + toast แจ้งผล
 
 ### Testing
-- [ ] Unit: `globalSearch`, filter/sort utilities, activity formatter, export data builder
-- [ ] E2E: กด Ctrl+K → ค้นหา → เปิดผลลัพธ์; export Excel และ PDF ดาวน์โหลดสำเร็จ
+- [x] Unit: `globalSearch` ครบทุกแหล่ง (รวมกรณีถังขยะ/limit), `filterActivities` (actor/action/event/date/query), `collectEventExportData` ผ่าน integrity ของ mock (11 tests ใหม่)
+- [x] E2E 12 เคส: Ctrl+K + highlight, เปิดงานจากผลค้นหา, เปิดไฟล์จากผลค้นหา, ค้นผู้เข้าร่วมจากอีเมล, empty + recent search, activity filter ครบ + date range + search, export PDF/Excel ดาวน์โหลดจริง, ปุ่ม export disabled เมื่อไม่เลือกข้อมูล, ดาวน์โหลดไฟล์จริงจากหน้า Files, profile ครบ + เปลี่ยนตาม switch user
 
 ### Done Criteria
-- [ ] Search ครอบคลุมทุกแหล่งข้อมูลตามสเปก
-- [ ] Export ได้ไฟล์จริงทั้ง PDF และ Excel
-- [ ] Activity History filter/search ทำงานครบ
+- [x] Search ครอบคลุมทุกแหล่งข้อมูลตามสเปก
+- [x] Export ได้ไฟล์จริงทั้ง PDF และ Excel
+- [x] Activity History filter/search ทำงานครบ
+- [x] `lint` / `typecheck` / `build` / `test` / `e2e` ผ่านทั้งหมด
+
+> **หมายเหตุการออกแบบ:** PDF ใช้ข้อความอังกฤษทั้งฉบับ เพราะฟอนต์ไทยของโปรเจกต์เป็น woff2 ซึ่ง jsPDF ฝังไม่ได้ (ต้องใช้ TTF) — ข้อมูล mock มีสองภาษาอยู่แล้วจึงไม่เสียเนื้อหา ส่วน Excel ใช้ภาษาที่ผู้ใช้เลือกอยู่ · ชีต Activity มีเฉพาะใน Excel ตามสเปกที่ให้ PDF เป็นสรุปภาพรวม
 
 ---
 

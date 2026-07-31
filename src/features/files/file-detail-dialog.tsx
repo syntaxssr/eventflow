@@ -41,6 +41,7 @@ import { getFullName } from "@/lib/user"
 import { cn } from "@/lib/utils"
 import { useAppState } from "@/store"
 import type { FileItem } from "@/types/file"
+import { downloadMockFile } from "./download-file"
 import { FilePreview } from "./file-preview"
 import { useFileActions } from "./use-file-actions"
 
@@ -106,7 +107,11 @@ export function FileDetailDialog({
             <Button
               size="sm"
               variant="outline"
-              onClick={() => toast.success(t("file.downloadStarted"))}
+              onClick={() => {
+                void downloadMockFile(file)
+                toast.success(t("file.downloadStarted"))
+              }}
+              data-testid="download-file"
             >
               <DownloadIcon className="size-4" aria-hidden="true" />
               {t("file.download")}
