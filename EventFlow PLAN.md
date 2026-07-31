@@ -290,42 +290,53 @@ tests/
 
 ## Phase 2 — Dashboard
 
+> **สถานะ: เสร็จแล้ว** · Mock Data ชุดเต็ม (6 events · 43 tasks · 158 participants · 19 files · 100+ activities) · Unit 93 tests · E2E 34 tests
+
 ### UI
-- [ ] Stat Cards: Upcoming Events, Tasks Due Soon, Overdue Tasks, Incomplete Tasks, Unread Notifications
-- [ ] Event Progress Card (กิจกรรมหลัก: งานเลี้ยงประจำปีของบริษัท) + progress bar + วันนับถอยหลัง
-- [ ] Chart: สรุปงานตามสถานะ (donut/bar) + สรุปสถานะตอบรับ RSVP
-- [ ] Card: จำนวนผู้เข้าร่วม + breakdown ตามประเภท
-- [ ] List: Recent Files, Recent Activity, My Tasks Due Soon
-- [ ] Skeleton สำหรับทุก card
+- [x] Stat Cards 5 ใบ: Upcoming Events, Tasks Due Soon, Overdue Tasks, Incomplete Tasks, Unread Notifications
+- [x] Featured Event Card (งานเลี้ยงประจำปี) + cover + progress bar + วันนับถอยหลัง + ผู้รับผิดชอบ
+- [x] Donut Chart สรุปงานตามสถานะ + การ์ดสรุปสถานะตอบรับ RSVP
+- [x] จำนวนผู้เข้าร่วมแสดงบนการ์ดกิจกรรมและการ์ด RSVP
+- [x] List: Recent Files, Recent Activity, My Urgent Tasks
+- [x] Skeleton ครบทุก card (สัดส่วนตรงกับเนื้อหาจริง)
 
 ### Interaction
-- [ ] ตัวเลขบน stat card มี count-up animation (เคารพ `prefers-reduced-motion`)
-- [ ] คลิกทุก card → ลิงก์ไปหน้าที่เกี่ยวข้อง พร้อม filter ที่ตรงกัน (เช่น Overdue → My Tasks filter overdue)
-- [ ] ข้อมูลทั้งหมดคำนวณจาก store จริง → เปลี่ยนสถานะงานที่หน้าอื่นแล้วกลับมา Dashboard ต้องอัปเดต
-- [ ] Loading delay จำลองตอนเข้าหน้าแรก
+- [x] ตัวเลขบน stat card มี count-up animation (`useCountUp`, ปิดเองเมื่อ `prefers-reduced-motion`)
+- [x] ทุก stat card เป็นลิงก์พร้อม query filter (เช่น `?scope=all&due=overdue`)
+- [x] แถวในชาร์ตและการ์ด RSVP คลิกไปหน้าที่กรองไว้แล้วได้
+- [x] ข้อมูลทั้งหมดคำนวณจาก store ผ่าน selectors ไม่มีตัวเลข hardcode
+- [x] Loading delay จำลองตอนเข้าหน้า (`usePageState`) + รองรับ Dev Utility บังคับสถานะ
 
 ### Mock Data
-- [ ] Event หลัก "งานเลี้ยงประจำปีของบริษัท / Company Annual Party" ข้อมูลครบทุก field
-- [ ] Event รอง 3–5 งาน สถานะหลากหลาย (draft, planning, ready, completed, cancelled)
-- [ ] Task ≥ 25 งานกระจายทุกสถานะ/priority รวมงาน overdue และ due soon
+- [x] Event หลัก "งานเลี้ยงประจำปีของบริษัท 2569" ข้อมูลครบทุก field + cover SVG
+- [x] Event รองครบทั้ง 6 สถานะ (draft, planning, ready, in_progress, completed, cancelled)
+- [x] Task 43 งาน กระจายทุกสถานะ/priority พร้อม dependency chain, งาน blocked, overdue 4 งาน, due soon 2 งาน
+- [x] ผู้เข้าร่วม 158 คน (งานหลัก 83 คน) ครบทุกประเภทและสถานะตอบรับ
+- [x] ไฟล์ 19 รายการ มี version history และไฟล์ในถังขยะ
+- [x] Activity 100+ รายการ และ Notification แยกตามผู้ใช้
 
 ### Responsive
-- [ ] Grid 4 / 2 / 1 คอลัมน์ตามขนาดจอ
-- [ ] Chart ย่อได้ ไม่ล้นจอ, legend อ่านออกบนมือถือ
+- [x] Stat cards 5 / 2 / 1 คอลัมน์, เนื้อหาหลัก 3 / 1 คอลัมน์
+- [x] Chart ย่อตามจอ legend อ่านออกบนมือถือ (ตรวจที่ 390px)
 
 ### Accessibility
-- [ ] Chart มีตารางข้อมูลสำรอง หรือ `aria-label` สรุปค่า
-- [ ] ไม่ใช้สีอย่างเดียว — ทุก status มีข้อความ/ไอคอน
-- [ ] Heading hierarchy ถูกต้อง (h1 → h2 → h3)
+- [x] Chart มีรายการตัวเลขกำกับข้าง ๆ ไม่ต้องอ่านค่าจากสีอย่างเดียว
+- [x] ทุก status/priority มีทั้งไอคอนและข้อความ
+- [x] Progress bar มี `aria-label`
+- [x] Heading hierarchy ถูกต้อง (h1 หน้า → h2 การ์ด)
 
 ### Testing
-- [ ] Unit: `calculateEventProgress`, `getOverdueTasks`, `getDueSoonTasks`, dashboard selectors
-- [ ] E2E: เข้า dashboard เห็นการ์ดครบ + คลิก card แล้วไปหน้าเป้าหมายพร้อม filter
+- [x] Unit: `calculateEventProgress`, `countTasksByStatus`, `isOverdue`, `isDueSoon`, `getDueStatus`, dashboard selectors
+- [x] Unit: **ชุดตรวจความสมบูรณ์ของ Mock Data** — id ไม่ซ้ำ, reference ครบ, ไม่มี circular dependency, ไม่มีเหตุการณ์ในอนาคต, อีเมลผู้เข้าร่วมไม่ซ้ำ
+- [x] E2E 13 เคส: การ์ดครบ, ตัวเลขในชาร์ตรวมกันถูกต้อง, คลิกไปหน้าเป้าหมายพร้อม filter, สลับผู้ใช้แล้วงานเปลี่ยน, Empty/Error State ผ่าน Dev Utility
 
 ### Done Criteria
-- [ ] ตัวเลขทุกตัวสอดคล้องกับข้อมูลใน store (ไม่ hardcode)
-- [ ] TH/EN + Light/Dark ถูกต้องทั้งหน้า
-- [ ] Loading/Empty/Error state ทดสอบผ่าน Dev Utility ได้
+- [x] ตัวเลขทุกตัวสอดคล้องกับข้อมูลใน store (E2E ตรวจว่าผลรวมในชาร์ตเท่ากับจำนวนงานจริง)
+- [x] TH/EN + Light/Dark ถูกต้องทั้งหน้า
+- [x] Loading/Empty/Error state ทดสอบผ่าน Dev Utility ได้
+- [x] `lint` / `typecheck` / `build` / `test` / `e2e` ผ่านทั้งหมด
+
+> **หมายเหตุการออกแบบ:** การ์ดสรุปด้านบนนับงาน **ของทั้งทีม** ไม่ใช่เฉพาะงานของผู้ใช้ที่ล็อกอิน เพราะทุกคนดูแลกิจกรรมร่วมกันตาม requirement ข้อ 1 ส่วนการ์ด "งานเร่งด่วนของฉัน" เป็นมุมมองส่วนตัว ลิงก์จากการ์ดสรุปจึงพา `scope=all` ไปด้วย ซึ่ง My Tasks จะรองรับใน Phase 4
 
 ---
 

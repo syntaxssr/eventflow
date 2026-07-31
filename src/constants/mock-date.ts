@@ -38,6 +38,26 @@ export function fromDateKey(dateKey: string): Date {
   return new Date(year, month - 1, day, 0, 0, 0, 0)
 }
 
+/**
+ * แปลง Date เป็นสตริง ISO โซนเวลาไทย (`+07:00`)
+ *
+ * Mock Data ทั้งระบบใช้รูปแบบเดียวกันนี้ เพื่อให้เรียงลำดับด้วยการเทียบสตริงได้ถูกต้อง
+ * (การผสม `Z` กับ `+07:00` จะทำให้เรียงผิดแม้เป็นเวลาเดียวกัน)
+ */
+export function toBangkokIso(date: Date): string {
+  const shifted = new Date(date.getTime() + 7 * 3_600_000)
+  const pad = (value: number) => `${value}`.padStart(2, "0")
+  return (
+    `${shifted.getUTCFullYear()}-${pad(shifted.getUTCMonth() + 1)}-${pad(shifted.getUTCDate())}` +
+    `T${pad(shifted.getUTCHours())}:${pad(shifted.getUTCMinutes())}:${pad(shifted.getUTCSeconds())}+07:00`
+  )
+}
+
+/** เลื่อนเวลาจากสตริง ISO ไปข้างหน้า/ถอยหลังตามจำนวนชั่วโมง */
+export function shiftIsoHours(iso: string, hours: number): string {
+  return toBangkokIso(new Date(new Date(iso).getTime() + hours * 3_600_000))
+}
+
 /** จำนวนวันเต็มระหว่างสองวัน (b - a) โดยไม่สนใจเวลา */
 export function daysBetween(a: Date, b: Date): number {
   const startA = new Date(a.getFullYear(), a.getMonth(), a.getDate()).getTime()
