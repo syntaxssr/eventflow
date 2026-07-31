@@ -441,6 +441,25 @@ const SEEDS: FileSeed[] = [
     deletedBy: "u-1",
   },
   {
+    id: "f-20",
+    eventId: "e-1",
+    name: "ใบเสนอราคาที่ไม่ได้เลือก.pdf",
+    categoryId: "fc-budget",
+    type: "pdf",
+    versions: [
+      {
+        filename: "ใบเสนอราคาที่ไม่ได้เลือก.pdf",
+        uploadedBy: "u-5",
+        uploadedAt: "2026-06-20T10:40:00+07:00",
+        sizeMb: 1.8,
+        changeNote: ["ใบเสนอราคาจากผู้ให้บริการที่ไม่ได้เลือก", "Quote from the caterer we did not pick"],
+      },
+    ],
+    // ลบมานานแล้ว เหลืออีกไม่กี่วันก่อนถูกลบถาวร — ใช้สาธิตสถานะ "ใกล้ถูกลบถาวร"
+    deletedAt: "2026-07-05T09:15:00+07:00",
+    deletedBy: "u-5",
+  },
+  {
     id: "f-19",
     eventId: "e-2",
     name: "แบบฟอร์มเก่าไม่ใช้แล้ว.docx",

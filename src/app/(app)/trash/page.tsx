@@ -1,11 +1,11 @@
 import type { Metadata } from "next"
 
-import { PagePlaceholder } from "@/components/common/page-placeholder"
+import { TrashView } from "@/features/trash/trash-view"
 
 export const metadata: Metadata = {
   title: "ถังขยะ",
 }
 
-export default function Page() {
-  return <PagePlaceholder titleKey="nav.trash" phase="Phase 6 — Trash" />
+export default function TrashPage() {
+  return <TrashView />
 }

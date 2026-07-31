@@ -187,6 +187,107 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ),
       }
 
+    /* ---- File ---- */
+    case "file/add":
+      return { ...state, files: [action.file, ...state.files] }
+
+    case "file/update":
+      return {
+        ...state,
+        files: state.files.map((file) =>
+          file.id === action.id
+            ? {
+                ...file,
+                ...action.changes,
+                updatedAt: action.at,
+                updatedBy: action.by,
+              }
+            : file
+        ),
+      }
+
+    case "file/moveToTrash":
+      return {
+        ...state,
+        files: state.files.map((file) =>
+          file.id === action.id
+            ? { ...file, deletedAt: action.at, deletedBy: action.by }
+            : file
+        ),
+      }
+
+    case "file/restore":
+      return {
+        ...state,
+        files: state.files.map((file) =>
+          file.id === action.id
+            ? { ...file, deletedAt: null, deletedBy: null }
+            : file
+        ),
+      }
+
+    case "file/purge":
+      return {
+        ...state,
+        files: state.files.filter((file) => file.id !== action.id),
+      }
+
+    case "file/addVersion":
+      return {
+        ...state,
+        files: state.files.map((file) =>
+          file.id === action.fileId
+            ? {
+                ...file,
+                versions: [...file.versions, action.version],
+                currentVersionId: action.version.id,
+                updatedAt: action.version.uploadedAt,
+                updatedBy: action.version.uploadedBy,
+              }
+            : file
+        ),
+      }
+
+    case "file/restoreVersion":
+      return {
+        ...state,
+        files: state.files.map((file) =>
+          file.id === action.fileId
+            ? {
+                ...file,
+                versions: [...file.versions, action.version],
+                currentVersionId: action.version.id,
+                updatedAt: action.version.uploadedAt,
+                updatedBy: action.version.uploadedBy,
+              }
+            : file
+        ),
+      }
+
+    case "fileCategory/add":
+      return {
+        ...state,
+        fileCategories: [...state.fileCategories, action.category],
+      }
+
+    case "fileCategory/update":
+      return {
+        ...state,
+        fileCategories: state.fileCategories.map((category) =>
+          category.id === action.id
+            ? { ...category, ...action.changes }
+            : category
+        ),
+      }
+
+    case "fileCategory/delete":
+      return {
+        ...state,
+        fileCategories: state.fileCategories.filter(
+          (category) => category.id !== action.id
+        ),
+      }
+
     /* ---- Timeline ---- */
     case "timeline/create":
       return { ...state, timeline: [...state.timeline, action.item] }

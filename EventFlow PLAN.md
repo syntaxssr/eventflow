@@ -503,50 +503,57 @@ tests/
 
 ## Phase 6 — File Management, Version History & Trash
 
+> **สถานะ: เสร็จแล้ว** · Unit 193 tests · E2E 89 tests
+
 ### UI
-- [ ] All Files page + Files tab ใน Event: Grid / List toggle
-- [ ] Category sidebar/chips: กำหนดการ, PowerPoint, รายชื่อผู้เข้าร่วม, โปสเตอร์กิจกรรม, Script พิธีกร + เพิ่มหมวดหมู่ใหม่ได้
-- [ ] Upload Zone: เลือกไฟล์ + Drag and Drop + หลายไฟล์พร้อมกัน
-- [ ] Upload Progress list: progress bar ต่อไฟล์ + Success / Failed / Retry / Cancel
-- [ ] File Preview Modal ตามประเภท: Image (แสดงจริง) · PDF (mock document page) · PowerPoint (mock slide thumbnail + slide navigator) · Excel (mock spreadsheet grid) · Word (mock document page)
-- [ ] Version History Panel: version number, filename, uploaded by, date, size, change note
-- [ ] Trash page: ชื่อไฟล์, ประเภท, event, ผู้ลบ, วันที่ลบ, จำนวนวันคงเหลือ, Restore, Delete Permanently
-- [ ] Filter: file type, category, event, uploader, date + Sort
+- [x] All Files page + Files tab ใน Event: Grid / List toggle
+- [x] Category chips: 5 หมวดหมู่เริ่มต้น + งบประมาณและสัญญา + เพิ่มหมวดหมู่ใหม่ได้
+- [x] Upload Zone: เลือกไฟล์ + Drag and Drop + หลายไฟล์พร้อมกัน
+- [x] Upload Progress list: progress bar ต่อไฟล์ + Success / Failed / Retry / Cancel
+- [x] File Preview ตามประเภท: Image (แสดงไฟล์จริงผ่าน object URL) · PDF/Word (mock document page + ตัวเลื่อนหน้า) · PowerPoint (mock slide + thumbnail navigator) · Excel (mock spreadsheet grid)
+- [x] Version History: version number, filename, uploaded by, date, size, change note + ป้าย "เวอร์ชันปัจจุบัน"
+- [x] Trash page: ชื่อไฟล์, ประเภท, event, ผู้ลบ, วันที่ลบ, จำนวนวันคงเหลือ, Restore, Delete Permanently
+- [x] Filter: file type, category, uploader + chips + clear all
+- [ ] Filter ตามช่วงวันที่ และตัวเลือก Sort — ยังไม่ทำ ปัจจุบันเรียงตามวันที่แก้ไขล่าสุดเสมอ
 
 ### Interaction
-- [ ] Validation ขนาดไฟล์ > 50 MB → error เข้าใจง่าย ระบุชื่อไฟล์และขนาด
-- [ ] Validation ประเภทไฟล์ที่รองรับ (PPT, Excel, PDF, Word, Image)
-- [ ] Upload จำลอง progress 0→100 พร้อม animation, cancel กลางคันได้, fail แล้ว retry ได้
-- [ ] File Actions: ดาวน์โหลด (mock file), เปลี่ยนชื่อ, อัปโหลดเวอร์ชันใหม่ (+ change note), ย้ายหมวดหมู่, ลบ (→ Trash), ดูประวัติเวอร์ชัน, เปิด preview
-- [ ] Restore Version → Confirmation Dialog อธิบายว่า "ระบบจะสร้าง Current Version ใหม่จากเวอร์ชันที่เลือก"
-- [ ] Trash: Restore กลับที่เดิม, Delete Permanently → Confirmation destructive
-- [ ] ทุก action สร้าง Activity log + Notification (file change / new version)
-- [ ] Manual Save สำหรับ upload / rename / move category / restore version
+- [x] Validation ขนาดไฟล์ > 50 MB → error ระบุชื่อไฟล์และขนาดจริง
+- [x] Validation ประเภทไฟล์ที่รองรับ (PPT, Excel, PDF, Word, Image)
+- [x] Upload จำลอง progress 0→100, cancel กลางคันได้, fail แล้ว retry ได้
+- [x] File Actions: ดาวน์โหลด, เปลี่ยนชื่อ, อัปโหลดเวอร์ชันใหม่ (+ change note บังคับกรอก), ย้ายหมวดหมู่, ลบ (→ Trash), ประวัติเวอร์ชัน, preview
+- [x] Restore Version → Confirmation อธิบายว่าระบบจะสร้าง Current Version ใหม่จากเวอร์ชันที่เลือก
+- [x] Trash: Restore กลับที่เดิม, Delete Permanently → Confirmation แบบ destructive ที่บอกจำนวนเวอร์ชันที่จะหายไป
+- [x] ทุก action บันทึก Activity log และการอัปโหลดเวอร์ชันใหม่สร้าง Notification ถึงทีม
+- [x] Manual Save สำหรับ rename / move category / restore version / new version
+- [ ] ดาวน์โหลดยังเป็นการแจ้งเตือนอย่างเดียว ยังไม่สร้างไฟล์จริง — จะทำพร้อม Export ใน Phase 9
 
 ### Mock Data
-- [ ] ไฟล์ ≥ 15 รายการครอบคลุมทุกประเภทและทุกหมวดหมู่
-- [ ] ไฟล์ที่มี version history หลายเวอร์ชัน ≥ 3 ไฟล์ (พร้อม change note สมจริง)
-- [ ] ไฟล์ใน Trash ที่เหลือวันต่างกัน (เช่น 28, 15, 3, 1 วัน)
-- [ ] Asset ตัวอย่างจริงใน `public/` สำหรับ image preview
+- [x] ไฟล์ 20 รายการครอบคลุมทุกประเภทและทุกหมวดหมู่
+- [x] ไฟล์ที่มีหลายเวอร์ชัน 5 ไฟล์ พร้อม change note สมจริง
+- [x] ไฟล์ใน Trash 5 รายการ เหลือวันต่างกัน (29 / 28 / 15 / 14 / 4 วัน) รวมรายการที่ติดป้าย "ใกล้ถูกลบถาวร"
+- [x] ใช้ SVG ใน `public/covers/` เป็นภาพตัวอย่างของไฟล์รูปที่มากับ mock data
 
 ### Responsive
-- [ ] Grid 4/3/2/1, preview modal เป็น full-screen บน mobile
-- [ ] Upload zone รองรับ tap-to-select บน mobile
-- [ ] Version history เป็น list บน mobile
+- [x] Grid 3/2/1 ตามขนาดจอ, dialog scroll ได้ในตัวและเต็มความกว้างบนจอเล็ก
+- [x] Upload zone มีปุ่ม "เลือกไฟล์" ให้กดบนมือถือ ไม่ต้องลากอย่างเดียว
+- [x] Version history และตารางถังขยะเลื่อนแนวนอนบนจอแคบ
 
 ### Accessibility
-- [ ] Upload zone เข้าถึงด้วยคีย์บอร์ด (button + input file ที่ label ถูกต้อง)
-- [ ] Progress ใช้ `role="progressbar"` + `aria-valuenow`
-- [ ] Preview modal focus trap + ปิดด้วย Esc
-- [ ] `aria-live` ประกาศ upload สำเร็จ/ล้มเหลว
+- [x] Upload zone มีปุ่มจริงคู่กับ `<input type="file">` ที่มี `aria-label`
+- [x] Progress ใช้ `role="progressbar"` ของ shadcn (มี `aria-valuenow` ในตัว)
+- [x] Preview อยู่ใน Radix Dialog — focus trap และปิดด้วย Esc ได้
+- [x] สถานะอัปโหลดสำเร็จ/ล้มเหลวแจ้งผ่าน toast และมีข้อความในรายการ ไม่พึ่งสีอย่างเดียว
 
 ### Testing
-- [ ] Unit: `validateFileSize`, `validateFileType`, `getFileIcon`, `trashDaysRemaining`, `restoreVersion` logic
-- [ ] E2E: upload ไฟล์ → เห็นใน list → อัปโหลดเวอร์ชันใหม่ → ดู history → restore version → ลบ → เห็นใน Trash → restore
+- [x] Unit: `detectFileType`, `validateFile` (รวมกรณีขนาดเท่าเพดานพอดี), `currentVersion`, `restoreVersion`, `appendVersion`, `trashDaysRemaining`, `isExpiringSoon`
+- [x] E2E 15 เคส: รายการ, กรอง, เพิ่มหมวดหมู่, อัปโหลดสำเร็จ, ปฏิเสธประเภทที่ไม่รองรับ, **อัปโหลดล้มเหลวแล้วกด retry สำเร็จ**, preview, กู้คืนเวอร์ชัน, เปลี่ยนชื่อ, ลบเข้าถังขยะ, ถังขยะแสดงวันคงเหลือ, กู้คืน, ลบถาวร
 
 ### Done Criteria
-- [ ] Upload/Preview/Version/Trash ทำงานครบทุก action
-- [ ] Countdown 30 วันคำนวณจาก MOCK_TODAY ถูกต้อง
+- [x] Upload/Preview/Version/Trash ทำงานครบทุก action
+- [x] Countdown 30 วันคำนวณจาก MOCK_TODAY ถูกต้อง (unit test คุมไว้)
+- [x] `lint` / `typecheck` / `build` / `test` / `e2e` ผ่านทั้งหมด
+
+> **หมายเหตุการออกแบบ:** การกู้คืนเวอร์ชัน **ไม่ได้ย้อนไปทับของเดิม** แต่สร้างเวอร์ชันใหม่จากเนื้อหาของเวอร์ชันที่เลือก ประวัติจึงครบเสมอและย้อนกลับได้อีก · ไฟล์รูปที่ผู้ใช้อัปโหลดเองพรีวิวได้จริงผ่าน `URL.createObjectURL`
 - [ ] Preview ดูสมจริงทุกประเภทไฟล์
 
 ---

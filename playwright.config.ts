@@ -11,9 +11,11 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   // เผื่อเวลาให้ Next.js dev server คอมไพล์ route ที่ยังไม่เคยถูกเรียก
-  timeout: 60_000,
-  expect: { timeout: 15_000 },
-  workers: process.env.CI ? 1 : undefined,
+  timeout: 120_000,
+  expect: { timeout: 20_000 },
+  // dev server ของ Next คอมไพล์ route ตอนถูกเรียกครั้งแรก การรันหลาย worker
+  // พร้อมกันจึงทำให้บาง route ใช้เวลานานผิดปกติ — จำกัดไว้ 3 เพื่อไม่ให้แย่งกันเอง
+  workers: process.env.CI ? 1 : 3,
   reporter: process.env.CI ? "github" : "list",
   use: {
     baseURL: BASE_URL,

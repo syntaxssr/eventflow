@@ -197,7 +197,7 @@ describe("buildGanttLayout", () => {
   it("ไม่สร้างเส้นเชื่อมเมื่อรายการไม่ได้ผูกกับงาน", () => {
     const layout = buildGanttLayout(
       [item("a", "2026-09-01", "09:00", "10:00")],
-      [{ id: "t-1", dependsOn: [] } as Task]
+      [{ id: "t-1", dependsOn: [] }] as unknown as Task[]
     )
     expect(layout.links).toEqual([])
   })

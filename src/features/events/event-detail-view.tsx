@@ -46,6 +46,7 @@ import {
   selectTasksByEvent,
   summariseRsvp,
 } from "@/store/selectors"
+import { FilesView } from "@/features/files/files-view"
 import { TasksView } from "@/features/tasks/tasks-view"
 import { TimelineView } from "@/features/timeline/timeline-view"
 import { EventActionsMenu } from "./event-actions-menu"
@@ -291,10 +292,7 @@ export function EventDetailView({ eventId }: { eventId: string }) {
         </TabsContent>
 
         <TabsContent value="files" className="pt-4">
-          <PendingTab
-            countLabel={`${t("nav.files")}: ${data.files.length}`}
-            phase="Phase 6 — File Management"
-          />
+          <FilesView eventId={event.id} />
         </TabsContent>
 
         <TabsContent value="participants" className="pt-4">
