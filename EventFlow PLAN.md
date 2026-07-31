@@ -613,47 +613,52 @@ tests/
 
 ## Phase 8 — Collaboration & Notifications
 
+> **สถานะ: เสร็จแล้ว** · Unit 238 tests · E2E 111 tests
+
 ### UI
-- [ ] Comment Section ใน Task Detail: input + toolbar (mention, attach), รายการ comment แบบ thread
-- [ ] Comment item: avatar, ชื่อ, timestamp (relative + tooltip absolute), เนื้อหา, edited indicator, reply, edit, delete, emoji reaction
-- [ ] Mention autocomplete dropdown เมื่อพิมพ์ `@` + highlight mention ในเนื้อหา
-- [ ] Attachment chip ในความคิดเห็น + preview
-- [ ] Notification Bell + Dropdown (10 รายการล่าสุด + ดูทั้งหมด) + Unread Badge
-- [ ] Notification Page: filter ตามประเภท, read/unread, Mark all as read
-- [ ] Notification Settings page: toggle 5 ประเภท + สถานะ Saved
+- [x] Comment Section ใน Task Detail: input + toolbar (mention, attach), รายการ comment แบบ thread
+- [x] Comment item: avatar, ชื่อ, timestamp (relative + tooltip absolute), เนื้อหา, edited indicator, reply, edit, delete, emoji reaction
+- [x] Mention autocomplete dropdown เมื่อพิมพ์ `@` + highlight mention ในเนื้อหา
+- [x] Attachment chip ในความคิดเห็น (icon ตามประเภท + ชื่อ + ขนาด)
+- [x] Notification Bell + Dropdown (10 รายการล่าสุด + ดูทั้งหมด) + Unread Badge
+- [x] Notification Page: filter ตามประเภท, read/unread, Mark all as read
+- [x] Notification Settings page: toggle 5 ประเภท + สถานะ Saved
 
 ### Interaction
-- [ ] เพิ่ม / Reply (thread) / แก้ไข (เฉพาะของผู้ใช้ปัจจุบัน) / ลบ (confirm) / reaction
-- [ ] Mention → สร้าง Notification ให้ผู้ถูก mention ทันที (เห็นผลเมื่อ switch user)
-- [ ] แนบไฟล์ในความคิดเห็น (validation ขนาด/ประเภทเดียวกับ Phase 6)
-- [ ] Notification: read/unread, mark as read (คลิกแล้ว), mark all as read, ลิงก์ไปยัง target จริง (task/file/timeline)
-- [ ] Notification เกิดอัตโนมัติจาก: assign งานใหม่, ใกล้ครบกำหนด, เกินกำหนด, แก้ไขไฟล์, อัปโหลดเวอร์ชันใหม่, ถูก mention, timeline เปลี่ยน, checklist ครบ, task ถูก block/unblock
-- [ ] Notification Settings → **Auto Save** + สถานะ Saving/Saved; ปิดประเภทไหนแล้วต้องไม่สร้าง notification ประเภทนั้น
-- [ ] Comment/Notification เปลี่ยนตาม Switch User
+- [x] เพิ่ม / Reply (thread) / แก้ไข (เฉพาะของผู้ใช้ปัจจุบัน) / ลบ (confirm พร้อมจำนวน reply ที่หายไป) / reaction
+- [x] Mention → สร้าง Notification ให้ผู้ถูก mention ทันที (E2E ยืนยันผ่าน switch user)
+- [x] แนบไฟล์ในความคิดเห็น (validation ขนาด/ประเภทเดียวกับ Phase 6)
+- [x] Notification: read/unread, mark as read (คลิกแล้ว), mark all as read, ลิงก์ไปยัง target จริง
+- [x] Notification เกิดอัตโนมัติครบ 9 เหตุการณ์: assign งานใหม่ (สร้าง+เพิ่มผู้รับผิดชอบตอนแก้ไข), ใกล้ครบกำหนด, เกินกำหนด, แก้ไขไฟล์ (เปลี่ยนชื่อ/ย้ายหมวด), อัปโหลดเวอร์ชันใหม่, ถูก mention, timeline เปลี่ยน, checklist ครบ, task ถูก block/unblock
+- [x] Notification Settings → **Auto Save** + สถานะ Saving/Saved; ปิดประเภทไหนแล้วไม่สร้าง notification ประเภทนั้น (บังคับที่ `useNotify` จุดเดียว, มี unit + E2E คุม)
+- [x] Comment/Notification เปลี่ยนตาม Switch User
 
 ### Mock Data
-- [ ] Comment thread สมจริงในงานสำคัญ ≥ 5 งาน (มี reply, mention, attachment, edited)
-- [ ] Notification ผสม read/unread ครบทุกประเภทสำหรับผู้ใช้แต่ละคน
+- [x] Comment thread สมจริงใน 5 งานสำคัญ (12 ความคิดเห็น มี reply, mention, attachment, edited, reaction) — เวลาตรงกับ notification "ถูกกล่าวถึง" เดิม
+- [x] Notification ผสม read/unread ครบทุกประเภทสำหรับผู้ใช้แต่ละคน (มีตั้งแต่ Phase 2)
 
 ### Responsive
-- [ ] Comment thread ย่อหน้า reply ไม่เกิน 2 ระดับบน mobile
-- [ ] Notification dropdown → full sheet บน mobile
-- [ ] Mention dropdown ไม่ล้นจอ
+- [x] Comment thread ย่อหน้า reply ไม่เกิน 2 ระดับ — ลึกกว่านั้นแสดงชิดระดับเดิม
+- [x] Notification dropdown → bottom sheet บน mobile
+- [x] Mention dropdown กว้างเท่าช่องพิมพ์ ไม่ล้นจอ
 
 ### Accessibility
-- [ ] Mention combobox: `role="combobox"` + `aria-activedescendant` + arrow/Enter/Esc
-- [ ] Unread badge มีข้อความสำหรับ screen reader ("3 การแจ้งเตือนที่ยังไม่อ่าน")
-- [ ] Comment ใหม่ประกาศผ่าน `aria-live="polite"`
-- [ ] Reaction button มี `aria-pressed`
+- [x] Mention combobox: `role="combobox"` + `aria-activedescendant` + arrow/Enter/Tab/Esc
+- [x] Unread badge มีข้อความสำหรับ screen reader ผ่าน `aria-label` ของกระดิ่ง + ป้าย อ่านแล้ว/ยังไม่อ่าน ต่อรายการ
+- [x] Comment ใหม่ประกาศผ่าน `aria-live="polite"`
+- [x] Reaction button มี `aria-pressed`
 
 ### Testing
-- [ ] Unit: mention parser, notification generator ตาม settings, unread counter, comment tree builder
-- [ ] E2E: comment → reply → mention เพื่อนร่วมทีม → switch user → เห็น notification → คลิกแล้วไปที่ task ถูกต้อง
+- [x] Unit: mention parser (context/apply/highlight), notification generator ตาม settings, unread counter, comment tree builder, reaction toggle, ลบพร้อม reply (17 tests ใหม่)
+- [x] E2E 9 เคส: thread เดิม, reply+edit, ลบพร้อมยืนยัน, reaction aria-pressed, แนบไฟล์+validation, **comment → mention → switch user → เห็น notification → คลิกแล้วไปที่งานและถูกทำเครื่องหมายอ่าน**, ปิด mention ใน settings แล้วไม่เกิดแจ้งเตือน, กรอง+mark all as read, auto save ใน settings
 
 ### Done Criteria
-- [ ] Comment ครบทุก action
-- [ ] Notification สร้างครบ 9 ประเภทและเคารพ settings
-- [ ] Mark as read / Mark all as read ทำงานถูกต้อง
+- [x] Comment ครบทุก action
+- [x] Notification สร้างครบ 9 ประเภทและเคารพ settings
+- [x] Mark as read / Mark all as read ทำงานถูกต้อง
+- [x] `lint` / `typecheck` / `build` / `test` / `e2e` ผ่านทั้งหมด
+
+> **หมายเหตุการออกแบบ:** จุดยิงการแจ้งเตือนทุกจุดรวมศูนย์ที่ hook `useNotify` — ตัดผู้ทำเอง ตัดผู้รับซ้ำ และเคารพ settings ที่เดียว · ประเภทที่ไม่มีปุ่มปิด (checklist ครบ, block/unblock) แจ้งเสมอตามสเปกที่ให้ตั้งค่าได้ 5 ประเภท · การลบความคิดเห็นลบ reply ทั้งสายใต้มันด้วย
 
 ---
 

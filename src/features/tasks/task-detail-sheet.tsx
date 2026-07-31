@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { HardHatIcon, PencilLineIcon, Trash2Icon } from "lucide-react"
+import { PencilLineIcon, Trash2Icon } from "lucide-react"
 import { toast } from "sonner"
 
 import { AvatarGroup } from "@/components/common/avatar-group"
@@ -26,6 +26,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { PRIORITY_STYLE, TASK_STATUS_STYLE } from "@/constants/status"
+import { CommentSection } from "@/features/comments/comment-section"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
 import { getBlockedInfo } from "@/lib/dependency"
@@ -208,14 +209,7 @@ export function TaskDetailSheet({
             <DependencySection task={task} tasks={tasks} />
 
             <Separator />
-            <div className="text-muted-foreground flex items-center gap-2 rounded-md border border-dashed px-3 py-4 text-sm">
-              <HardHatIcon className="size-4 shrink-0" aria-hidden="true" />
-              <span>
-                {t("page.comingSoonPhase", {
-                  phase: "Phase 8 — Comments & Notifications",
-                })}
-              </span>
-            </div>
+            <CommentSection task={task} />
           </div>
         </SheetContent>
       </Sheet>

@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { useDemo } from "@/components/dev/demo-provider"
 import { ROUTES } from "@/constants/app"
 import { useActivityLog } from "@/hooks/use-activity-log"
+import { useNotify } from "@/hooks/use-notify"
 import { useLocale } from "@/i18n"
 import { nowIso } from "@/lib/clock"
 import { newId } from "@/lib/id"
@@ -26,30 +27,21 @@ export function useTimelineActions() {
   const currentUser = useCurrentUser()
   const demo = useDemo()
   const logActivity = useActivityLog()
+  const notify = useNotify()
 
   const save = React.useCallback(async () => {
     await demo.simulate()
   }, [demo])
 
+  /** แจ้งผู้รับผิดชอบรายการนั้นและเจ้าของกิจกรรม — settings ถูกบังคับใน useNotify */
   const notifyOwners = React.useCallback(
     (item: TimelineItem, body: LocalizedText, at: string) => {
       if (!currentUser) return
 
-      // แจ้งผู้รับผิดชอบรายการนั้นและเจ้าของกิจกรรม ยกเว้นตัวผู้แก้ไขเอง
       const event = state.events.find((entry) => entry.id === item.eventId)
-      const recipients = new Set(
-        [...item.ownerIds, event?.ownerId].filter(
-          (id): id is string => Boolean(id) && id !== currentUser.id
-        )
-      )
-      if (recipients.size === 0) return
-
-      dispatch({
-        type: "notification/add",
-        notifications: [...recipients].map((userId) => ({
-          id: newId("n"),
-          userId,
-          type: "timeline_changed" as const,
+      notify(
+        {
+          type: "timeline_changed",
           title: {
             th: t("timeline.notificationTitle"),
             en: t("timeline.notificationTitle"),
@@ -57,13 +49,13 @@ export function useTimelineActions() {
           body,
           href: ROUTES.timeline,
           eventId: item.eventId,
-          isRead: false,
           createdAt: at,
           actorId: currentUser.id,
-        })),
-      })
+        },
+        [...item.ownerIds, ...(event?.ownerId ? [event.ownerId] : [])]
+      )
     },
-    [currentUser, dispatch, state.events, t]
+    [currentUser, notify, state.events, t]
   )
 
   const createItem = React.useCallback(

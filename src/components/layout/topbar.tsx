@@ -1,28 +1,17 @@
 "use client"
 
-import Link from "next/link"
-import { BellIcon, SearchIcon } from "lucide-react"
+import { SearchIcon } from "lucide-react"
 
 import { LanguageToggle } from "@/components/common/language-toggle"
 import { ThemeToggle } from "@/components/common/theme-toggle"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { ROUTES } from "@/constants/app"
+import { NotificationBell } from "@/features/notifications/notification-bell"
 import { useLocale } from "@/i18n"
-import { useAppState, useCurrentUser } from "@/store"
 import { UserMenu } from "./user-menu"
 
 export function Topbar() {
   const { t } = useLocale()
-  const currentUser = useCurrentUser()
-  const notifications = useAppState().notifications
-
-  const unreadCount = currentUser
-    ? notifications.filter(
-        (item) => item.userId === currentUser.id && !item.isRead
-      ).length
-    : 0
 
   return (
     <header className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-30 flex h-14 items-center gap-2 border-b px-3 backdrop-blur sm:px-4">
@@ -45,27 +34,7 @@ export function Topbar() {
       <div className="flex-1 sm:hidden" />
 
       <div className="flex items-center gap-0.5">
-        <Button
-          asChild
-          variant="ghost"
-          size="icon"
-          className="relative"
-          aria-label={
-            unreadCount > 0
-              ? t("shell.unreadNotifications", { count: unreadCount })
-              : t("shell.noUnreadNotifications")
-          }
-        >
-          <Link href={ROUTES.notifications}>
-            <BellIcon className="size-4" aria-hidden="true" />
-            {unreadCount > 0 ? (
-              <span className="bg-destructive text-destructive-foreground absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-[0.625rem] font-bold">
-                {unreadCount > 9 ? "9+" : unreadCount}
-              </span>
-            ) : null}
-          </Link>
-        </Button>
-
+        <NotificationBell />
         <LanguageToggle />
         <ThemeToggle />
         <UserMenu />

@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { useDemo } from "@/components/dev/demo-provider"
 import { ROUTES } from "@/constants/app"
 import { useActivityLog } from "@/hooks/use-activity-log"
+import { useNotify } from "@/hooks/use-notify"
 import { useLocale } from "@/i18n"
 import { nowIso } from "@/lib/clock"
 import { newId } from "@/lib/id"
@@ -36,12 +37,16 @@ export function useFileActions() {
   const currentUser = useCurrentUser()
   const demo = useDemo()
   const logActivity = useActivityLog()
+  const notify = useNotify()
 
   const save = React.useCallback(async () => {
     await demo.simulate()
   }, [demo])
 
-  /** แจ้งทีมที่เกี่ยวข้องกับกิจกรรม ยกเว้นตัวผู้ทำเอง */
+  /**
+   * แจ้งทีมที่เกี่ยวข้องกับกิจกรรม (เจ้าของกิจกรรม + ผู้เคยอัปโหลดไฟล์ในกิจกรรม)
+   * การกรองผู้ทำเองและการเคารพ settings เป็นหน้าที่ของ useNotify
+   */
   const notifyTeam = React.useCallback(
     (
       file: FileItem,
@@ -52,31 +57,27 @@ export function useFileActions() {
       if (!currentUser) return
 
       const event = state.events.find((entry) => entry.id === file.eventId)
-      const recipients = new Set(
-        [event?.ownerId, ...state.files
+      const recipients = [
+        event?.ownerId,
+        ...state.files
           .filter((entry) => entry.eventId === file.eventId)
-          .map((entry) => entry.uploadedBy)]
-          .filter((id): id is string => Boolean(id) && id !== currentUser.id)
-      )
-      if (recipients.size === 0) return
+          .map((entry) => entry.uploadedBy),
+      ].filter((id): id is string => Boolean(id))
 
-      dispatch({
-        type: "notification/add",
-        notifications: [...recipients].map((userId) => ({
-          id: newId("n"),
-          userId,
+      notify(
+        {
           type,
           title,
           body: { th: file.name, en: file.name },
           href: ROUTES.files,
           eventId: file.eventId,
-          isRead: false,
           createdAt: at,
           actorId: currentUser.id,
-        })),
-      })
+        },
+        recipients
+      )
     },
-    [currentUser, dispatch, state.events, state.files]
+    [currentUser, notify, state.events, state.files]
   )
 
   const addFile = React.useCallback(
@@ -240,9 +241,15 @@ export function useFileActions() {
         after: { th: name, en: name },
         createdAt: at,
       })
+      notifyTeam(
+        { ...file, name },
+        "file_updated",
+        { th: "มีการแก้ไขไฟล์", en: "A file was edited" },
+        at
+      )
       toast.success(t("file.renamed"))
     },
-    [currentUser, dispatch, logActivity, save, t]
+    [currentUser, dispatch, logActivity, notifyTeam, save, t]
   )
 
   const moveCategory = React.useCallback(
@@ -274,9 +281,15 @@ export function useFileActions() {
         after: label(categoryId),
         createdAt: at,
       })
+      notifyTeam(
+        file,
+        "file_updated",
+        { th: "มีการแก้ไขไฟล์", en: "A file was edited" },
+        at
+      )
       toast.success(t("file.moved"))
     },
-    [currentUser, dispatch, logActivity, save, state.fileCategories, t]
+    [currentUser, dispatch, logActivity, notifyTeam, save, state.fileCategories, t]
   )
 
   const moveToTrash = React.useCallback(

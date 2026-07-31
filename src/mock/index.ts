@@ -1,5 +1,6 @@
 import type { AppState } from "@/store/types"
 import { MOCK_ACTIVITIES } from "./activities"
+import { MOCK_COMMENTS } from "./comments"
 import { MOCK_EVENTS } from "./events"
 import { MOCK_FILE_CATEGORIES, MOCK_FILES } from "./files"
 import { MOCK_NOTIFICATIONS } from "./notifications"
@@ -36,7 +37,15 @@ export function createInitialState(): AppState {
     })),
     fileCategories: MOCK_FILE_CATEGORIES.map((category) => ({ ...category })),
     participants: MOCK_PARTICIPANTS.map((participant) => ({ ...participant })),
-    comments: [],
+    comments: MOCK_COMMENTS.map((comment) => ({
+      ...comment,
+      mentionIds: [...comment.mentionIds],
+      attachments: comment.attachments.map((attachment) => ({ ...attachment })),
+      reactions: comment.reactions.map((reaction) => ({
+        ...reaction,
+        userIds: [...reaction.userIds],
+      })),
+    })),
     notifications: MOCK_NOTIFICATIONS.map((notification) => ({ ...notification })),
     activities: MOCK_ACTIVITIES.map((activity) => ({ ...activity })),
     notificationSettings: Object.fromEntries(

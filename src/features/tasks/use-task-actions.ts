@@ -7,11 +7,12 @@ import { useDemo } from "@/components/dev/demo-provider"
 import { ROUTES } from "@/constants/app"
 import { TASK_STATUS_STYLE } from "@/constants/status"
 import { useActivityLog } from "@/hooks/use-activity-log"
+import { useNotify } from "@/hooks/use-notify"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
 import { nowIso } from "@/lib/clock"
 import { newId } from "@/lib/id"
-import { useAppDispatch, useCurrentUser } from "@/store"
+import { useAppDispatch, useAppState, useCurrentUser } from "@/store"
 import type { LocalizedText } from "@/types/common"
 import type { ChecklistItem, Task, TaskStatus } from "@/types/task"
 
@@ -24,9 +25,11 @@ import type { ChecklistItem, Task, TaskStatus } from "@/types/task"
 export function useTaskActions() {
   const { t, tl } = useLocale()
   const dispatch = useAppDispatch()
+  const state = useAppState()
   const currentUser = useCurrentUser()
   const demo = useDemo()
   const logActivity = useActivityLog()
+  const notify = useNotify()
 
   const statusLabel = React.useCallback(
     (status: TaskStatus): LocalizedText => {
@@ -58,8 +61,38 @@ export function useTaskActions() {
         after: statusLabel(status),
         createdAt: at,
       })
+
+      // งานนี้เสร็จแล้ว → งานที่รอมันอยู่และไม่เหลือตัวบล็อกอื่น = พ้นการบล็อก
+      if (status === "completed") {
+        for (const blockedId of task.blocks) {
+          const blocked = state.tasks.find((entry) => entry.id === blockedId)
+          if (!blocked) continue
+          const stillBlocking = blocked.dependsOn.some((depId) => {
+            if (depId === task.id) return false
+            const dep = state.tasks.find((entry) => entry.id === depId)
+            return dep ? dep.status !== "completed" : false
+          })
+          if (!stillBlocking) {
+            notify(
+              {
+                type: "task_unblocked",
+                title: {
+                  th: "งานของคุณพ้นการบล็อกแล้ว",
+                  en: "Your task is unblocked",
+                },
+                body: blocked.title,
+                href: ROUTES.myTasks,
+                eventId: blocked.eventId,
+                createdAt: at,
+                actorId: currentUser.id,
+              },
+              blocked.assigneeIds
+            )
+          }
+        }
+      }
     },
-    [currentUser, dispatch, logActivity, save, statusLabel]
+    [currentUser, dispatch, logActivity, notify, save, state.tasks, statusLabel]
   )
 
   /**
@@ -112,12 +145,9 @@ export function useTaskActions() {
           }
         )
 
-        dispatch({
-          type: "notification/add",
-          notifications: task.assigneeIds.map((userId) => ({
-            id: newId("n"),
-            userId,
-            type: "checklist_completed" as const,
+        notify(
+          {
+            type: "checklist_completed",
             title: {
               th: "รายการตรวจสอบครบทุกข้อแล้ว",
               en: "A checklist is now complete",
@@ -125,11 +155,11 @@ export function useTaskActions() {
             body: task.title,
             href: ROUTES.myTasks,
             eventId: task.eventId,
-            isRead: false,
             createdAt: nowIso(),
             actorId: currentUser.id,
-          })),
-        })
+          },
+          task.assigneeIds
+        )
 
         toast.success(t("task.autoCompleted"))
         return
@@ -146,7 +176,7 @@ export function useTaskActions() {
       })
       toast.info(t("task.autoReopened"))
     },
-    [currentUser, dispatch, logActivity, statusLabel, t]
+    [currentUser, logActivity, notify, statusLabel, t]
   )
 
   const addChecklistItem = React.useCallback(
@@ -208,9 +238,29 @@ export function useTaskActions() {
     async (task: Task, dependencyId: string) => {
       await save()
       dispatch({ type: "task/addDependency", taskId: task.id, dependencyId })
+
+      // งานที่ต้องรอยังไม่เสร็จ → งานนี้ถูกบล็อกทันที แจ้งผู้รับผิดชอบ
+      const dependency = state.tasks.find((entry) => entry.id === dependencyId)
+      if (dependency && dependency.status !== "completed" && currentUser) {
+        notify(
+          {
+            type: "task_blocked",
+            title: { th: "งานของคุณถูกบล็อก", en: "Your task is blocked" },
+            body: {
+              th: `${task.title.th} — รอ “${dependency.title.th}”`,
+              en: `${task.title.en} — waiting on “${dependency.title.en}”`,
+            },
+            href: ROUTES.myTasks,
+            eventId: task.eventId,
+            createdAt: nowIso(),
+            actorId: currentUser.id,
+          },
+          task.assigneeIds
+        )
+      }
       toast.success(t("task.dependencyAdded"))
     },
-    [dispatch, save, t]
+    [currentUser, dispatch, notify, save, state.tasks, t]
   )
 
   const removeDependency = React.useCallback(

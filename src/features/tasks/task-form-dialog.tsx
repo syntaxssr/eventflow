@@ -37,8 +37,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { ROUTES } from "@/constants/app"
 import { PRIORITY_STYLE, TASK_STATUS_STYLE } from "@/constants/status"
 import { useActivityLog } from "@/hooks/use-activity-log"
+import { useNotify } from "@/hooks/use-notify"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
 import { nowIso } from "@/lib/clock"
@@ -102,6 +104,7 @@ export function TaskFormDialog({
   const currentUser = useCurrentUser()
   const demo = useDemo()
   const logActivity = useActivityLog()
+  const notify = useNotify()
 
   const [confirmClose, setConfirmClose] = React.useState(false)
   const isEditing = Boolean(task)
@@ -180,6 +183,19 @@ export function TaskFormDialog({
         after: null,
         createdAt: at,
       })
+      // แจ้งเฉพาะผู้รับผิดชอบที่เพิ่งถูกเพิ่มเข้ามาใหม่
+      notify(
+        {
+          type: "task_assigned",
+          title: { th: "คุณได้รับมอบหมายงานใหม่", en: "You have a new task" },
+          body: localized(values.title),
+          href: ROUTES.myTasks,
+          eventId: task.eventId,
+          createdAt: at,
+          actorId: currentUser.id,
+        },
+        values.assigneeIds.filter((id) => !task.assigneeIds.includes(id))
+      )
       toast.success(t("task.updated"))
     } else {
       const newTask: Task = {
@@ -205,26 +221,18 @@ export function TaskFormDialog({
       }
 
       dispatch({ type: "task/create", task: newTask })
-      dispatch({
-        type: "notification/add",
-        notifications: values.assigneeIds
-          .filter((userId) => userId !== currentUser.id)
-          .map((userId) => ({
-            id: newId("n"),
-            userId,
-            type: "task_assigned" as const,
-            title: {
-              th: "คุณได้รับมอบหมายงานใหม่",
-              en: "You have a new task",
-            },
-            body: newTask.title,
-            href: "/my-tasks",
-            eventId: newTask.eventId,
-            isRead: false,
-            createdAt: at,
-            actorId: currentUser.id,
-          })),
-      })
+      notify(
+        {
+          type: "task_assigned",
+          title: { th: "คุณได้รับมอบหมายงานใหม่", en: "You have a new task" },
+          body: newTask.title,
+          href: ROUTES.myTasks,
+          eventId: newTask.eventId,
+          createdAt: at,
+          actorId: currentUser.id,
+        },
+        values.assigneeIds
+      )
       logActivity({
         action: "task_created",
         targetType: "task",

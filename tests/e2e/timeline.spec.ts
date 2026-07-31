@@ -144,9 +144,10 @@ test.describe("Phase 5 — Timeline editing", () => {
     await page.getByTestId("switch-user-trigger").click()
     await page.getByRole("menuitemradio", { name: /สิริพร ใจดี/ }).click()
 
-    await expect(
-      page.getByRole("link", { name: /การแจ้งเตือนที่ยังไม่อ่าน/ })
-    ).toBeVisible()
+    await expect(page.getByTestId("notification-bell")).toHaveAttribute(
+      "aria-label",
+      /การแจ้งเตือนที่ยังไม่อ่าน/
+    )
   })
 
   test("ลบรายการต้องผ่านกล่องยืนยัน", async ({ page }) => {

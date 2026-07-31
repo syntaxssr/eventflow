@@ -1,4 +1,5 @@
 import { applyChecklistRules, reorderChecklist } from "@/lib/checklist"
+import { removeCommentWithReplies, toggleReaction } from "@/lib/comment"
 import {
   detachTask,
   linkDependency,
@@ -380,6 +381,48 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ],
       }
     }
+
+    /* ---- Comment ---- */
+    case "comment/add":
+      return { ...state, comments: [...state.comments, action.comment] }
+
+    case "comment/update":
+      return {
+        ...state,
+        comments: state.comments.map((comment) =>
+          comment.id === action.id
+            ? {
+                ...comment,
+                body: action.body,
+                updatedAt: action.at,
+                isEdited: true,
+              }
+            : comment
+        ),
+      }
+
+    case "comment/delete":
+      return {
+        ...state,
+        comments: removeCommentWithReplies(state.comments, action.id),
+      }
+
+    case "comment/react":
+      return {
+        ...state,
+        comments: state.comments.map((comment) =>
+          comment.id === action.id
+            ? {
+                ...comment,
+                reactions: toggleReaction(
+                  comment.reactions,
+                  action.emoji,
+                  action.userId
+                ),
+              }
+            : comment
+        ),
+      }
 
     /* ---- Activity & Notification ---- */
     case "activity/add":
