@@ -1,0 +1,33 @@
+import { defineConfig, devices } from "@playwright/test"
+
+// ใช้พอร์ตเดียวกับ `npm run dev` เพื่อให้ Playwright ใช้เซิร์ฟเวอร์ที่เปิดค้างไว้ได้
+// (Next.js อนุญาตให้รัน dev server ต่อหนึ่งโปรเจกต์ได้ครั้งละหนึ่งตัวเท่านั้น)
+const PORT = Number(process.env.PORT ?? 3000)
+const BASE_URL = `http://localhost:${PORT}`
+
+export default defineConfig({
+  testDir: "./tests/e2e",
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: process.env.CI ? "github" : "list",
+  use: {
+    baseURL: BASE_URL,
+    trace: "on-first-retry",
+    locale: "th-TH",
+    timezoneId: "Asia/Bangkok",
+  },
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+    },
+  ],
+  webServer: {
+    command: `npx next dev --port ${PORT}`,
+    url: BASE_URL,
+    reuseExistingServer: !process.env.CI,
+    timeout: 180_000,
+  },
+})

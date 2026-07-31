@@ -1,0 +1,302 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* =========================================================================
+   EventFlow — Design Tokens
+   Brand: Primary Orange #F99B35 (ใช้เป็น Accent, ไม่ใช้เต็มพื้นที่)
+   ทุกคู่สีข้อความ/พื้นหลังผ่าน WCAG AA (>= 4.5:1 สำหรับข้อความ, >= 3:1 สำหรับ UI)
+   ========================================================================= */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-heading: var(--font-sans);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  /* Brand scale */
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-brand-950: var(--brand-950);
+  /* สีแบรนด์สำหรับ "ข้อความ" โดยเฉพาะ — เข้มพอที่จะผ่าน AA บนพื้นหลัง */
+  --color-brand-text: var(--brand-text);
+
+  /* Semantic */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-surface: var(--success-surface);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-surface: var(--warning-surface);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-surface: var(--info-surface);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-danger-surface: var(--danger-surface);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* ---- Typography ----
+     LINE Seed Sans TH เป็นฟอนต์หลัก + fallback stack เมื่อโหลดไม่สำเร็จ */
+  --font-sans:
+    var(--font-line-seed), "Noto Sans Thai", "IBM Plex Sans Thai", ui-sans-serif,
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+
+  /* ---- Brand ---- */
+  --brand-50: #fef7ee;
+  --brand-100: #fdecd7;
+  --brand-200: #fad5ae;
+  --brand-300: #f7b77a;
+  --brand-400: #fba954;
+  --brand-500: #f99b35; /* base — brand color จาก requirement */
+  --brand-600: #e07d15;
+  --brand-700: #bd6210;
+  --brand-800: #964d14;
+  --brand-900: #7a4114;
+  --brand-950: #422008;
+  --brand-text: #a8570a; /* 5.2:1 บนพื้นขาว — ใช้กับข้อความ/ลิงก์ */
+
+  /* ---- Neutral surface ---- */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.16 0.004 60);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.16 0.004 60);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0.004 60);
+
+  /* ---- Primary = Brand Orange ----
+     ข้อความบนปุ่มส้มใช้สีเข้ม (contrast 8.3:1) เพราะสีขาวบน #F99B35
+     ได้เพียง 2.1:1 ซึ่งไม่ผ่าน WCAG AA */
+  --primary: var(--brand-500);
+  --primary-foreground: #2a1705;
+
+  --secondary: oklch(0.968 0.004 70);
+  --secondary-foreground: oklch(0.22 0.006 60);
+  --muted: oklch(0.968 0.004 70);
+  --muted-foreground: oklch(0.49 0.008 60);
+  --accent: var(--brand-50);
+  --accent-foreground: var(--brand-900);
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: oklch(0.912 0.005 70);
+  --input: oklch(0.912 0.005 70);
+  --ring: #d97706; /* 3.2:1 บนพื้นขาว — ผ่านเกณฑ์ UI component */
+
+  /* ---- Semantic ---- */
+  --success: #15803d;
+  --success-foreground: #ffffff;
+  --success-surface: #dcfce7;
+  --warning: #a16207;
+  --warning-foreground: #ffffff;
+  --warning-surface: #fef3c7;
+  --info: #1d4ed8;
+  --info-foreground: #ffffff;
+  --info-surface: #dbeafe;
+  --danger: #b91c1c;
+  --danger-foreground: #ffffff;
+  --danger-surface: #fee2e2;
+
+  /* ---- Chart ---- */
+  --chart-1: #f99b35;
+  --chart-2: #2563eb;
+  --chart-3: #059669;
+  --chart-4: #7c3aed;
+  --chart-5: #64748b;
+
+  --radius: 0.625rem;
+
+  /* ---- Sidebar ---- */
+  --sidebar: oklch(0.985 0.003 70);
+  --sidebar-foreground: oklch(0.16 0.004 60);
+  --sidebar-primary: var(--brand-500);
+  --sidebar-primary-foreground: #2a1705;
+  --sidebar-accent: var(--brand-50);
+  --sidebar-accent-foreground: var(--brand-900);
+  --sidebar-border: oklch(0.912 0.005 70);
+  --sidebar-ring: #d97706;
+}
+
+.dark {
+  --brand-50: #422008;
+  --brand-100: #5c2f0b;
+  --brand-200: #7a4114;
+  --brand-300: #964d14;
+  --brand-400: #e07d15;
+  --brand-500: #f99b35;
+  --brand-600: #fab55f;
+  --brand-700: #fac98a;
+  --brand-800: #fbdcb4;
+  --brand-900: #fdeeda;
+  --brand-950: #fef7ee;
+  --brand-text: #f9b569; /* 9.5:1 บนพื้นมืด */
+
+  --background: oklch(0.15 0.004 60);
+  --foreground: oklch(0.975 0.003 70);
+  --card: oklch(0.205 0.005 60);
+  --card-foreground: oklch(0.975 0.003 70);
+  --popover: oklch(0.205 0.005 60);
+  --popover-foreground: oklch(0.975 0.003 70);
+
+  --primary: var(--brand-500);
+  --primary-foreground: #2a1705;
+
+  --secondary: oklch(0.27 0.005 60);
+  --secondary-foreground: oklch(0.975 0.003 70);
+  --muted: oklch(0.27 0.005 60);
+  --muted-foreground: oklch(0.72 0.006 70);
+  --accent: oklch(0.29 0.02 55);
+  --accent-foreground: #fbdcb4;
+
+  --destructive: #f87171;
+  --destructive-foreground: #2a0707;
+
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: #f9a94f;
+
+  --success: #4ade80;
+  --success-foreground: #052e16;
+  --success-surface: oklch(0.35 0.08 155 / 35%);
+  --warning: #fbbf24;
+  --warning-foreground: #291a02;
+  --warning-surface: oklch(0.38 0.08 75 / 35%);
+  --info: #60a5fa;
+  --info-foreground: #0a1b3d;
+  --info-surface: oklch(0.36 0.09 255 / 35%);
+  --danger: #f87171;
+  --danger-foreground: #2a0707;
+  --danger-surface: oklch(0.36 0.09 20 / 35%);
+
+  --chart-1: #f9a94f;
+  --chart-2: #60a5fa;
+  --chart-3: #34d399;
+  --chart-4: #a78bfa;
+  --chart-5: #94a3b8;
+
+  --sidebar: oklch(0.19 0.004 60);
+  --sidebar-foreground: oklch(0.975 0.003 70);
+  --sidebar-primary: var(--brand-500);
+  --sidebar-primary-foreground: #2a1705;
+  --sidebar-accent: oklch(0.29 0.02 55);
+  --sidebar-accent-foreground: #fbdcb4;
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: #f9a94f;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Focus ที่มองเห็นได้ชัดเจนทุก interactive element (a11y) */
+  :focus-visible {
+    @apply outline-ring outline-2 outline-offset-2;
+  }
+
+  /* หัวข้อใช้น้ำหนักที่ LINE Seed Sans TH มีจริง (400/700/800) */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
+    font-weight: 700;
+  }
+}
+
+@layer utilities {
+  /* ซ่อนแบบยังอ่านได้ด้วย screen reader */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
+/* รองรับ prefers-reduced-motion ทั้งระบบ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
