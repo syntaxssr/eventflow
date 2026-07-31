@@ -14,6 +14,14 @@ import {
 
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
+import { useLocale } from "@/i18n"
+import type { TranslationKey } from "@/i18n/types"
+
+/**
+ * Schema ของ EventFlow เก็บข้อความ error เป็น translation key (เช่น `auth.emailRequired`)
+ * เพื่อให้สลับภาษาแล้วข้อความ validation เปลี่ยนตามทันที
+ */
+const TRANSLATION_KEY_PATTERN = /^[a-z]+\.[a-zA-Z]+$/
 
 const Form = FormProvider
 
@@ -134,7 +142,12 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 
 function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   const { error, formMessageId } = useFormField()
-  const body = error ? String(error?.message ?? "") : props.children
+  const { t } = useLocale()
+  const raw = error ? String(error?.message ?? "") : props.children
+  const body =
+    typeof raw === "string" && TRANSLATION_KEY_PATTERN.test(raw)
+      ? t(raw as TranslationKey)
+      : raw
 
   if (!body) {
     return null

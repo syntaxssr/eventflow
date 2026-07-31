@@ -83,6 +83,23 @@ export const en: Dictionary = {
     switchUserHint: "Instantly explore the app as another team member",
     switchedTo: "Switched user",
   },
+  shell: {
+    mainNavigation: "Main navigation",
+    searchPlaceholder: "Search events, tasks, files or participants",
+    openSearch: "Open search",
+    userMenu: "User menu",
+    myProfile: "My profile",
+    notificationSettings: "Notification settings",
+    unreadNotifications: "{count} unread notifications",
+    noUnreadNotifications: "No new notifications",
+    signedInAs: "Signed in as",
+  },
+  page: {
+    comingSoonTitle: "This page is under construction",
+    comingSoonDescription:
+      "Features on this page arrive in a later phase of the build plan. The layout and navigation are ready to explore.",
+    comingSoonPhase: "Planned for: {phase}",
+  },
   theme: {
     label: "Theme",
     light: "Light",

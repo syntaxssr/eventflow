@@ -1,16 +1,9 @@
 import { expect, test } from "@playwright/test"
 
-test.describe("Phase 0 — Design System smoke", () => {
-  test("หน้าแรกเปิดได้และเข้าสู่ Design System ได้", async ({ page }) => {
-    await page.goto("/")
+test.describe("Design System", () => {
+  test("หน้า Design System เปิดได้", async ({ page }) => {
+    await page.goto("/design-system")
 
-    await expect(
-      page.getByRole("heading", { level: 1, name: "EventFlow" })
-    ).toBeVisible()
-
-    await page.getByRole("link", { name: "เปิด Design System" }).click()
-
-    await expect(page).toHaveURL(/\/design-system$/)
     await expect(
       page.getByRole("heading", { level: 1, name: "Design System" })
     ).toBeVisible()

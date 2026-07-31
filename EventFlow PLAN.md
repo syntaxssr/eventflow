@@ -232,50 +232,59 @@ tests/
 
 ## Phase 1 — Authentication & Application Shell
 
+> **สถานะ: เสร็จแล้ว** · 15 routes · Unit 43 tests · E2E 21 tests
+
 ### UI
-- [ ] หน้า Login: โลโก้ EventFlow, Corporate Email, Password, Show/Hide, Remember Me, ปุ่ม Sign In
-- [ ] กล่อง Mock Account Information (แสดง email/password ตัวอย่าง + ปุ่ม fill อัตโนมัติ)
-- [ ] Sidebar (Desktop): Logo, Dashboard, Events, My Tasks, Files, Timeline, Participants, Notifications, Activity History, Trash, Profile/Settings — collapse ได้
-- [ ] Topbar: Global Search (placeholder), Notification Bell + badge, Language Switcher, Theme Switcher, Profile Menu
-- [ ] Bottom Navigation (Mobile): Home, Events, My Tasks, Notifications, More + More Drawer
-- [ ] Metadata / Page Title ใช้ชื่อ "EventFlow" ทุกหน้า
-- [ ] หน้า `404` และ `error.tsx` แบบ friendly
+- [x] หน้า Login แบบสองคอลัมน์: แผงแบรนด์ + ฟอร์ม (Corporate Email, Password, Show/Hide, Remember Me, ปุ่ม Sign In)
+- [x] กล่อง Mock Account Information แบบพับได้ — แสดงผู้ใช้ทั้ง 7 คน + รหัสผ่าน + ปุ่ม fill อัตโนมัติ
+- [x] Sidebar (Desktop): Logo, 9 เมนูหลัก + Profile/Settings — collapse เป็นโหมดไอคอนได้ พร้อม tooltip
+- [x] Topbar: Global Search (placeholder), Notification Bell + badge, Language Switcher, Theme Switcher, Profile Menu
+- [x] Bottom Navigation (Mobile): Home, Events, My Tasks, Notifications, More + More Sheet
+- [x] Metadata / Page Title ใช้ template `%s · EventFlow` ทุกหน้า
+- [x] หน้า `not-found.tsx` และ `error.tsx` แบบ friendly พร้อมปุ่ม Retry
+- [x] `Logo` / `LogoMark` แบบ SVG ในตัว (ไม่พึ่ง asset ภายนอก)
+- [x] `PageHeader` / `PageContainer` / `PagePlaceholder` เป็นโครงมาตรฐานของทุกหน้า
 
 ### Interaction
-- [ ] Login validation (email format, required, รหัสผิด → Error State) + Loading State ปุ่ม
-- [ ] Login สำเร็จ → redirect `/dashboard` + toast ต้อนรับ
-- [ ] Logout → กลับหน้า Login + reset session state
-- [ ] Route guard: ยังไม่ login เข้า `(app)` → redirect ไป `/login`
-- [ ] **Switch Mock User** ใน Profile Menu — ไม่ต้อง logout, ข้อมูล My Tasks / Profile / Notifications / Mentions / Recent Activity เปลี่ยนตามทันที
-- [ ] Sidebar collapse state + active nav highlight (สีส้ม)
-- [ ] Dev Utility Panel (มุมจอ, toggle ได้): บังคับ Loading / Empty / Error State + บังคับ next action fail
+- [x] Login validation (required, email format, รหัสผิด → Error State) + Loading State ปุ่ม
+- [x] Login สำเร็จ → redirect `/dashboard` + toast ต้อนรับพร้อมชื่อผู้ใช้
+- [x] Logout → กลับหน้า Login + ล้าง session
+- [x] Route guard: ยังไม่ login เข้า `(app)` → redirect ไป `/login`; login แล้วเข้า `/login` → ไป `/dashboard`
+- [x] **Switch Mock User** ใน Profile Menu — ไม่ต้อง logout, ข้อมูลผูกกับ `session.userId` จึงเปลี่ยนตามทุกจุด
+- [x] Sidebar collapse + active nav highlight (แถบสีส้มซ้าย + ตัวหนา + พื้นหลังอ่อน)
+- [x] Dev Utility Panel (ลอยมุมจอ ทุกหน้า): บังคับ Loading / Empty / Error, สั่งให้ action ถัดไปล้มเหลว, จำลองเครือข่ายช้า, รีเซ็ตข้อมูล
 
 ### Mock Data
-- [ ] Mock Users ≥ 7 คน: Event Manager, Creative Designer, IT Support, HR Coordinator, Finance Coordinator, MC Coordinator, Venue Coordinator
-- [ ] แต่ละคน: ชื่อ-นามสกุล (TH/EN), avatar, ตำแหน่ง, ทีม, corporate email, งานที่รับผิดชอบ, recent activity
-- [ ] Mock credentials ที่ใช้ login ได้จริง
+- [x] Mock Users 7 คน ครบทุกบทบาท: Event Manager, Creative Designer, IT Support, HR Coordinator, Finance Coordinator, MC Coordinator, Venue Coordinator
+- [x] แต่ละคนมีชื่อ-นามสกุล/ตำแหน่ง/ทีม (TH+EN), avatar สีประจำตัว, corporate email, เบอร์โทร
+- [x] Mock credentials ใช้ login ได้จริง (รหัสผ่านเดียวกันทุกบัญชี แสดงบนหน้า Login)
+- [ ] งานที่รับผิดชอบ + Recent Activity ของแต่ละคน → ผูกจริงเมื่อมีข้อมูล Task/Activity ใน Phase 4 และ 9
 
 ### Responsive
-- [ ] Desktop → Sidebar / Tablet → Sidebar collapsed / Mobile → Bottom Nav + Drawer
-- [ ] Topbar ยุบเป็น icon-only บน mobile
-- [ ] Login page ใช้งานได้ดีทุกขนาดจอ
+- [x] Desktop → Sidebar เต็ม / Tablet → Sidebar ย่อได้ / Mobile → Bottom Nav + More Sheet
+- [x] Topbar ยุบเป็น icon-only บน mobile (ซ่อนช่องค้นหา)
+- [x] Login page ใช้งานได้ดีทุกขนาดจอ (แผงแบรนด์ซ่อนบนจอเล็ก)
 
 ### Accessibility
-- [ ] Form label ผูกกับ input, error message ผูกด้วย `aria-describedby` + `aria-invalid`
-- [ ] Sidebar เป็น `<nav>` + `aria-current="page"`
-- [ ] Skip to content link
-- [ ] Profile menu / dropdown ใช้งานด้วยคีย์บอร์ดได้ (Radix)
-- [ ] ปุ่ม icon-only มี `aria-label`
+- [x] Form label ผูกกับ input, error message ผูกด้วย `aria-describedby` + `aria-invalid` (ตรวจด้วย E2E)
+- [x] Sidebar เป็น `<nav>` + `aria-current="page"`
+- [x] Skip to content link
+- [x] Profile menu / dropdown / switch user ใช้งานด้วยคีย์บอร์ดได้ (Radix + `menuitemradio`)
+- [x] ปุ่ม icon-only มี `aria-label` ทุกปุ่ม
+- [x] สี Avatar เลือกสีข้อความอัตโนมัติให้ผ่าน AA (`getReadableTextColor`)
 
 ### Testing
-- [ ] Unit: form validation schema
-- [ ] E2E: login สำเร็จ, login ล้มเหลว, logout, switch user แล้วข้อมูลเปลี่ยน
+- [x] Unit: login schema, mock users + `authenticate()`, `isNavItemActive()`, color contrast (รวม 43 tests)
+- [x] E2E 17 เคส: redirect, validation, aria wiring, รหัสผิด, show/hide password, mock account fill, route guard, refresh reset, logout, switch user, ทุกเมนู sidebar, aria-current, collapse sidebar, สลับภาษา, dev utility, console error
 
 ### Done Criteria
-- [ ] เข้าทุก route ใน sidebar ได้ (แม้เป็นหน้าเปล่า placeholder)
-- [ ] Theme/Language สลับได้ทุกหน้าใน shell
-- [ ] Switch user เปลี่ยนข้อมูลจริง
-- [ ] ไม่มีปุ่มที่กดแล้วไม่ทำอะไร
+- [x] เข้าทุก route ใน sidebar ได้ (15 routes build ผ่านทั้งหมด)
+- [x] Theme/Language สลับได้ทุกหน้าใน shell
+- [x] Switch user เปลี่ยนข้อมูลจริง
+- [x] ไม่มีปุ่มที่กดแล้วไม่ทำอะไร
+- [x] `lint` / `typecheck` / `build` / `test` / `e2e` ผ่านทั้งหมด
+
+> **ข้อจำกัดที่ทราบ:** `metadata.title` ของแต่ละหน้าเป็นภาษาไทยคงที่ (Next.js สร้าง metadata ฝั่งเซิร์ฟเวอร์ แต่ภาษาเก็บใน client state) — ข้อความบนหน้าจอเปลี่ยนภาษาครบถ้วน มีเพียงชื่อแท็บเบราว์เซอร์ที่ไม่เปลี่ยนตาม
 
 ---
 

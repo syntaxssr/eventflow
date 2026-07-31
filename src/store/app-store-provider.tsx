@@ -62,10 +62,17 @@ export function useCurrentUser(): User | null {
   return state.users.find((user) => user.id === state.session?.userId) ?? null
 }
 
-/** รีเซ็ตข้อมูลกลับเป็น Mock Data เริ่มต้น */
+/**
+ * รีเซ็ตข้อมูลกลับเป็น Mock Data เริ่มต้น
+ * คง session ปัจจุบันไว้เพื่อให้ทดลองใช้งานต่อได้โดยไม่ต้อง login ใหม่
+ */
 export function useResetStore(): () => void {
   const dispatch = useAppDispatch()
+  const state = useAppState()
   return React.useCallback(() => {
-    dispatch({ type: "system/reset", state: createInitialState() })
-  }, [dispatch])
+    dispatch({
+      type: "system/reset",
+      state: { ...createInitialState(), session: state.session },
+    })
+  }, [dispatch, state.session])
 }

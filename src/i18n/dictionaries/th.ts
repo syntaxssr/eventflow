@@ -84,6 +84,23 @@ export const th = {
     switchUserHint: "ทดลองใช้งานในมุมมองของสมาชิกคนอื่นได้ทันที",
     switchedTo: "สลับเป็นผู้ใช้",
   },
+  shell: {
+    mainNavigation: "เมนูหลัก",
+    searchPlaceholder: "ค้นหากิจกรรม งาน ไฟล์ หรือผู้เข้าร่วม",
+    openSearch: "เปิดช่องค้นหา",
+    userMenu: "เมนูผู้ใช้",
+    myProfile: "โปรไฟล์ของฉัน",
+    notificationSettings: "ตั้งค่าการแจ้งเตือน",
+    unreadNotifications: "การแจ้งเตือนที่ยังไม่อ่าน {count} รายการ",
+    noUnreadNotifications: "ไม่มีการแจ้งเตือนใหม่",
+    signedInAs: "เข้าสู่ระบบในชื่อ",
+  },
+  page: {
+    comingSoonTitle: "หน้านี้กำลังพัฒนา",
+    comingSoonDescription:
+      "ฟีเจอร์ในหน้านี้จะพร้อมใช้งานในเฟสถัดไปตามแผนพัฒนา ตอนนี้เปิดดูโครงหน้าและเมนูได้แล้ว",
+    comingSoonPhase: "ตามแผน: {phase}",
+  },
   theme: {
     label: "ธีม",
     light: "สว่าง",
