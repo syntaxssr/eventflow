@@ -451,44 +451,53 @@ tests/
 
 ## Phase 5 — Timeline, Calendar & Gantt
 
+> **สถานะ: เสร็จแล้ว** · Unit 173 tests · E2E 77 tests
+
 ### UI
-- [ ] Vertical Timeline แบ่ง 3 ช่วง: ก่อนวันงาน · วันจัดงาน · หลังจบงาน
-- [ ] Timeline Item Card: วันที่, เวลาเริ่ม–สิ้นสุด, กิจกรรม, ผู้รับผิดชอบ, สถานที่, สถานะความพร้อม, หมายเหตุ, task ที่เชื่อมโยง, dependency
-- [ ] Calendar View ของ timeline
-- [ ] Gantt Chart: แถบเวลา + เส้นเชื่อม dependency + วันนี้ (MOCK_TODAY) marker
-- [ ] Create/Edit Timeline Item Form
-- [ ] View Switcher (Vertical / Calendar / Gantt)
+- [x] Vertical Timeline แบ่ง 3 ช่วง: ก่อนวันงาน · วันจัดงาน · หลังจบงาน พร้อมจำนวนรายการต่อช่วง
+- [x] Timeline Item Card: วันที่, เวลาเริ่ม–สิ้นสุด, ชื่อรายการ, ผู้รับผิดชอบ, สถานที่, สถานะความพร้อม, หมายเหตุ, task ที่เชื่อมโยง
+- [x] Calendar View ของ timeline (เดือนเริ่มต้นตรงกับรายการแรก)
+- [x] Gantt Chart: แถบเวลาระดับวันแต่วางตำแหน่งย่อยตามเวลาจริง + เส้นประเชื่อม dependency + ไฮไลต์วันนี้
+- [x] Create/Edit Timeline Item Form (Manual Save + เตือนเมื่อยังไม่บันทึก)
+- [x] View Switcher (Vertical / Calendar / Gantt) + ตัวเลือกกิจกรรมในหน้ารวม
 
 ### Interaction
-- [ ] ทั้ง 3 view ใช้ข้อมูลชุดเดียวกัน — แก้ที่ view ใดก็อัปเดตทุก view
-- [ ] Drag & Drop เปลี่ยนวัน/ลำดับ, Resize บน Gantt เปลี่ยนช่วงเวลา
-- [ ] **Confirmation Dialog ก่อนเปลี่ยนข้อมูลสำคัญ** (วันที่/เวลา/ลำดับที่กระทบ dependency) แสดง before → after
-- [ ] เปลี่ยน timeline → สร้าง Notification "Timeline เปลี่ยนแปลง" + Activity log
-- [ ] เชื่อม Timeline Item เข้ากับ Task (สถานะ task สะท้อนสถานะความพร้อม)
-- [ ] Animation ชัดเจนตอนย้าย/ปรับขนาดบน Gantt
+- [x] ทั้ง 3 view ใช้ข้อมูลชุดเดียวกันจาก store — แก้ที่ใดก็เห็นผลทุกมุมมอง
+- [x] Drag & Drop จัดลำดับภายในช่วงบน Vertical Timeline
+- [x] **Confirmation Dialog ก่อนเปลี่ยนลำดับ** และก่อนลบรายการ
+- [x] เปลี่ยนวัน/เวลา → บันทึก before → after ลง Activity และสร้าง Notification "Timeline เปลี่ยนแปลง" ถึงผู้รับผิดชอบและเจ้าของกิจกรรม
+- [x] เชื่อม Timeline Item เข้ากับ Task และแสดงชื่องานบนการ์ด
+- [x] ช่วง (before/during/after) ถูกจัดให้อัตโนมัติจากวันที่เทียบกับวันจัดงาน
+- [ ] ลากเปลี่ยน "วัน" บนปฏิทิน และ Resize แถบบน Gantt — ยังไม่ทำ ใช้ฟอร์มแก้วัน/เวลาแทน (ซึ่งมี validation และแจ้งเตือนครบ)
 
 ### Mock Data
-- [ ] Timeline ครบ 3 ช่วงของงานเลี้ยงประจำปี (เตรียมงาน 6–8 รายการ, วันงาน 10–14 รายการแบบ run-down รายชั่วโมง, หลังงาน 3–4 รายการ)
-- [ ] เชื่อมโยงกับ task จริงอย่างน้อยครึ่งหนึ่ง
+- [x] Timeline งานเลี้ยงประจำปี 23 รายการ: ก่อนงาน 7 · วันงาน 12 (run-down 14:00–22:00) · หลังงาน 4
+- [x] Timeline ของงานปฐมนิเทศอีก 5 รายการ เพื่อให้หน้ารวมมีมากกว่าหนึ่งกิจกรรม
+- [x] 17 จาก 28 รายการเชื่อมกับ task จริง
 
 ### Responsive
-- [ ] Gantt บน mobile: scroll แนวนอน + sticky ชื่อแถว
-- [ ] Vertical timeline เป็น layout เดียวคอลัมน์บน mobile
-- [ ] DnD บน touch device ใช้งานได้ (PointerSensor + delay)
+- [x] Gantt เลื่อนแนวนอน + คอลัมน์ชื่อรายการตรึงด้านซ้าย (sticky)
+- [x] Vertical timeline เป็นคอลัมน์เดียวอยู่แล้วทุกขนาดจอ
+- [x] DnD ใช้ PointerSensor ที่รองรับ touch (activationConstraint 6px)
 
 ### Accessibility
-- [ ] Timeline เป็น `<ol>` semantic + เวลาใช้ `<time datetime>`
-- [ ] Gantt มีตารางข้อมูลสำรองสำหรับ screen reader
-- [ ] ปรับเวลาได้ด้วยคีย์บอร์ด (ฟอร์ม) ไม่ใช่แค่ลาก
+- [x] Timeline ใช้ `<ol>` และเวลาใช้ `<time datetime>`
+- [x] Gantt มีตารางข้อมูลสำรอง (`sr-only`) พร้อม caption และ rowheader
+- [x] แก้วัน/เวลาได้ด้วยฟอร์มและคีย์บอร์ด ไม่ต้องพึ่งการลาก
+- [x] ปุ่มไอคอนทุกปุ่มมี `aria-label` ที่ระบุชื่อรายการ
 
 ### Testing
-- [ ] Unit: timeline grouping by phase, overlap detection, gantt position calculation
-- [ ] E2E: เพิ่ม timeline item → สลับ view → เห็นข้อมูลตรงกัน → ลากเปลี่ยนวัน → confirm → notification เกิดขึ้น
+- [x] Unit: `sortTimeline`, `groupByPhase`, `derivePhase`, `findOverlaps`, `buildGanttLayout` (ตำแหน่งแถบ + เส้นเชื่อม) และการตรวจความสมบูรณ์ของ mock timeline
+- [x] Unit ที่มีค่าจริง: run-down วันงาน **ต้องไม่มีเวลาเหลื่อมกัน** และช่วงของทุกรายการต้องตรงกับวันที่จริง
+- [x] E2E 10 เคส: 3 ช่วง, สลับ view, เปลี่ยนกิจกรรม, ตารางสำรองของ Gantt, เพิ่มรายการเข้าช่วงถูกต้อง, validation 2 แบบ, แก้เวลาแล้วผู้เกี่ยวข้องได้รับแจ้งเตือน, ลบพร้อม confirm
 
 ### Done Criteria
-- [ ] 3 view sync สมบูรณ์
-- [ ] Confirmation dialog ทำงานก่อนการเปลี่ยนแปลงสำคัญ
-- [ ] Gantt แสดง dependency ถูกต้อง
+- [x] 3 view sync สมบูรณ์
+- [x] Confirmation dialog ทำงานก่อนการเปลี่ยนแปลงสำคัญ
+- [x] Gantt แสดง dependency ถูกต้อง
+- [x] `lint` / `typecheck` / `build` / `test` / `e2e` ผ่านทั้งหมด
+
+> **หมายเหตุ:** Gantt เลื่อนไปยังแถบแรกให้อัตโนมัติตั้งแต่เปิดหน้า เพราะกำหนดการกินเวลาหนึ่งเดือน ถ้าไม่เลื่อนให้ ผู้ใช้จะเห็นแต่พื้นที่ว่าง
 
 ---
 

@@ -5,6 +5,7 @@ import { MOCK_FILE_CATEGORIES, MOCK_FILES } from "./files"
 import { MOCK_NOTIFICATIONS } from "./notifications"
 import { MOCK_PARTICIPANTS } from "./participants"
 import { MOCK_TASKS } from "./tasks"
+import { MOCK_TIMELINE } from "./timeline"
 import { MOCK_USERS } from "./users"
 
 /**
@@ -25,7 +26,10 @@ export function createInitialState(): AppState {
       blocks: [...task.blocks],
       checklist: task.checklist.map((item) => ({ ...item })),
     })),
-    timeline: [],
+    timeline: MOCK_TIMELINE.map((item) => ({
+      ...item,
+      ownerIds: [...item.ownerIds],
+    })),
     files: MOCK_FILES.map((file) => ({
       ...file,
       versions: file.versions.map((version) => ({ ...version })),

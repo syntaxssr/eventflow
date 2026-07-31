@@ -47,6 +47,7 @@ import {
   summariseRsvp,
 } from "@/store/selectors"
 import { TasksView } from "@/features/tasks/tasks-view"
+import { TimelineView } from "@/features/timeline/timeline-view"
 import { EventActionsMenu } from "./event-actions-menu"
 
 export function EventDetailView({ eventId }: { eventId: string }) {
@@ -286,10 +287,7 @@ export function EventDetailView({ eventId }: { eventId: string }) {
         </TabsContent>
 
         <TabsContent value="timeline" className="pt-4">
-          <PendingTab
-            countLabel={`${t("nav.timeline")}: ${data.timeline.length}`}
-            phase="Phase 5 — Timeline, Calendar & Gantt"
-          />
+          <TimelineView eventId={event.id} />
         </TabsContent>
 
         <TabsContent value="files" className="pt-4">

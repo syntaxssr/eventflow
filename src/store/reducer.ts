@@ -187,6 +187,45 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ),
       }
 
+    /* ---- Timeline ---- */
+    case "timeline/create":
+      return { ...state, timeline: [...state.timeline, action.item] }
+
+    case "timeline/update":
+      return {
+        ...state,
+        timeline: state.timeline.map((item) =>
+          item.id === action.id
+            ? {
+                ...item,
+                ...action.changes,
+                updatedAt: action.at,
+                updatedBy: action.by,
+              }
+            : item
+        ),
+      }
+
+    case "timeline/delete":
+      return {
+        ...state,
+        timeline: state.timeline.filter((item) => item.id !== action.id),
+      }
+
+    case "timeline/reorder": {
+      const orderById = new Map(
+        action.orderedIds.map((id, index) => [id, index])
+      )
+      return {
+        ...state,
+        timeline: state.timeline.map((item) =>
+          item.phase === action.phase && orderById.has(item.id)
+            ? { ...item, order: orderById.get(item.id)! }
+            : item
+        ),
+      }
+    }
+
     /* ---- Activity & Notification ---- */
     case "activity/add":
       return {
