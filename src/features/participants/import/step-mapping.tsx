@@ -61,7 +61,7 @@ export function ImportStepMapping({
               <Label htmlFor={id}>
                 {t(FIELD_LABEL_KEY[field])}
                 {required ? (
-                  <span className="text-danger" aria-hidden="true">
+                  <span className="text-foreground" aria-hidden="true">
                     {" "}
                     *
                   </span>
@@ -101,7 +101,7 @@ export function ImportStepMapping({
 
       {missingRequired.length > 0 ? (
         <p
-          className="text-danger flex items-center gap-1.5 text-sm"
+          className="text-foreground flex items-center gap-1.5 text-sm"
           role="alert"
         >
           <TriangleAlertIcon className="size-4 shrink-0" aria-hidden="true" />

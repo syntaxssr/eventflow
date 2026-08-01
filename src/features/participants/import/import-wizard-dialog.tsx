@@ -281,7 +281,7 @@ function StepIndicator({
               className={cn(
                 "flex size-5 items-center justify-center rounded-full border text-[0.6875rem] font-semibold",
                 isCurrent
-                  ? "border-brand-500 bg-brand-500 text-white"
+                  ? "border-primary bg-primary text-primary-foreground"
                   : isDone
                     ? "border-brand-300 bg-brand-50 text-brand-900 dark:bg-brand-500/15 dark:text-brand-300"
                     : "text-muted-foreground"

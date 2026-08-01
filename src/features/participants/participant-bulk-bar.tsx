@@ -67,7 +67,7 @@ export function ParticipantBulkBar({
         <Button
           size="sm"
           variant="outline"
-          className="text-danger hover:text-danger"
+          className="text-foreground"
           onClick={onDelete}
           data-testid="bulk-delete"
         >

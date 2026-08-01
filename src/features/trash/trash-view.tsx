@@ -157,7 +157,7 @@ export function TrashView() {
                       className={cn(
                         "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap",
                         expiring
-                          ? "border-red-200 bg-red-50 text-red-800 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-300"
+                          ? "border-danger/35 bg-danger/15 text-foreground dark:border-danger/45 dark:bg-danger/25"
                           : "border-border bg-muted text-muted-foreground"
                       )}
                     >

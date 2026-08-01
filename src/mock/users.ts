@@ -1,5 +1,7 @@
 import type { MockCredential, User } from "@/types/user"
 
+// สีจากชุด AVATAR_PALETTE (30 เฉด) — ดู src/constants/avatar-colors.ts
+
 /**
  * รหัสผ่านเดียวกันทุกบัญชีเพื่อให้ทดลองใช้งานได้ง่าย
  * แสดงไว้บนหน้า Login อยู่แล้ว ไม่ใช่ความลับ
@@ -14,7 +16,7 @@ export const MOCK_USERS: User[] = [
     lastName: { th: "ศรีสุวรรณ", en: "Srisuwan" },
     initials: { th: "ปศ", en: "PS" },
     avatarUrl: "",
-    avatarColor: "#f99b35",
+    avatarColor: "#A3DEFE",
     role: "event_manager",
     position: { th: "ผู้จัดการกิจกรรม", en: "Event Manager" },
     team: { th: "ฝ่ายสื่อสารองค์กร", en: "Corporate Communications" },
@@ -27,7 +29,7 @@ export const MOCK_USERS: User[] = [
     lastName: { th: "วงศ์อนันต์", en: "Wonganan" },
     initials: { th: "ธว", en: "TW" },
     avatarUrl: "",
-    avatarColor: "#7c3aed",
+    avatarColor: "#1C1C1C",
     role: "creative_designer",
     position: { th: "นักออกแบบครีเอทีฟ", en: "Creative Designer" },
     team: { th: "ฝ่ายออกแบบ", en: "Design" },
@@ -40,7 +42,7 @@ export const MOCK_USERS: User[] = [
     lastName: { th: "ใจดี", en: "Jaidee" },
     initials: { th: "สจ", en: "SJ" },
     avatarUrl: "",
-    avatarColor: "#0d9488",
+    avatarColor: "#F49A7F",
     role: "hr_coordinator",
     position: { th: "เจ้าหน้าที่ประสานงานบุคคล", en: "HR Coordinator" },
     team: { th: "ฝ่ายทรัพยากรบุคคล", en: "Human Resources" },
@@ -53,7 +55,7 @@ export const MOCK_USERS: User[] = [
     lastName: { th: "พงษ์ไพบูลย์", en: "Pongpaiboon" },
     initials: { th: "อพ", en: "AP" },
     avatarUrl: "",
-    avatarColor: "#2563eb",
+    avatarColor: "#7B69CC",
     role: "it_support",
     position: { th: "เจ้าหน้าที่สนับสนุนไอที", en: "IT Support" },
     team: { th: "ฝ่ายเทคโนโลยีสารสนเทศ", en: "Information Technology" },
@@ -66,7 +68,7 @@ export const MOCK_USERS: User[] = [
     lastName: { th: "เรืองฤทธิ์", en: "Ruangrit" },
     initials: { th: "กร", en: "KR" },
     avatarUrl: "",
-    avatarColor: "#c2410c",
+    avatarColor: "#FFCF49",
     role: "finance_coordinator",
     position: { th: "เจ้าหน้าที่ประสานงานการเงิน", en: "Finance Coordinator" },
     team: { th: "ฝ่ายบัญชีและการเงิน", en: "Finance & Accounting" },
@@ -79,7 +81,7 @@ export const MOCK_USERS: User[] = [
     lastName: { th: "แสงทอง", en: "Sangthong" },
     initials: { th: "ณส", en: "NS" },
     avatarUrl: "",
-    avatarColor: "#db2777",
+    avatarColor: "#73BFA3",
     role: "mc_coordinator",
     position: { th: "ผู้ประสานงานพิธีกร", en: "MC Coordinator" },
     team: { th: "ฝ่ายสื่อสารองค์กร", en: "Corporate Communications" },
@@ -92,7 +94,7 @@ export const MOCK_USERS: User[] = [
     lastName: { th: "อารีย์", en: "Aree" },
     initials: { th: "พอ", en: "PA" },
     avatarUrl: "",
-    avatarColor: "#0891b2",
+    avatarColor: "#E63946",
     role: "venue_coordinator",
     position: { th: "ผู้ประสานงานสถานที่", en: "Venue Coordinator" },
     team: { th: "ฝ่ายธุรการ", en: "General Affairs" },

@@ -43,9 +43,9 @@ export function contrastRatio(foreground: string, background: string): number {
 }
 
 /** สีข้อความเข้มสำหรับวางบนพื้นหลังสว่าง */
-export const READABLE_DARK = "#1c1917"
+export const READABLE_DARK = "#1c1c1c"
 /** สีข้อความสว่างสำหรับวางบนพื้นหลังเข้ม */
-export const READABLE_LIGHT = "#ffffff"
+export const READABLE_LIGHT = "#f2f2f0"
 
 /**
  * เลือกสีข้อความที่อ่านง่ายที่สุดบนพื้นหลังที่กำหนด

@@ -47,19 +47,19 @@ export function ImportStepPreview({
       <div className="space-y-1.5 text-sm">
         <p className="flex items-center gap-1.5">
           <CircleCheckIcon
-            className="size-4 shrink-0 text-green-600"
+            className="text-foreground size-4 shrink-0"
             aria-hidden="true"
           />
           {t("participant.previewValid", { count: validRows })}
         </p>
         {errorRows.length > 0 ? (
-          <p className="text-danger flex items-center gap-1.5" role="alert">
+          <p className="text-foreground flex items-center gap-1.5" role="alert">
             <TriangleAlertIcon className="size-4 shrink-0" aria-hidden="true" />
             {t("participant.previewErrors", { count: errorRows.length })}
           </p>
         ) : null}
         {conflictCount > 0 ? (
-          <p className="flex items-center gap-1.5 text-amber-700 dark:text-amber-300">
+          <p className="text-foreground flex items-center gap-1.5">
             <MailWarningIcon className="size-4 shrink-0" aria-hidden="true" />
             {t("participant.previewConflicts", { count: conflictCount })}
           </p>
@@ -83,7 +83,7 @@ export function ImportStepPreview({
                 key={row.rowNumber}
                 className={cn(
                   row.errors.length > 0 &&
-                    "bg-red-50/60 hover:bg-red-50 dark:bg-red-500/10 dark:hover:bg-red-500/15"
+                    "bg-danger/10 hover:bg-danger/15 dark:bg-danger/15 dark:hover:bg-danger/20"
                 )}
                 data-testid={
                   row.errors.length > 0 ? "preview-row-error" : "preview-row"
@@ -98,7 +98,7 @@ export function ImportStepPreview({
                 <TableCell className="text-sm">
                   <span className="block">{row.values.email || "—"}</span>
                   {row.errors.length > 0 ? (
-                    <span className="text-danger mt-0.5 block text-xs">
+                    <span className="text-foreground mt-0.5 block text-xs">
                       {row.errors
                         .map(
                           (error) =>

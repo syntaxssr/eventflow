@@ -22,55 +22,62 @@ interface NotificationMeta {
   tile: string
 }
 
+/** ใช้ได้เฉพาะ --info / --warning / --success / --danger กับดำ/ขาวไล่ความทึบ */
+const NEUTRAL_TILE = "bg-muted text-muted-foreground"
+const INFO_TILE = "bg-info/15 text-foreground dark:bg-info/25"
+const WARNING_TILE = "bg-warning/25 text-foreground dark:bg-warning/30"
+const SUCCESS_TILE = "bg-success/20 text-foreground dark:bg-success/25"
+const DANGER_TILE = "bg-danger/15 text-foreground dark:bg-danger/25"
+
 export const NOTIFICATION_META: Record<NotificationType, NotificationMeta> = {
   task_assigned: {
     labelKey: "notification.typeTaskAssigned",
     icon: UserPlusIcon,
-    tile: "bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+    tile: INFO_TILE,
   },
   task_due_soon: {
     labelKey: "notification.typeTaskDueSoon",
     icon: BellRingIcon,
-    tile: "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+    tile: WARNING_TILE,
   },
   task_overdue: {
     labelKey: "notification.typeTaskOverdue",
     icon: TriangleAlertIcon,
-    tile: "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300",
+    tile: DANGER_TILE,
   },
   file_updated: {
     labelKey: "notification.typeFileUpdated",
     icon: FilePenIcon,
-    tile: "bg-teal-50 text-teal-700 dark:bg-teal-500/15 dark:text-teal-300",
+    tile: NEUTRAL_TILE,
   },
   file_new_version: {
     labelKey: "notification.typeFileNewVersion",
     icon: FileUpIcon,
-    tile: "bg-teal-50 text-teal-700 dark:bg-teal-500/15 dark:text-teal-300",
+    tile: NEUTRAL_TILE,
   },
   mentioned: {
     labelKey: "notification.typeMentioned",
     icon: AtSignIcon,
-    tile: "bg-brand-50 text-brand-900 dark:bg-brand-500/15 dark:text-brand-300",
+    tile: INFO_TILE,
   },
   timeline_changed: {
     labelKey: "notification.typeTimelineChanged",
     icon: CalendarClockIcon,
-    tile: "bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300",
+    tile: NEUTRAL_TILE,
   },
   checklist_completed: {
     labelKey: "notification.typeChecklistCompleted",
     icon: ListChecksIcon,
-    tile: "bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300",
+    tile: SUCCESS_TILE,
   },
   task_blocked: {
     labelKey: "notification.typeTaskBlocked",
     icon: LockIcon,
-    tile: "bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300",
+    tile: DANGER_TILE,
   },
   task_unblocked: {
     labelKey: "notification.typeTaskUnblocked",
     icon: LockOpenIcon,
-    tile: "bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300",
+    tile: SUCCESS_TILE,
   },
 }

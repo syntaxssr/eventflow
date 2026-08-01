@@ -251,8 +251,7 @@ export function FileUploadZone({
                     <p
                       className={cn(
                         "flex items-center gap-1 text-xs",
-                        task.status === "success" &&
-                          "text-green-700 dark:text-green-400",
+                        task.status === "success" && "text-foreground",
                         task.status === "failed" && "text-destructive",
                         task.status === "cancelled" && "text-muted-foreground"
                       )}

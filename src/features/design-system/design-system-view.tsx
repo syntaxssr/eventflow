@@ -25,6 +25,7 @@ import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { APP_NAME } from "@/constants/app"
+import { AVATAR_PALETTE_ITEMS } from "@/constants/avatar-colors"
 import {
   DUE_SOON_STYLE,
   EVENT_STATUS_STYLE,
@@ -37,6 +38,7 @@ import {
   type StatusStyle,
 } from "@/constants/status"
 import { useT } from "@/i18n"
+import { getReadableTextColor } from "@/lib/color"
 
 const BRAND_STEPS = [
   "50",
@@ -132,7 +134,7 @@ export function DesignSystemView() {
           <div className="space-y-6">
             <div className="space-y-2">
               <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
-                {t("designSystem.brandScale")} — #F99B35
+                {t("designSystem.brandScale")}
               </p>
               <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-11">
                 {BRAND_STEPS.map((step) => (
@@ -163,6 +165,35 @@ export function DesignSystemView() {
                     <div className={`${token.surface} px-3 py-2`}>
                       <p className="text-sm font-semibold">{token.name}</p>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                สีของ avatar
+              </p>
+              <p className="text-muted-foreground text-xs">
+                ชุดสีตายตัว 30 สี — ใช้กำหนดสีพื้นหลัง Avatar ของผู้ใช้แต่ละคน
+                แบบไม่ซ้ำได้ถึง 30 คน
+              </p>
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-6">
+                {AVATAR_PALETTE_ITEMS.map((item) => (
+                  <div
+                    key={item.hex}
+                    className="border-border flex h-16 flex-col items-center justify-center gap-0.5 rounded-md border text-center"
+                    style={{
+                      background: item.hex,
+                      color: getReadableTextColor(item.hex),
+                    }}
+                  >
+                    <p className="text-[0.6875rem] leading-tight font-semibold">
+                      {item.name}
+                    </p>
+                    <p className="text-[0.625rem] leading-tight opacity-90">
+                      {item.hex}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -236,7 +267,7 @@ export function DesignSystemView() {
               <CardHeader>
                 <CardTitle>Buttons</CardTitle>
                 <CardDescription>
-                  ปุ่มหลักใช้สีส้มแบรนด์พร้อมข้อความสีเข้มเพื่อให้ผ่าน WCAG AA
+                  ปุ่มหลักใช้โทนเทาเข้ม/ดำแบบมินิมอลพร้อมข้อความสีขาวเพื่อให้ผ่าน WCAG AA
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-wrap gap-2">
@@ -323,21 +354,33 @@ export function DesignSystemView() {
                 <div className="flex flex-wrap gap-2">
                   <Button
                     size="sm"
-                    onClick={() => toast.success(t("toast.success"))}
+                    onClick={() =>
+                      toast.success(t("toast.success"), {
+                        description: "คุณกำลังไปได้สวย",
+                      })
+                    }
                   >
                     Toast success
                   </Button>
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => toast.warning(t("toast.warning"))}
+                    onClick={() =>
+                      toast.info("สถานะปกติ", {
+                        description: "ทุกอย่างเรียบร้อยดี",
+                      })
+                    }
                   >
-                    Toast warning
+                    Toast info
                   </Button>
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => toast.error(t("toast.genericError"))}
+                    onClick={() =>
+                      toast.error(t("toast.genericError"), {
+                        description: "ตอนนี้ต้องรีบดูแลด่วน",
+                      })
+                    }
                   >
                     Toast error
                   </Button>

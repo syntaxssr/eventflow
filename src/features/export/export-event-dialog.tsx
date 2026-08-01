@@ -161,7 +161,7 @@ export function ExportEventDialog({
             )
           })}
           {selected.length === 0 ? (
-            <p className="text-danger text-xs" role="alert">
+            <p className="text-foreground text-xs" role="alert">
               {t("export.needSection")}
             </p>
           ) : null}

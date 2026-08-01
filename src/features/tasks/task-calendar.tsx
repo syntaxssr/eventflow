@@ -192,7 +192,7 @@ function OverdueList({
   if (overdue.length === 0) return null
 
   return (
-    <section className="rounded-lg border border-red-200 bg-red-50/60 p-3 dark:border-red-500/30 dark:bg-red-500/10">
+    <section className="border-danger/30 bg-danger/10 dark:border-danger/40 dark:bg-danger/15 rounded-lg border p-3">
       <h3 className="mb-2 text-sm font-semibold">{t("task.overdue")}</h3>
       <ul className="flex flex-wrap gap-2">
         {overdue.map((task) => (

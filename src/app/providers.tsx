@@ -20,7 +20,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <TooltipProvider delayDuration={200}>
               {children}
               <DevToolsPanel />
-              <Toaster position="top-right" richColors closeButton />
+              <Toaster position="top-right" richColors />
             </TooltipProvider>
           </DemoProvider>
         </AppStoreProvider>

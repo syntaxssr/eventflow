@@ -37,21 +37,21 @@ export function ParticipantSummaryCards({ summary }: { summary: RsvpSummary }) {
       label: t("rsvp.attending"),
       value: summary.attending,
       icon: CircleCheckIcon,
-      tile: "bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300",
+      tile: "bg-success/20 text-foreground dark:bg-success/25",
     },
     {
       key: "notAttending",
       label: t("rsvp.notAttending"),
       value: summary.notAttending,
       icon: CircleXIcon,
-      tile: "bg-rose-50 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300",
+      tile: "bg-danger/15 text-foreground dark:bg-danger/25",
     },
     {
       key: "pending",
       label: t("rsvp.pending"),
       value: summary.pending,
       icon: CircleHelpIcon,
-      tile: "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+      tile: "bg-warning/25 text-foreground dark:bg-warning/30",
     },
   ]
 

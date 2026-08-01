@@ -31,7 +31,7 @@ export function SaveIndicator({
     saved: {
       icon: <CheckIcon className="size-3.5" aria-hidden="true" />,
       label: t("common.saved"),
-      tone: "text-green-700 dark:text-green-400",
+      tone: "text-foreground",
     },
     error: {
       icon: <TriangleAlertIcon className="size-3.5" aria-hidden="true" />,

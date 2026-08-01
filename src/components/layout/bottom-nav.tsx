@@ -42,9 +42,9 @@ export function BottomNav() {
             href={item.href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex flex-col items-center gap-1 px-1 py-2 text-[0.6875rem] font-medium transition-colors",
+              "mx-1 flex flex-col items-center gap-1 rounded-lg px-1 py-2 text-[0.6875rem] font-medium transition-colors",
               active
-                ? "text-brand-text"
+                ? "bg-primary text-primary-foreground font-semibold"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -59,9 +59,9 @@ export function BottomNav() {
           <button
             type="button"
             className={cn(
-              "flex flex-col items-center gap-1 px-1 py-2 text-[0.6875rem] font-medium transition-colors",
+              "mx-1 flex flex-col items-center gap-1 rounded-lg px-1 py-2 text-[0.6875rem] font-medium transition-colors",
               moreActive
-                ? "text-brand-text"
+                ? "bg-primary text-primary-foreground font-semibold"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
@@ -90,7 +90,7 @@ export function BottomNav() {
                     className={cn(
                       "flex items-center gap-3 rounded-lg border px-3 py-3 text-sm font-medium transition-colors",
                       active
-                        ? "border-brand-200 bg-brand-50 text-brand-900"
+                        ? "border-primary bg-primary text-primary-foreground"
                         : "border-border hover:bg-muted"
                     )}
                   >

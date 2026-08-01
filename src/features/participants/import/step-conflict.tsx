@@ -70,7 +70,7 @@ export function ImportStepConflict({
           {t("participant.conflictHint")}
         </p>
         {remaining > 0 ? (
-          <p className="text-xs text-amber-700 dark:text-amber-300" aria-live="polite">
+          <p className="text-foreground text-xs" aria-live="polite">
             {t("participant.conflictRemaining", { count: remaining })}
           </p>
         ) : null}
@@ -196,7 +196,7 @@ function ConflictPanel({
               key={field}
               className={cn(
                 "grid grid-cols-[7rem_1fr] gap-2 rounded px-1.5 py-0.5 text-sm",
-                isDifferent && "bg-amber-50 dark:bg-amber-500/10"
+                isDifferent && "bg-warning/20 dark:bg-warning/25"
               )}
             >
               <dt className="text-muted-foreground text-xs leading-5">
@@ -205,7 +205,7 @@ function ConflictPanel({
               <dd className="min-w-0 break-words">
                 {valueOf(field) || "—"}
                 {isDifferent ? (
-                  <span className="ml-1.5 inline-flex items-center gap-0.5 rounded-full bg-amber-100 px-1.5 py-0.5 text-[0.625rem] font-medium text-amber-800 dark:bg-amber-500/20 dark:text-amber-300">
+                  <span className="ml-1.5 inline-flex items-center gap-0.5 rounded-full bg-warning/30 px-1.5 py-0.5 text-[0.625rem] font-medium text-foreground dark:bg-warning/35">
                     <GitCompareIcon className="size-2.5" aria-hidden="true" />
                     {t("participant.differentBadge")}
                   </span>

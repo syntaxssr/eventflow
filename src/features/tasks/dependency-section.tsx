@@ -87,7 +87,7 @@ export function DependencySection({
           <LinkIcon className="size-4" aria-hidden="true" />
           {t("task.dependencies")}
           {blocked.isBlocked ? (
-            <span className="bg-red-50 text-red-800 dark:bg-red-500/15 dark:text-red-300 rounded-full px-2 py-0.5 text-xs font-medium">
+            <span className="bg-danger/15 text-foreground dark:bg-danger/25 rounded-full px-2 py-0.5 text-xs font-medium">
               {t("task.waitingFor", { count: blocked.blockingTaskIds.length })}
             </span>
           ) : null}
@@ -103,7 +103,7 @@ export function DependencySection({
                 className={cn(
                   "flex items-center gap-2 rounded-md border px-2 py-1.5",
                   dependency.status !== "completed" &&
-                    "border-red-200 bg-red-50/60 dark:border-red-500/30 dark:bg-red-500/10"
+                    "border-danger/30 bg-danger/10 dark:border-danger/40 dark:bg-danger/15"
                 )}
               >
                 {dependency.status !== "completed" ? (

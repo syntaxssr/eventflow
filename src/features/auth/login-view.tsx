@@ -60,7 +60,7 @@ export function LoginView() {
 
   return (
     <main className="flex min-h-svh flex-col lg:flex-row">
-      {/* แผงแบรนด์ — ใช้สีส้มเป็น accent ไม่เต็มพื้นที่ */}
+      {/* แผงแบรนด์ — โทนเทาไล่น้ำหนักแบบมินิมอล ไม่ใช้สี accent */}
       <section className="bg-brand-50 relative hidden flex-1 flex-col justify-between p-10 lg:flex">
         <Logo size="lg" className="text-brand-950" />
 
@@ -75,7 +75,7 @@ export function LoginView() {
                   className="bg-brand-500 mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full"
                   aria-hidden="true"
                 >
-                  <Icon className="size-4" style={{ color: "#2a1705" }} />
+                  <Icon className="size-4 text-foreground" />
                 </span>
                 <span className="text-brand-950 text-sm">
                   {HIGHLIGHT_TEXT[key][locale]}

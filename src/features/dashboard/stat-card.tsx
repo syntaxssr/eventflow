@@ -13,12 +13,10 @@ import { cn } from "@/lib/utils"
 type Tone = "default" | "warning" | "danger" | "brand"
 
 const TONE_TILE: Record<Tone, string> = {
-  default:
-    "bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300",
+  default: "bg-muted text-muted-foreground",
   brand: "bg-brand-50 text-brand-900",
-  warning:
-    "bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300",
-  danger: "bg-red-100 text-red-800 dark:bg-red-500/15 dark:text-red-300",
+  warning: "bg-warning/25 text-foreground dark:bg-warning/30",
+  danger: "bg-danger/15 text-foreground dark:bg-danger/25",
 }
 
 /**

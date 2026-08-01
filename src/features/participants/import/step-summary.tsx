@@ -36,28 +36,28 @@ export function ImportStepSummary({ summary }: { summary: ImportSummary }) {
       label: t("participant.summaryCreate"),
       value: summary.toCreate,
       icon: UserPlusIcon,
-      tone: "bg-green-50 text-green-800 dark:bg-green-500/15 dark:text-green-300",
+      tone: "bg-success/20 text-foreground dark:bg-success/25",
     },
     {
       key: "update",
       label: t("participant.summaryUpdate"),
       value: summary.toUpdate,
       icon: PencilIcon,
-      tone: "bg-blue-50 text-blue-800 dark:bg-blue-500/15 dark:text-blue-300",
+      tone: "bg-info/15 text-foreground dark:bg-info/25",
     },
     {
       key: "skip",
       label: t("participant.summarySkip"),
       value: summary.toSkip,
       icon: SkipForwardIcon,
-      tone: "bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300",
+      tone: "bg-muted text-muted-foreground",
     },
     {
       key: "error",
       label: t("participant.summaryError"),
       value: summary.errorRows,
       icon: TriangleAlertIcon,
-      tone: "bg-red-50 text-red-800 dark:bg-red-500/15 dark:text-red-300",
+      tone: "bg-danger/15 text-foreground dark:bg-danger/25",
     },
   ]
 

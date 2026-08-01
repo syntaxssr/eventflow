@@ -10,14 +10,14 @@ export function LogoMark({ className }: { className?: string }) {
       aria-hidden="true"
       className={cn("size-8", className)}
     >
-      <rect x="2" y="5" width="28" height="25" rx="6" fill="var(--brand-500)" />
-      <rect x="2" y="5" width="28" height="7" rx="3.5" fill="var(--brand-600)" />
-      <rect x="8" y="2" width="3" height="7" rx="1.5" fill="var(--brand-700)" />
-      <rect x="21" y="2" width="3" height="7" rx="1.5" fill="var(--brand-700)" />
+      <rect x="2" y="5" width="28" height="25" rx="6" fill="var(--foreground)" />
+      <rect x="2" y="5" width="28" height="7" rx="3.5" fill="var(--foreground)" />
+      <rect x="8" y="2" width="3" height="7" rx="1.5" fill="var(--foreground)" />
+      <rect x="21" y="2" width="3" height="7" rx="1.5" fill="var(--foreground)" />
       <path
         d="M10 21.5l4 4 8-8"
         fill="none"
-        stroke="#2a1705"
+        stroke="var(--background)"
         strokeWidth="3"
         strokeLinecap="round"
         strokeLinejoin="round"

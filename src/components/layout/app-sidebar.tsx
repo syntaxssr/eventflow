@@ -24,18 +24,15 @@ import { ACCOUNT_NAV, MAIN_NAV, type NavItem, isNavItemActive } from "./nav-item
 
 /**
  * เมนูที่กำลังใช้งานอยู่ต้องเห็นชัดโดยไม่พึ่งสีอย่างเดียว
- * จึงใช้แถบสีส้มด้านซ้าย + ตัวหนา ประกอบกับพื้นหลังอ่อน
+ * จึงใช้ตัวหนา + สลับพื้นหลัง/ตัวอักษรเป็นสีตรงข้าม (ขาวดำ/ดำขาว) แทนการทำ
+ * เป็นแค่โทนอ่อนเหมือนเมนูอื่น ๆ
  */
 const NAV_BUTTON_CLASS = [
-  "relative",
+  "data-[active=true]:bg-primary",
+  "data-[active=true]:text-primary-foreground",
   "data-[active=true]:font-semibold",
-  "data-[active=true]:text-brand-900",
-  "data-[active=true]:before:absolute",
-  "data-[active=true]:before:inset-y-1.5",
-  "data-[active=true]:before:left-0",
-  "data-[active=true]:before:w-1",
-  "data-[active=true]:before:rounded-r-full",
-  "data-[active=true]:before:bg-brand-500",
+  "data-[active=true]:hover:bg-primary",
+  "data-[active=true]:hover:text-primary-foreground",
 ].join(" ")
 
 function NavList({ items }: { items: NavItem[] }) {

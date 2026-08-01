@@ -197,7 +197,7 @@ function DuplicateEventForm({
           <section className="border-border rounded-lg border p-3">
             <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold">
               <CheckIcon
-                className="size-4 text-green-600 dark:text-green-400"
+                className="text-foreground size-4"
                 aria-hidden="true"
               />
               {t("event.duplicateIncluded")}

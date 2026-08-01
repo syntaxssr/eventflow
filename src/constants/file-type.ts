@@ -15,30 +15,33 @@ interface FileTypeStyle {
   label: string
 }
 
+/** ทุกประเภทไฟล์ใช้ tile สีเทาเดียวกัน — แยกแยะด้วยไอคอนแทนสี */
+const FILE_TILE = "bg-muted text-muted-foreground"
+
 export const FILE_TYPE_STYLE: Record<FileType, FileTypeStyle> = {
   powerpoint: {
     icon: PresentationIcon,
-    tile: "bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300",
+    tile: FILE_TILE,
     label: "PowerPoint",
   },
   excel: {
     icon: FileSpreadsheetIcon,
-    tile: "bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300",
+    tile: FILE_TILE,
     label: "Excel",
   },
   pdf: {
     icon: FileTextIcon,
-    tile: "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300",
+    tile: FILE_TILE,
     label: "PDF",
   },
   word: {
     icon: FileTextIcon,
-    tile: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+    tile: FILE_TILE,
     label: "Word",
   },
   image: {
     icon: FileImageIcon,
-    tile: "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300",
+    tile: FILE_TILE,
     label: "Image",
   },
 }
