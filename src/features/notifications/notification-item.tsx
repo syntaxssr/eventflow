@@ -73,7 +73,7 @@ export function NotificationItem({
         <span className="text-muted-foreground block truncate text-xs">
           {tl(notification.body)}
         </span>
-        <span className="text-muted-foreground/80 mt-0.5 block text-[0.6875rem]">
+        <span className="text-muted-foreground mt-0.5 block text-[0.6875rem]">
           {t(meta.labelKey)} ·{" "}
           <time dateTime={notification.createdAt}>
             {formatRelativeTime(notification.createdAt, locale)}

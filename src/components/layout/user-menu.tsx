@@ -61,7 +61,7 @@ export function UserMenu({ showName = true }: { showName?: boolean }) {
         >
           <UserAvatar user={currentUser} size="xs" />
           {showName ? (
-            <span className="hidden max-w-32 truncate text-sm font-medium sm:inline">
+            <span className="hidden max-w-32 truncate text-sm font-medium lg:inline">
               {getFullName(currentUser, locale)}
             </span>
           ) : null}

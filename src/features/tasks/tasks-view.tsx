@@ -244,7 +244,12 @@ export function TasksView({
                 value={scope}
                 onValueChange={(value) => setScope(value as Scope)}
               >
-                <SelectTrigger size="sm" className="w-40" data-testid="scope-select">
+                <SelectTrigger
+                  size="sm"
+                  className="w-40"
+                  data-testid="scope-select"
+                  aria-label={t("task.scopeMine")}
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

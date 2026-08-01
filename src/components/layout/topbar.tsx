@@ -14,9 +14,8 @@ export function Topbar() {
 
       <GlobalSearch />
 
-      <div className="flex-1 sm:hidden" />
-
-      <div className="flex items-center gap-0.5">
+      {/* ดันกลุ่มไอคอนให้ชิดขวาสุดของจอเสมอ แม้ช่องค้นหาถูกจำกัดความกว้าง */}
+      <div className="ml-auto flex items-center gap-0.5">
         <NotificationBell />
         <LanguageToggle />
         <ThemeToggle />

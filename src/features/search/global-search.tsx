@@ -129,13 +129,13 @@ export function GlobalSearch() {
         type="button"
         onClick={() => setOpen(true)}
         data-testid="open-global-search"
-        className="border-input bg-background text-muted-foreground hover:bg-muted/50 focus-visible:outline-ring hidden h-9 max-w-md flex-1 items-center gap-2 rounded-md border px-3 text-sm focus-visible:outline-2 sm:flex"
+        className="border-input bg-background text-muted-foreground hover:bg-muted/50 focus-visible:outline-ring hidden h-9 max-w-md min-w-0 flex-1 items-center gap-2 rounded-md border px-3 text-sm focus-visible:outline-2 sm:flex"
       >
         <SearchIcon className="size-4 shrink-0" aria-hidden="true" />
-        <span className="flex-1 truncate text-left">
+        <span className="min-w-0 flex-1 truncate text-left">
           {t("shell.searchPlaceholder")}
         </span>
-        <kbd className="bg-muted pointer-events-none rounded px-1.5 py-0.5 font-mono text-[0.6875rem]">
+        <kbd className="bg-muted pointer-events-none hidden rounded px-1.5 py-0.5 font-mono text-[0.6875rem] lg:inline">
           Ctrl K
         </kbd>
       </button>

@@ -300,3 +300,23 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Sonner richColors (โหมดสว่าง) — เข้มขึ้นจากค่าเริ่มต้นของไลบรารี
+   เพื่อให้ contrast ของข้อความบนพื้นพาสเทลผ่าน WCAG AA (axe: color-contrast)
+   ต้องชี้ที่ตัว toast เองเพราะไลบรารีตั้งตัวแปรไว้บน toast ไม่ใช่ toaster */
+[data-sonner-toaster][data-sonner-theme="light"]
+  [data-sonner-toast][data-rich-colors="true"][data-type="success"] {
+  --success-text: hsl(140, 100%, 22%);
+}
+[data-sonner-toaster][data-sonner-theme="light"]
+  [data-sonner-toast][data-rich-colors="true"][data-type="warning"] {
+  --warning-text: hsl(31, 92%, 30%);
+}
+[data-sonner-toaster][data-sonner-theme="light"]
+  [data-sonner-toast][data-rich-colors="true"][data-type="info"] {
+  --info-text: hsl(221, 91%, 38%);
+}
+[data-sonner-toaster][data-sonner-theme="light"]
+  [data-sonner-toast][data-rich-colors="true"][data-type="error"] {
+  --error-text: hsl(358, 75%, 36%);
+}

@@ -30,6 +30,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label={t("shell.mainNavigation")}
+      data-testid="bottom-nav"
       className="bg-background fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       {MOBILE_NAV.map((item) => {
