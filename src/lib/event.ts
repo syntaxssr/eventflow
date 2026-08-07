@@ -1,3 +1,4 @@
+import { AVATAR_PALETTE } from "@/constants/avatar-colors"
 import { daysBetween, fromDateKey, toDateKey } from "@/constants/mock-date"
 import type { DateKey } from "@/types/common"
 import type { DuplicateEventOptions, EventItem } from "@/types/event"
@@ -5,6 +6,19 @@ import type { FileCategory } from "@/types/file"
 import type { Task } from "@/types/task"
 import type { TimelineItem } from "@/types/timeline"
 import { newId } from "./id"
+
+/**
+ * สีประจำกิจกรรม — หยิบจากพาเลต avatar ด้วย hash ของ id
+ * เป็นฟังก์ชันบริสุทธิ์ กิจกรรมเดิมจึงได้สีเดิมเสมอทุกครั้งที่เรนเดอร์
+ * โดยไม่ต้องเก็บสีลงในข้อมูล
+ */
+export function getEventColor(eventId: string): string {
+  let hash = 0
+  for (let i = 0; i < eventId.length; i += 1) {
+    hash = (hash * 31 + eventId.charCodeAt(i)) % 100000
+  }
+  return AVATAR_PALETTE[hash % AVATAR_PALETTE.length]
+}
 
 export interface DuplicateEventInput {
   source: EventItem

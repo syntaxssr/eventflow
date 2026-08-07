@@ -1,5 +1,6 @@
 import { z } from "zod"
 
+import { AVATAR_PALETTE_ITEMS } from "@/constants/avatar-colors"
 import { EVENT_STATUSES } from "@/types/event"
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
@@ -42,12 +43,11 @@ export const eventSchema = z
 
 export type EventFormValues = z.infer<typeof eventSchema>
 
-/** ภาพปกให้เลือกใน Prototype (การอัปโหลดจริงอยู่ใน Phase 6) */
-export const COVER_OPTIONS = [
-  "/covers/annual-party.svg",
-  "/covers/orientation.svg",
-  "/covers/security.svg",
-  "/covers/csr.svg",
-  "/covers/townhall.svg",
-  "/covers/product-launch.svg",
-] as const
+/**
+ * ภาพปกให้เลือกใน Prototype (การอัปโหลดจริงอยู่ใน Phase 6)
+ * แต่ละไฟล์คือสีพื้นไล่ระดับบนลงล่าง + เกรน หนึ่งใบต่อหนึ่งเฉดในพาเลต avatar
+ * สร้างจากสคริปต์ ไม่ได้วาดมือ — ชื่อไฟล์ตรงกับชื่อสีใน avatar-colors.ts
+ */
+export const COVER_OPTIONS = AVATAR_PALETTE_ITEMS.map(
+  (item) => `/covers/${item.name.toLowerCase().replace(/\s+/g, "-")}.svg`
+)

@@ -254,7 +254,7 @@ test.describe("Phase 3 — Duplicate, cancel & delete", () => {
     await expect(page.getByText("ยืนยันการลบกิจกรรม")).toBeVisible()
     await expect(page.getByText("งานย่อย 29 งานจะถูกซ่อนไปพร้อมกัน")).toBeVisible()
     await expect(
-      page.getByText("รายชื่อผู้เข้าร่วม 83 คนจะไม่แสดงอีก")
+      page.getByText("รายชื่อผู้เข้าร่วม 90 คนจะไม่แสดงอีก")
     ).toBeVisible()
 
     await page.getByRole("button", { name: "ลบกิจกรรม" }).click()

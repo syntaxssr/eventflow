@@ -12,23 +12,24 @@ import { cn } from "@/lib/utils"
 
 type Tone = "default" | "warning" | "danger" | "brand"
 
+/** ไอคอนใช้สีเดียวกับพื้นการ์ดแต่ทึบกว่า จึงยังอ่านออกบนพื้นที่จางลงแล้ว */
 const TONE_TILE: Record<Tone, string> = {
   default: "bg-muted text-muted-foreground",
-  brand: "bg-brand-50 text-brand-900",
-  // danger เข้มกว่า warning เสมอ เพราะเร่งด่วนกว่า — ค่าเดิมสลับกันอยู่
-  warning: "bg-warning/25 text-foreground dark:bg-warning/30",
-  danger: "bg-danger/35 text-foreground dark:bg-danger/40",
+  brand: "bg-stat-blue/70 text-foreground dark:bg-stat-blue/45",
+  danger: "bg-stat-red/70 text-foreground dark:bg-stat-red/45",
+  warning: "bg-stat-yellow/70 text-foreground dark:bg-stat-yellow/45",
 }
 
 /**
- * แถบสีซ้ายของการ์ด — ใช้เฉพาะโทนที่สื่อสถานะจริง (warning/danger)
- * โทน default/brand ไม่มีแถบ เพราะเป็นตัวเลขเฉย ๆ ไม่ใช่สถานะ
+ * พื้นหลังการ์ด — สีละใบเพื่อให้สแกนแยกได้ทันทีโดยไม่ต้องอ่าน
+ * ความทึบต่างกันตามธีมเพราะพื้นคนละขั้ว: light รับได้ถึง 40% ส่วน dark
+ * ต้องหยุดที่ 22% ไม่งั้นสีอ่อน (ฟ้า/เหลือง) ดันพื้นสว่างจนตัวอักษรขาวหลุด AA
  */
-const TONE_ACCENT: Record<Tone, string> = {
+const TONE_SURFACE: Record<Tone, string> = {
   default: "",
-  brand: "",
-  warning: "border-l-warning border-l-[3px]",
-  danger: "border-l-danger border-l-[3px]",
+  brand: "bg-stat-blue/40 dark:bg-stat-blue/22",
+  danger: "bg-stat-red/40 dark:bg-stat-red/22",
+  warning: "bg-stat-yellow/40 dark:bg-stat-yellow/22",
 }
 
 /**
@@ -56,9 +57,9 @@ export function StatCard({
   return (
     <Card
       className={cn(
-        // Card ใช้ ring ไม่ใช่ border — hover จึงต้องเน้นที่ ring ไม่งั้นทับสีแถบซ้าย
+        // Card ใช้ ring ไม่ใช่ border — hover จึงเน้นที่ ring
         "overflow-hidden transition-colors hover:ring-foreground/25",
-        TONE_ACCENT[tone]
+        TONE_SURFACE[tone]
       )}
     >
       <CardContent className="p-0">
@@ -76,13 +77,15 @@ export function StatCard({
             <Icon className="size-5" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="text-muted-foreground block truncate text-xs font-medium">
+            {/* ไม่ใช้ --muted-foreground (ดำ 62%) เพราะพอมีสีทับพื้นการ์ดแล้ว
+                contrast ตกต่ำกว่า AA (danger เหลือ 4.27) ดำ 70% ได้ 5.1–5.7 */}
+            <span className="text-foreground/70 block truncate text-xs font-medium">
               {t(labelKey)}
             </span>
             <span className="block text-2xl leading-tight font-bold tabular-nums">
               {formatNumber(animated, locale)}
               {unitKey ? (
-                <span className="text-muted-foreground ml-1 text-xs font-normal">
+                <span className="text-foreground/70 ml-1 text-xs font-normal">
                   {t(unitKey)}
                 </span>
               ) : null}

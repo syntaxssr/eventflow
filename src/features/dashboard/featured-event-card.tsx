@@ -5,7 +5,6 @@ import Link from "next/link"
 import { ArrowRightIcon, CalendarIcon, ClockIcon, MapPinIcon, UsersIcon } from "lucide-react"
 
 import { StatusBadge } from "@/components/common/status-badge"
-import { UserAvatar } from "@/components/common/user-avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
@@ -15,19 +14,15 @@ import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
 import { daysBetween, fromDateKey } from "@/constants/mock-date"
 import { formatDateRange, formatNumber } from "@/lib/format"
-import { getFullName } from "@/lib/user"
 import type { EventItem, EventProgress } from "@/types/event"
-import type { User } from "@/types/user"
 
 export function FeaturedEventCard({
   event,
   progress,
-  owner,
   participantCount,
 }: {
   event: EventItem
   progress: EventProgress
-  owner: User | undefined
   participantCount: number
 }) {
   const { t, tl, locale } = useLocale()
@@ -114,22 +109,7 @@ export function FeaturedEventCard({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-4">
-          {owner ? (
-            <div className="flex items-center gap-2">
-              <UserAvatar user={owner} size="sm" />
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium">
-                  {getFullName(owner, locale)}
-                </p>
-                <p className="text-muted-foreground truncate text-xs">
-                  {owner.position[locale]}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <span />
-          )}
+        <div className="flex flex-wrap items-center justify-end gap-3 border-t pt-4">
           <Button asChild variant="outline" size="sm">
             <Link href={`${ROUTES.events}?event=${event.id}`}>
               {t("common.viewAll")}

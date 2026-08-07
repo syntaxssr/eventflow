@@ -173,7 +173,6 @@ export function DashboardView() {
           <FeaturedEventCard
             event={data.featuredEvent}
             progress={data.featuredProgress}
-            owner={data.usersById.get(data.featuredEvent.ownerId)}
             participantCount={data.featuredParticipants.length}
           />
         </div>

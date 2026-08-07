@@ -13,8 +13,11 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { ROUTES } from "@/constants/app"
+import { AVATAR_PALETTE } from "@/constants/avatar-colors"
 import { fromDateKey, getToday, toDateKey } from "@/constants/mock-date"
 import { useLocale } from "@/i18n"
+import { getReadableTextColor } from "@/lib/color"
+import { getEventColor } from "@/lib/event"
 import { cn } from "@/lib/utils"
 import type { EventItem } from "@/types/event"
 import type { Task } from "@/types/task"
@@ -23,6 +26,9 @@ const WEEKDAY_LABELS: Record<"th" | "en", string[]> = {
   th: ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"],
   en: ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
 }
+
+/** สีตัวอย่างในคำอธิบาย — สื่อว่าจุดกิจกรรมเปลี่ยนสีตามโปรเจกต์ */
+const LEGEND_EVENT_COLORS = AVATAR_PALETTE.slice(0, 3)
 
 /**
  * จำนวนสัปดาห์ที่เดือนนั้นต้องใช้จริง (4–6)
@@ -46,9 +52,12 @@ function buildMonthGrid(year: number, month: number): Date[] {
   })
 }
 
-/** รายการที่ผูกกับวันหนึ่ง ๆ — แยกชนิดไว้เพื่อเลือกสีจุดและปลายทางลิงก์ */
+/**
+ * รายการที่ผูกกับวันหนึ่ง ๆ — แยกชนิดไว้เพื่อเลือกสีจุดและปลายทางลิงก์
+ * กิจกรรมพก `color` ประจำโปรเจกต์มาด้วย ส่วนงานใช้สีกลางเสมอ
+ */
 type DayEntry =
-  | { kind: "event"; id: string; label: string }
+  | { kind: "event"; id: string; label: string; color: string }
   | { kind: "task"; id: string; label: string }
 
 /**
@@ -95,6 +104,7 @@ export function DashboardCalendarCard({
           kind: "event",
           id: event.id,
           label: tl(event.title),
+          color: getEventColor(event.id),
         })
         cursorDay.setDate(cursorDay.getDate() + 1)
       }
@@ -132,6 +142,7 @@ export function DashboardCalendarCard({
           <Button
             variant="outline"
             size="icon-sm"
+            className="rounded-full"
             onClick={() => shiftMonth(-1)}
             aria-label={t("common.previous")}
           >
@@ -140,6 +151,7 @@ export function DashboardCalendarCard({
           <Button
             variant="outline"
             size="icon-sm"
+            className="rounded-full"
             onClick={() => shiftMonth(1)}
             aria-label={t("common.next")}
           >
@@ -161,9 +173,21 @@ export function DashboardCalendarCard({
               const key = toDateKey(day)
               const inMonth = day.getMonth() === cursor.getMonth()
               const entries = byDate.get(key) ?? []
-              const hasEvent = entries.some((entry) => entry.kind === "event")
+              const eventColors = [
+                ...new Set(
+                  entries
+                    .filter((entry) => entry.kind === "event")
+                    .map((entry) => entry.color)
+                ),
+              ]
+              // วันที่มีกิจกรรมย้อมทั้งวงด้วยสีโปรเจกต์ ถ้าซ้อนกันหลายงานใช้สีแรก
+              const eventColor = eventColors[0]
+              const hasEvent = eventColors.length > 0
               const hasTask = entries.some((entry) => entry.kind === "task")
               const selected = key === selectedKey
+              // ทุกสีในพาเลตผ่าน AA กับสีที่ getReadableTextColor เลือกให้
+              const eventTextColor =
+                hasEvent && !selected ? getReadableTextColor(eventColor) : null
 
               return (
                 <button
@@ -179,30 +203,30 @@ export function DashboardCalendarCard({
                     .filter(Boolean)
                     .join(" ")}
                   className={cn(
-                    "focus-visible:outline-ring flex aspect-square flex-col items-center justify-center gap-1 rounded-md text-xs tabular-nums transition-colors focus-visible:outline-2 focus-visible:outline-offset-1",
-                    !inMonth && "text-muted-foreground/50",
-                    !selected && "hover:bg-muted",
+                    "focus-visible:outline-ring flex aspect-square flex-col items-center justify-center gap-1 rounded-full text-xs tabular-nums transition-colors focus-visible:outline-2 focus-visible:outline-offset-1",
+                    !inMonth && !hasEvent && "text-muted-foreground/50",
+                    !selected && !hasEvent && "hover:bg-muted",
                     // วันที่เลือกใช้สลับขาว-ดำตามกติกา active state ของระบบ
                     selected && "bg-primary text-primary-foreground font-bold",
+                    hasEvent && !selected && "font-bold",
                     !selected && key === todayKey && "ring-foreground/40 ring-1"
                   )}
+                  style={
+                    eventTextColor
+                      ? { backgroundColor: eventColor, color: eventTextColor }
+                      : undefined
+                  }
                 >
                   <span>{day.getDate()}</span>
                   <span className="flex h-1 items-center gap-0.5">
-                    {hasEvent ? (
-                      <span
-                        className={cn(
-                          "size-1 rounded-full",
-                          selected ? "bg-primary-foreground" : "bg-info"
-                        )}
-                        aria-hidden="true"
-                      />
-                    ) : null}
                     {hasTask ? (
+                      // บนวงสีโปรเจกต์ใช้ currentColor จุดจึงคอนทราสต์เท่าตัวเลข
                       <span
                         className={cn(
                           "size-1 rounded-full",
-                          selected ? "bg-primary-foreground" : "bg-foreground/70"
+                          selected && "bg-primary-foreground",
+                          !selected && !hasEvent && "bg-foreground/70",
+                          !selected && hasEvent && "bg-current"
                         )}
                         aria-hidden="true"
                       />
@@ -214,10 +238,19 @@ export function DashboardCalendarCard({
           </div>
         </div>
 
-        {/* จุดสองสีต่างกันด้วยสีอย่างเดียวไม่พอ จึงมีคำกำกับเสมอ */}
+        {/* จุดต่างกันด้วยสีอย่างเดียวไม่พอ จึงมีคำกำกับเสมอ
+            ฝั่งกิจกรรมโชว์หลายสีเพื่อสื่อว่าสีเปลี่ยนตามโปรเจกต์ ไม่ใช่สีตายตัว */}
         <ul className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
           <li className="flex items-center gap-1.5">
-            <span className="bg-info size-1.5 rounded-full" aria-hidden="true" />
+            <span className="flex items-center gap-0.5" aria-hidden="true">
+              {LEGEND_EVENT_COLORS.map((color) => (
+                <span
+                  key={color}
+                  className="size-1.5 rounded-full"
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </span>
             {t("dashboard.calendarEventDay")}
           </li>
           <li className="flex items-center gap-1.5">
@@ -252,8 +285,13 @@ export function DashboardCalendarCard({
                     <span
                       className={cn(
                         "size-1.5 shrink-0 rounded-full",
-                        entry.kind === "event" ? "bg-info" : "bg-foreground/70"
+                        entry.kind === "task" && "bg-foreground/70"
                       )}
+                      style={
+                        entry.kind === "event"
+                          ? { backgroundColor: entry.color }
+                          : undefined
+                      }
                       aria-hidden="true"
                     />
                     <span className="min-w-0 flex-1 truncate">

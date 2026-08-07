@@ -98,6 +98,12 @@
   /* Auth hero — คู่สีไล่ระดับ (บนสว่าง ล่างเข้ม) ของแผงแบรนด์หน้า Login
      ค่าจริงสลับตามธีมใน :root / .dark ด้านล่าง (light = น้ำเงินนอกพาเลต,
      dark = ดำ) ห้ามนำไปใช้ที่อื่น (ดู colors.md หัวข้อ "ข้อยกเว้น") */
+  /* สีพื้นการ์ดสรุปบน Dashboard — ใช้ค่าเดียวกับ 3 เฉดในพาเลต avatar
+     (Sky / Coral Red / Butter) ใช้แบบลดความทึบเสมอ ดู colors.md */
+  --color-stat-blue: #80c3e0;
+  --color-stat-red: #e06659;
+  --color-stat-yellow: #f4d887;
+
   --color-auth-hero: var(--auth-hero);
   --color-auth-hero-deep: var(--auth-hero-deep);
   --color-auth-hero-foreground: var(--auth-hero-foreground);

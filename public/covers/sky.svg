@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="960" height="480" role="img" aria-label="Sky">
+  <defs>
+    <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8ec9e2"/>
+      <stop offset="1" stop-color="#567d8e"/>
+    </linearGradient>
+    <filter id="n-sky" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncR type="linear" slope="1.8" intercept="-0.65"/>
+        <feFuncG type="linear" slope="1.8" intercept="-0.65"/>
+        <feFuncB type="linear" slope="1.8" intercept="-0.65"/>
+        <feFuncA type="linear" slope="0" intercept="1"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+  <rect width="960" height="480" fill="url(#g-sky)"/>
+  <rect width="960" height="480" filter="url(#n-sky)" opacity="0.22" style="mix-blend-mode:overlay"/>
+</svg>
