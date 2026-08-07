@@ -139,15 +139,6 @@ export function DashboardView() {
 
   return (
     <PageContainer>
-      <PageHeader
-        title={
-          currentUser
-            ? t("dashboard.greeting", { name: getFullName(currentUser, locale) })
-            : t("nav.dashboard")
-        }
-        description={t("dashboard.subtitle")}
-      />
-
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
           labelKey="dashboard.upcomingEvents"
