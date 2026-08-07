@@ -2,7 +2,7 @@ import { defineConfig, devices } from "@playwright/test"
 
 // ใช้พอร์ตเดียวกับ `npm run dev` เพื่อให้ Playwright ใช้เซิร์ฟเวอร์ที่เปิดค้างไว้ได้
 // (Next.js อนุญาตให้รัน dev server ต่อหนึ่งโปรเจกต์ได้ครั้งละหนึ่งตัวเท่านั้น)
-const PORT = Number(process.env.PORT ?? 3000)
+const PORT = Number(process.env.PORT ?? 3001)
 const BASE_URL = `http://localhost:${PORT}`
 
 export default defineConfig({

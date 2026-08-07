@@ -2,6 +2,14 @@ import { expect, test } from "@playwright/test"
 
 import { forceScreenState, signIn } from "./helpers"
 
+/** เปิดแท็บข้อมูลประกอบด้านล่าง Dashboard ตามชื่อแท็บ */
+async function openDetailTab(
+  page: import("@playwright/test").Page,
+  name: string
+) {
+  await page.getByRole("tab", { name }).click()
+}
+
 /** อ่านตัวเลขในการ์ดสรุปจากชื่อการ์ด */
 async function statValue(
   page: import("@playwright/test").Page,
@@ -21,15 +29,13 @@ test.describe("Phase 2 — Dashboard", () => {
     ).toBeVisible()
   })
 
-  test("แสดงการ์ดสรุปครบทั้ง 5 ใบพร้อมตัวเลข", async ({ page }) => {
+  test("แสดงการ์ดสรุปครบทั้ง 3 ใบพร้อมตัวเลข", async ({ page }) => {
     await signIn(page)
 
     for (const label of [
       "กิจกรรมที่กำลังจะมาถึง",
-      "งานใกล้ครบกำหนด",
       "งานเกินกำหนด",
-      "งานที่ยังไม่เสร็จ",
-      "การแจ้งเตือนที่ยังไม่อ่าน",
+      "งานใกล้ครบกำหนด",
     ]) {
       await expect(page.getByText(label, { exact: true })).toBeVisible()
     }
@@ -58,6 +64,7 @@ test.describe("Phase 2 — Dashboard", () => {
 
   test("สรุปงานตามสถานะรวมกันเท่ากับจำนวนงานทั้งหมด", async ({ page }) => {
     await signIn(page)
+    await openDetailTab(page, "สรุปงานตามสถานะ")
 
     const totalText = await page
       .getByText(/งานทั้งหมด: \d+ งาน/)
@@ -86,6 +93,7 @@ test.describe("Phase 2 — Dashboard", () => {
 
   test("สรุปสถานะตอบรับรวมกันเท่ากับจำนวนผู้เข้าร่วม", async ({ page }) => {
     await signIn(page)
+    await openDetailTab(page, "สรุปสถานะตอบรับ")
 
     const totalText = await page.getByText(/ผู้เข้าร่วม: \d+ คน/).innerText()
     const total = Number(totalText.replace(/[^\d]/g, ""))
@@ -114,18 +122,6 @@ test.describe("Phase 2 — Dashboard", () => {
     await expect(page).toHaveURL(/\/my-tasks\?scope=all&due=overdue$/)
   })
 
-  test("คลิกการ์ดการแจ้งเตือนแล้วไปหน้าการแจ้งเตือน", async ({ page }) => {
-    await signIn(page)
-
-    await page
-      .getByRole("link")
-      .filter({ hasText: "การแจ้งเตือนที่ยังไม่อ่าน" })
-      .first()
-      .click()
-
-    await expect(page).toHaveURL(/\/notifications$/)
-  })
-
   test("สลับผู้ใช้แล้วคำทักทายและงานเร่งด่วนเปลี่ยนตาม", async ({ page }) => {
     await signIn(page)
 
@@ -148,15 +144,18 @@ test.describe("Phase 2 — Dashboard", () => {
   test("แสดงไฟล์ล่าสุดและความเคลื่อนไหวล่าสุด", async ({ page }) => {
     await signIn(page)
 
+    await openDetailTab(page, "ไฟล์ล่าสุด")
     const files = page.getByTestId("recent-files")
     await expect(files).toContainText("สไลด์เปิดงาน Golden Night.pptx")
     await expect(files).toContainText("PowerPoint")
 
+    await openDetailTab(page, "ความเคลื่อนไหวล่าสุด")
     await expect(page.getByTestId("recent-activity")).toBeVisible()
   })
 
   test("ไม่มีเวลาในอนาคตปรากฏในความเคลื่อนไหวล่าสุด", async ({ page }) => {
     await signIn(page)
+    await openDetailTab(page, "ความเคลื่อนไหวล่าสุด")
 
     const card = page.getByTestId("recent-activity")
     await expect(card).toBeVisible()

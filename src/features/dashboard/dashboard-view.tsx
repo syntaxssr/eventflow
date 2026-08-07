@@ -3,30 +3,28 @@
 import * as React from "react"
 import Link from "next/link"
 import {
-  BellIcon,
   CalendarDaysIcon,
   CalendarPlusIcon,
   CircleAlertIcon,
   ClockAlertIcon,
-  ListChecksIcon,
 } from "lucide-react"
 
 import { EmptyState } from "@/components/common/empty-state"
 import { ErrorState } from "@/components/common/error-state"
 import { PageContainer, PageHeader } from "@/components/common/page-header"
 import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ROUTES } from "@/constants/app"
 import { getToday } from "@/constants/mock-date"
 import { MAIN_EVENT_ID } from "@/mock"
 import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
-import { getFullName } from "@/lib/user"
 import { useAppState, useCurrentUser } from "@/store"
 import {
   countTasksByStatus,
+  selectActiveEvents,
   selectActiveTasks,
   selectEventProgress,
-  selectNotificationsForUser,
   selectParticipantsByEvent,
   selectRecentActivities,
   selectRecentFiles,
@@ -37,6 +35,7 @@ import {
   summariseRsvp,
 } from "@/store/selectors"
 import { isDueSoon, isIncomplete, isOverdue } from "@/lib/due-date"
+import { DashboardCalendarCard } from "./dashboard-calendar-card"
 import { DashboardSkeleton } from "./dashboard-skeleton"
 import { FeaturedEventCard } from "./featured-event-card"
 import { RecentActivityCard } from "./recent-activity-card"
@@ -47,7 +46,7 @@ import { TaskStatusChart } from "./task-status-chart"
 import { UrgentTasksCard } from "./urgent-tasks-card"
 
 export function DashboardView() {
-  const { t, locale } = useLocale()
+  const { t } = useLocale()
   const state = useAppState()
   const currentUser = useCurrentUser()
   const today = React.useMemo(() => getToday(), [])
@@ -81,12 +80,9 @@ export function DashboardView() {
       myTasks,
       overdueCount: activeTasks.filter((task) => isOverdue(task, today)).length,
       dueSoonCount: activeTasks.filter((task) => isDueSoon(task, today)).length,
-      incompleteCount: activeTasks.filter(isIncomplete).length,
-      unreadCount: currentUser
-        ? selectNotificationsForUser(state, currentUser.id).filter(
-            (notification) => !notification.isRead
-          ).length
-        : 0,
+      // ปฏิทินต้องเห็นได้ทุกเดือนที่เลื่อนไปดู จึงใช้ชุดเต็มไม่ใช่เฉพาะที่กำลังจะมาถึง
+      calendarEvents: selectActiveEvents(state),
+      calendarTasks: activeTasks,
       recentFiles: selectRecentFiles(state, 5),
       recentActivities: selectRecentActivities(state, 6),
       usersById: new Map(state.users.map((user) => [user.id, user])),
@@ -139,49 +135,41 @@ export function DashboardView() {
 
   return (
     <PageContainer>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <StatCard
-          labelKey="dashboard.upcomingEvents"
-          value={data.upcomingEvents.length}
-          unitKey="dashboard.unitEvent"
-          icon={CalendarDaysIcon}
-          href={ROUTES.events}
-          tone="brand"
-        />
-        <StatCard
-          labelKey="dashboard.tasksDueSoon"
-          value={data.dueSoonCount}
-          unitKey="dashboard.unitTask"
-          icon={ClockAlertIcon}
-          href={`${ROUTES.myTasks}?scope=all&due=soon`}
-          tone="warning"
-        />
-        <StatCard
-          labelKey="dashboard.overdueTasks"
-          value={data.overdueCount}
-          unitKey="dashboard.unitTask"
-          icon={CircleAlertIcon}
-          href={`${ROUTES.myTasks}?scope=all&due=overdue`}
-          tone="danger"
-        />
-        <StatCard
-          labelKey="dashboard.incompleteTasks"
-          value={data.incompleteCount}
-          unitKey="dashboard.unitTask"
-          icon={ListChecksIcon}
-          href={`${ROUTES.myTasks}?scope=all&status=incomplete`}
-        />
-        <StatCard
-          labelKey="dashboard.unreadNotifications"
-          value={data.unreadCount}
-          unitKey="dashboard.unit"
-          icon={BellIcon}
-          href={ROUTES.notifications}
-        />
-      </div>
+      {/* คอลัมน์ซ้าย (2/3) เป็นตัวกำหนดความสูงของแถว ปฏิทินฝั่งขวายืดตาม
+          ไม่ใช่กลับกัน — ไม่งั้นการ์ดกิจกรรมหลักจะโดนบีบจนเนื้อหาขาด */}
+      <div className="grid items-start gap-4 lg:grid-cols-3">
+        <div className="space-y-4 lg:col-span-2">
+          {/* ชั้น 1 — ตัวเลขที่ต้องลงมือทำวันนี้เท่านั้น
+              ตัด "งานที่ยังไม่เสร็จ" ออกเพราะนับซ้อนกับอีกสองใบ และตัดการแจ้งเตือน
+              ที่ยังไม่อ่านออกเพราะมีกระดิ่งบน topbar อยู่แล้ว */}
+          <div className="grid gap-3 sm:grid-cols-3">
+            <StatCard
+              labelKey="dashboard.upcomingEvents"
+              value={data.upcomingEvents.length}
+              unitKey="dashboard.unitEvent"
+              icon={CalendarDaysIcon}
+              href={ROUTES.events}
+              tone="brand"
+            />
+            <StatCard
+              labelKey="dashboard.overdueTasks"
+              value={data.overdueCount}
+              unitKey="dashboard.unitTask"
+              icon={CircleAlertIcon}
+              href={`${ROUTES.myTasks}?scope=all&due=overdue`}
+              tone="danger"
+            />
+            <StatCard
+              labelKey="dashboard.tasksDueSoon"
+              value={data.dueSoonCount}
+              unitKey="dashboard.unitTask"
+              icon={ClockAlertIcon}
+              href={`${ROUTES.myTasks}?scope=all&due=soon`}
+              tone="warning"
+            />
+          </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+          {/* ชั้น 2 — กิจกรรมที่ต้องดูแลตอนนี้ */}
           <FeaturedEventCard
             event={data.featuredEvent}
             progress={data.featuredProgress}
@@ -189,26 +177,53 @@ export function DashboardView() {
             participantCount={data.featuredParticipants.length}
           />
         </div>
-        <TaskStatusChart
-          counts={countTasksByStatus(data.featuredTasks)}
-          total={data.featuredTasks.length}
+
+        <DashboardCalendarCard
+          events={data.calendarEvents}
+          tasks={data.calendarTasks}
         />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <RsvpSummaryCard summary={summariseRsvp(data.featuredParticipants)} />
-        <div className="lg:col-span-2">
+      {/* ชั้น 3 — ข้อมูลประกอบ ยุบเป็นแท็บเดียวเพื่อไม่ให้แย่งความสนใจกับสองชั้นบน
+          งานเร่งด่วนของผู้ใช้เป็นแท็บแรกและเปิดค้างไว้ เพราะเป็นสิ่งเดียวในหน้านี้
+          ที่ผูกกับคนที่ล็อกอินอยู่ */}
+      <Tabs defaultValue="urgent" data-testid="dashboard-detail-tabs">
+        <TabsList>
+          <TabsTrigger value="urgent">
+            {t("dashboard.myUrgentTasks")}
+          </TabsTrigger>
+          <TabsTrigger value="taskStatus">
+            {t("dashboard.taskStatusSummary")}
+          </TabsTrigger>
+          <TabsTrigger value="rsvp">{t("dashboard.rsvpSummary")}</TabsTrigger>
+          <TabsTrigger value="files">{t("dashboard.recentFiles")}</TabsTrigger>
+          <TabsTrigger value="activity">
+            {t("dashboard.recentActivity")}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="urgent">
           <UrgentTasksCard tasks={urgentTasks} eventsById={data.eventsById} />
-        </div>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <RecentFilesCard files={data.recentFiles} usersById={data.usersById} />
-        <RecentActivityCard
-          activities={data.recentActivities}
-          usersById={data.usersById}
-        />
-      </div>
+        </TabsContent>
+        <TabsContent value="taskStatus">
+          <TaskStatusChart
+            counts={countTasksByStatus(data.featuredTasks)}
+            total={data.featuredTasks.length}
+          />
+        </TabsContent>
+        <TabsContent value="rsvp">
+          <RsvpSummaryCard summary={summariseRsvp(data.featuredParticipants)} />
+        </TabsContent>
+        <TabsContent value="files">
+          <RecentFilesCard files={data.recentFiles} usersById={data.usersById} />
+        </TabsContent>
+        <TabsContent value="activity">
+          <RecentActivityCard
+            activities={data.recentActivities}
+            usersById={data.usersById}
+          />
+        </TabsContent>
+      </Tabs>
     </PageContainer>
   )
 }

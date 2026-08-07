@@ -4,39 +4,13 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 
 import { LanguageToggle } from "@/components/common/language-toggle"
+import { LogoMark } from "@/components/common/logo"
 import { ThemeToggle } from "@/components/common/theme-toggle"
 import { APP_NAME, ROUTES } from "@/constants/app"
 import { MOCK_TODAY_ISO } from "@/constants/mock-date"
 import { useLocale } from "@/i18n"
-import { cn } from "@/lib/utils"
 import { useAppState } from "@/store"
 import { LoginForm } from "./login-form"
-
-/** เครื่องหมายดอกจัน 8 แฉกปลายมน — ใช้เฉพาะแผงแบรนด์หน้า Login */
-function HeroMark({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 32 32"
-      fill="none"
-      aria-hidden="true"
-      className={cn("size-16 xl:size-20", className)}
-    >
-      {[0, 45, 90, 135].map((angle) => (
-        <line
-          key={angle}
-          x1={16}
-          y1={4}
-          x2={16}
-          y2={28}
-          stroke="currentColor"
-          strokeWidth={4.5}
-          strokeLinecap="round"
-          transform={`rotate(${angle} 16 16)`}
-        />
-      ))}
-    </svg>
-  )
-}
 
 /** พื้นผิวเกรนบางๆ ทับพื้นสีทึบของแผงแบรนด์ — ตกแต่งล้วน ไม่สื่อความหมาย */
 function HeroGrain() {
@@ -90,7 +64,7 @@ export function LoginView() {
             px เป็น % ของ section เท่ากับบรรทัดลิขสิทธิ์ จึงชิดซ้ายตรงกัน */}
         <div className="relative flex flex-1 flex-col justify-center px-[13%] pt-14 pb-8">
           <div className="max-w-lg">
-            <HeroMark />
+            <LogoMark className="size-16 xl:size-20" />
             <span className="sr-only">{APP_NAME}</span>
 
             <h2 className="mt-12 text-5xl leading-tight font-extrabold tracking-tight xl:text-6xl">

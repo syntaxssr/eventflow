@@ -15,8 +15,20 @@ type Tone = "default" | "warning" | "danger" | "brand"
 const TONE_TILE: Record<Tone, string> = {
   default: "bg-muted text-muted-foreground",
   brand: "bg-brand-50 text-brand-900",
+  // danger เข้มกว่า warning เสมอ เพราะเร่งด่วนกว่า — ค่าเดิมสลับกันอยู่
   warning: "bg-warning/25 text-foreground dark:bg-warning/30",
-  danger: "bg-danger/15 text-foreground dark:bg-danger/25",
+  danger: "bg-danger/35 text-foreground dark:bg-danger/40",
+}
+
+/**
+ * แถบสีซ้ายของการ์ด — ใช้เฉพาะโทนที่สื่อสถานะจริง (warning/danger)
+ * โทน default/brand ไม่มีแถบ เพราะเป็นตัวเลขเฉย ๆ ไม่ใช่สถานะ
+ */
+const TONE_ACCENT: Record<Tone, string> = {
+  default: "",
+  brand: "",
+  warning: "border-l-warning border-l-[3px]",
+  danger: "border-l-danger border-l-[3px]",
 }
 
 /**
@@ -42,7 +54,13 @@ export function StatCard({
   const animated = useCountUp(value)
 
   return (
-    <Card className="hover:border-brand-300 transition-colors">
+    <Card
+      className={cn(
+        // Card ใช้ ring ไม่ใช่ border — hover จึงต้องเน้นที่ ring ไม่งั้นทับสีแถบซ้าย
+        "overflow-hidden transition-colors hover:ring-foreground/25",
+        TONE_ACCENT[tone]
+      )}
+    >
       <CardContent className="p-0">
         <Link
           href={href}

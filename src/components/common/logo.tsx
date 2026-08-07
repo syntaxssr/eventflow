@@ -1,27 +1,32 @@
 import { APP_NAME } from "@/constants/app"
 import { cn } from "@/lib/utils"
 
-/** เครื่องหมายประจำระบบ — ปฏิทินที่มีเครื่องหมายถูก สื่อถึงกิจกรรมที่จัดสำเร็จ */
+/**
+ * เครื่องหมายประจำระบบ — ดอกจัน 8 แฉกปลายมน สื่อถึงจุดนัดพบของกิจกรรม
+ * ใช้ currentColor เพื่อให้กลืนกับสีข้อความของบริบทที่วาง (sidebar, แผงแบรนด์ Login)
+ */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 32 32"
+      fill="none"
       role="img"
       aria-hidden="true"
       className={cn("size-8", className)}
     >
-      <rect x="2" y="5" width="28" height="25" rx="6" fill="var(--foreground)" />
-      <rect x="2" y="5" width="28" height="7" rx="3.5" fill="var(--foreground)" />
-      <rect x="8" y="2" width="3" height="7" rx="1.5" fill="var(--foreground)" />
-      <rect x="21" y="2" width="3" height="7" rx="1.5" fill="var(--foreground)" />
-      <path
-        d="M10 21.5l4 4 8-8"
-        fill="none"
-        stroke="var(--background)"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      {[0, 45, 90, 135].map((angle) => (
+        <line
+          key={angle}
+          x1={16}
+          y1={4}
+          x2={16}
+          y2={28}
+          stroke="currentColor"
+          strokeWidth={4.5}
+          strokeLinecap="round"
+          transform={`rotate(${angle} 16 16)`}
+        />
+      ))}
     </svg>
   )
 }

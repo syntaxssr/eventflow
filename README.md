@@ -47,7 +47,7 @@ npm install
 
 | คำสั่ง | ทำอะไร |
 |---|---|
-| `npm run dev` | เปิด dev server ที่ http://localhost:3000 |
+| `npm run dev` | เปิด dev server ที่ http://localhost:3001 |
 | `npm run build` | สร้าง production build |
 | `npm start` | รัน production build |
 | `npm run lint` | ตรวจ ESLint |
