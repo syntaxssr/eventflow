@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test"
 
-export const DEMO_EMAIL = "paweena.s@company.co.th"
+export const DEMO_EMAIL = "alisa.l@company.co.th"
 export const DEMO_PASSWORD = "eventflow"
 
 /** เข้าสู่ระบบด้วยบัญชีทดลองแล้วรอจนถึงหน้า Dashboard */

@@ -24,7 +24,7 @@ import { FILE_TYPE_STYLE } from "@/constants/file-type"
 import { useLocale } from "@/i18n"
 import { splitMentionSegments } from "@/lib/comment"
 import { formatDateTime, formatFileSize, formatRelativeTime } from "@/lib/format"
-import { getFullName } from "@/lib/user"
+import { getFullName, getLegalName } from "@/lib/user"
 import { cn } from "@/lib/utils"
 import type { CommentNode } from "@/types/comment"
 import type { FileType } from "@/types/file"
@@ -61,9 +61,10 @@ export function CommentItem({
   const author = usersById.get(node.authorId)
   const isOwn = node.authorId === currentUserId
 
+  // ไฮไลต์ด้วยชื่อจริงล้วน ให้ตรงกับรูปแบบที่ comment-input แทรกลงข้อความ
   const mentionNames = node.mentionIds.flatMap((id) => {
     const user = usersById.get(id)
-    return user ? [getFullName(user, "th"), getFullName(user, "en")] : []
+    return user ? [getLegalName(user, "th"), getLegalName(user, "en")] : []
   })
   const segments = splitMentionSegments(tl(node.body), mentionNames)
 

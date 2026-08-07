@@ -83,6 +83,13 @@ export const th = {
     switchUser: "สลับผู้ใช้",
     switchUserHint: "ทดลองใช้งานในมุมมองของสมาชิกคนอื่นได้ทันที",
     switchedTo: "สลับเป็นผู้ใช้",
+    heroGreeting: "สวัสดี EventFlow!",
+    heroBody:
+      "รวมกำหนดการ งาน ผู้เข้าร่วม และการสื่อสารของทุกกิจกรรมไว้ที่เดียว ไม่ต้องไล่ตามไฟล์และแชทอีกต่อไป",
+    forgotPassword: "ลืมรหัสผ่าน",
+    forgotPasswordCta: "กดที่นี่",
+    forgotPasswordUnavailable:
+      "ยังไม่รองรับในเวอร์ชันตัวอย่าง — ใช้บัญชีทดลองด้านล่างแทนได้",
   },
   shell: {
     mainNavigation: "เมนูหลัก",

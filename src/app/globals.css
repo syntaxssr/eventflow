@@ -95,6 +95,13 @@
   --color-general-blue: #a3defe;
   --color-general-purple: #7b69cc;
 
+  /* Auth hero — คู่สีไล่ระดับ (บนสว่าง ล่างเข้ม) ที่อยู่นอกพาเลตหลัก
+     อนุมัติเฉพาะแผงแบรนด์หน้า Login ห้ามนำไปใช้ที่อื่น
+     (ดู colors.md หัวข้อ "ข้อยกเว้น") */
+  --color-auth-hero: #4b4fea;
+  --color-auth-hero-deep: #131796;
+  --color-auth-hero-foreground: #f2f2f0;
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -283,6 +290,27 @@
     @apply outline-ring outline-2 outline-offset-2;
   }
 
+  /* ไฮไลต์ตอนลากเลือกข้อความ — ดีฟอลต์ของเบราว์เซอร์เป็นน้ำเงินซึ่งอยู่นอกพาเลต
+     ใช้ดำ/ขาวลดความทึบแทน ได้โทนเดียวกับพื้นหลังแต่เข้มขึ้นหนึ่งขั้น
+     (light: #f2f2f0 กลายเป็น ~#d5d5d3) ตัวอักษรคงสีเดิมจึงอ่านง่ายเสมอ */
+  ::selection {
+    background-color: rgb(28 28 28 / 12%);
+    color: var(--foreground);
+  }
+
+  .dark ::selection {
+    background-color: rgb(242 242 240 / 20%);
+    color: var(--foreground);
+  }
+
+  /* แผงแบรนด์หน้า Login พื้นน้ำเงินเข้ม ตัวอักษรขาว — ดำ 12% แทบไม่เห็น
+     ใช้ขาวลดความทึบแทน ทั้งสองธีม */
+  [data-auth-hero] ::selection {
+    background-color: rgb(242 242 240 / 28%);
+    /* ไม่กำหนด color — ปล่อยให้สืบทอดสีขาวของแผงมาเอง
+       (--color-auth-hero-foreground อยู่ใน @theme inline จึงไม่ถูก emit เป็นตัวแปรจริง) */
+  }
+
   /* หัวข้อใช้น้ำหนักที่ LINE Seed Sans TH มีจริง (400/700/800) */
   h1,
   h2,
@@ -322,42 +350,20 @@
   }
 }
 
-/* Sonner richColors — การ์ดพื้นสีสถานะทึบ 100% (ไม่โปร่งใส) + หัวข้อ/ข้อความ
-   รองเป็นดำเสมอ (อ่านง่ายบนพื้นทึบ) ไอคอนเป็นอีโมจิพิกเซล (PixelFace) แทน
-   การพึ่งสีอย่างเดียว ต้องชี้ที่ตัว toast เองเพราะไลบรารีตั้งตัวแปรไว้บน
-   toast ไม่ใช่ toaster */
-[data-sonner-toast][data-rich-colors="true"][data-type="success"] {
-  --success-bg: color-mix(in srgb, var(--success) 100%, transparent);
-  --success-border: color-mix(in srgb, var(--success) 100%, transparent);
-  --success-text: #1c1c1c;
-}
-[data-sonner-toast][data-rich-colors="true"][data-type="warning"] {
-  --warning-bg: color-mix(in srgb, var(--warning) 100%, transparent);
-  --warning-border: color-mix(in srgb, var(--warning) 100%, transparent);
-  --warning-text: #1c1c1c;
-}
-[data-sonner-toast][data-rich-colors="true"][data-type="info"] {
-  --info-bg: color-mix(in srgb, var(--info) 100%, transparent);
-  --info-border: color-mix(in srgb, var(--info) 100%, transparent);
-  --info-text: #1c1c1c;
-}
-[data-sonner-toast][data-rich-colors="true"][data-type="error"] {
-  --error-bg: color-mix(in srgb, var(--danger) 100%, transparent);
-  --error-border: color-mix(in srgb, var(--danger) 100%, transparent);
-  --error-text: #1c1c1c;
-}
-
-[data-sonner-toast] [data-title] {
-  color: #1c1c1c !important;
-  font-weight: 700 !important;
-}
-[data-sonner-toast] [data-description] {
-  color: #1c1c1c !important;
-  font-weight: 500 !important;
-}
+/* Sonner — การ์ดพื้นกลาง (popover) ตามค่าเริ่มต้นของไลบรารี สถานะสื่อผ่าน
+   ไอคอนที่รูปทรงต่างกันต่อชนิด ไม่พึ่งสีอย่างเดียว */
 [data-sonner-toast] [data-icon] {
-  width: 2.25rem !important;
-  height: 2.25rem !important;
-  margin-right: 0.5rem !important;
   flex-shrink: 0;
+}
+[data-sonner-toast][data-type="success"] [data-icon] {
+  color: var(--success);
+}
+[data-sonner-toast][data-type="warning"] [data-icon] {
+  color: var(--warning);
+}
+[data-sonner-toast][data-type="info"] [data-icon] {
+  color: var(--info);
+}
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: var(--danger);
 }

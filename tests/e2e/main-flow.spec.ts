@@ -54,9 +54,9 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
   const taskDialog = page.getByRole("dialog")
   await taskDialog.getByLabel("ชื่องาน").fill("เตรียมเอกสารประกอบสัมมนา")
   await taskDialog.getByLabel("กำหนดส่ง").fill("2026-11-10")
-  // ผู้รับผิดชอบ 3 คน (ปวีณาถูกเลือกไว้เป็นค่าเริ่มต้น)
-  await taskDialog.getByLabel(/ธนกฤต วงศ์อนันต์/).check()
-  await taskDialog.getByLabel(/สิริพร ใจดี/).check()
+  // ผู้รับผิดชอบ 3 คน (อลิสาถูกเลือกไว้เป็นค่าเริ่มต้น)
+  await taskDialog.getByLabel(/หฤทัย ทิพยประไพ/).check()
+  await taskDialog.getByLabel(/กิตติคุณ เจริญพานิช/).check()
   await taskDialog.getByRole("button", { name: "บันทึก" }).click()
   await expect(page.getByText("เพิ่มงานเรียบร้อยแล้ว")).toBeVisible()
 
@@ -114,7 +114,7 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
   await timelineDialog.getByLabel("เวลาเริ่ม").fill("08:30")
   await timelineDialog.getByLabel("เวลาสิ้นสุด").fill("09:00")
   await timelineDialog.getByLabel("สถานที่").fill("หน้าห้องประชุมใหญ่")
-  await timelineDialog.getByLabel(/ปวีณา ศรีสุวรรณ/).check()
+  await timelineDialog.getByLabel(/อลิสา ลีลายุวัฒนกุล/).check()
   await timelineDialog.getByRole("button", { name: "บันทึก" }).click()
   await expect(page.getByText("เพิ่มรายการไทม์ไลน์แล้ว")).toBeVisible()
   await expect(page.getByTestId("timeline-phase-during")).toContainText(
@@ -130,9 +130,9 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
   await expect(page.getByTestId("task-detail")).toBeVisible()
 
   const commentInput = page.getByTestId("new-comment-input")
-  await commentInput.fill("เอกสารพร้อมแล้ว ฝากตรวจอีกรอบนะ @ธน")
-  await page.getByRole("option", { name: /ธนกฤต วงศ์อนันต์/ }).click()
-  await expect(commentInput).toHaveValue(/@ธนกฤต วงศ์อนันต์/)
+  await commentInput.fill("เอกสารพร้อมแล้ว ฝากตรวจอีกรอบนะ @หฤ")
+  await page.getByRole("option", { name: /หฤทัย ทิพยประไพ/ }).click()
+  await expect(commentInput).toHaveValue(/@หฤทัย ทิพยประไพ/)
   await page.getByTestId("new-comment-submit").click()
   await expect(page.getByText("เพิ่มความคิดเห็นแล้ว")).toBeVisible()
   await page.keyboard.press("Escape")
@@ -140,8 +140,8 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
   /* ---- 12. เปิด Notification (ในมุมมองผู้ถูก mention) ---- */
   await page.getByTestId("user-menu").click()
   await page.getByTestId("switch-user-trigger").click()
-  await page.getByRole("menuitemradio", { name: /ธนกฤต วงศ์อนันต์/ }).click()
-  await expect(page.getByTestId("user-menu")).toContainText("ธนกฤต วงศ์อนันต์")
+  await page.getByRole("menuitemradio", { name: /หฤทัย ทิพยประไพ/ }).click()
+  await expect(page.getByTestId("user-menu")).toContainText("หฤทัย ทิพยประไพ")
 
   await page.getByTestId("notification-bell").click()
   const mentionItem = page
@@ -163,7 +163,7 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
   await page
     .getByRole("option", { name: /งานเลี้ยงประจำปีของบริษัท 2569/ })
     .click()
-  await expect(page.getByTestId("participant-summary-total")).toHaveText("83")
+  await expect(page.getByTestId("participant-summary-total")).toHaveText("90")
 
   await page.getByTestId("open-import").click()
   await page
@@ -188,7 +188,7 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
   await expect(
     page.getByText("นำเข้าสำเร็จ — เพิ่มใหม่ 3 คน อัปเดต 2 คน")
   ).toBeVisible()
-  await expect(page.getByTestId("participant-summary-total")).toHaveText("86")
+  await expect(page.getByTestId("participant-summary-total")).toHaveText("93")
 
   /* ---- 15. Export PDF ---- */
   await page

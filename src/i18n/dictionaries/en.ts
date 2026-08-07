@@ -82,6 +82,13 @@ export const en: Dictionary = {
     switchUser: "Switch user",
     switchUserHint: "Instantly explore the app as another team member",
     switchedTo: "Switched user",
+    heroGreeting: "Hello EventFlow!",
+    heroBody:
+      "Keep every schedule, task, participant and conversation for an event in one place. No more chasing files and chat threads.",
+    forgotPassword: "Forgot password",
+    forgotPasswordCta: "Click here",
+    forgotPasswordUnavailable:
+      "Not available in this prototype — use a demo account below instead.",
   },
   shell: {
     mainNavigation: "Main navigation",

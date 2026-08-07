@@ -124,7 +124,7 @@ test.describe("Phase 9 — Activity History", () => {
     // กรองผู้ดำเนินการเพิ่ม
     await page.getByLabel("ผู้ดำเนินการ").click()
     await page
-      .getByRole("option", { name: /ธนกฤต วงศ์อนันต์/ })
+      .getByRole("option", { name: /หฤทัย ทิพยประไพ/ })
       .click()
     await expect(page.getByText(/พบ \d+ รายการ/)).toBeVisible()
 
@@ -259,8 +259,8 @@ test.describe("Phase 9 — Profile", () => {
     await page.waitForURL("**/profile")
 
     const card = page.getByTestId("profile-card")
-    await expect(card).toContainText("ปวีณา ศรีสุวรรณ")
-    await expect(card).toContainText("paweena.s@company.co.th")
+    await expect(card).toContainText("อลิสา ลีลายุวัฒนกุล")
+    await expect(card).toContainText("alisa.l@company.co.th")
     await expect(page.getByTestId("profile-assigned")).toBeVisible()
     await expect(page.getByTestId("profile-due-soon")).toBeVisible()
     await expect(page.getByTestId("profile-completed")).toBeVisible()
@@ -269,13 +269,13 @@ test.describe("Phase 9 — Profile", () => {
     // เปลี่ยนตามผู้ใช้ที่สลับ
     await page.getByTestId("user-menu").click()
     await page.getByTestId("switch-user-trigger").click()
-    await page.getByRole("menuitemradio", { name: /ธนกฤต วงศ์อนันต์/ }).click()
+    await page.getByRole("menuitemradio", { name: /หฤทัย ทิพยประไพ/ }).click()
     await page
       .getByTestId("sidebar-nav")
       .getByRole("link", { name: "โปรไฟล์", exact: true })
       .click()
     await expect(page.getByTestId("profile-card")).toContainText(
-      "ธนกฤต วงศ์อนันต์"
+      "หฤทัย ทิพยประไพ"
     )
 
     // คลิกงานในหมวดแล้วเปิดรายละเอียดงาน

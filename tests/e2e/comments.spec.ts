@@ -40,7 +40,7 @@ test.describe("Phase 8 — Comment thread", () => {
     await expect(section.getByTestId("comment-item")).toHaveCount(3)
     await expect(
       section.getByTestId("mention-highlight").first()
-    ).toContainText("@ณัฐวุฒิ แสงทอง")
+    ).toContainText("@อัณชวิศศ์ ปาร์มวงศ์")
     await expect(section.getByText("แก้ไขแล้ว").first()).toBeVisible()
     await expect(section.getByTestId("reaction-chip").first()).toBeVisible()
   })
@@ -156,22 +156,22 @@ test.describe("Phase 8 — Mention & notifications", () => {
 
     const section = page.getByTestId("comment-section")
     const input = section.getByTestId("new-comment-input")
-    await input.fill("ฝากตรวจสคริปต์ช่วงเปิดงานด้วยนะ @ธน")
+    await input.fill("ฝากตรวจสคริปต์ช่วงเปิดงานด้วยนะ @หฤ")
     // autocomplete ต้องเปิดและเลือกด้วยเมาส์ได้
     await expect(section.getByTestId("new-comment-mention-list")).toBeVisible()
-    await page.getByRole("option", { name: /ธนกฤต วงศ์อนันต์/ }).click()
-    await expect(input).toHaveValue(/@ธนกฤต วงศ์อนันต์/)
+    await page.getByRole("option", { name: /หฤทัย ทิพยประไพ/ }).click()
+    await expect(input).toHaveValue(/@หฤทัย ทิพยประไพ/)
 
     await section.getByTestId("new-comment-submit").click()
     await expect(page.getByText("เพิ่มความคิดเห็นแล้ว")).toBeVisible()
     await expect(
       section.getByTestId("mention-highlight").filter({
-        hasText: "@ธนกฤต วงศ์อนันต์",
+        hasText: "@หฤทัย ทิพยประไพ",
       })
     ).toBeVisible()
 
     // สลับเป็นผู้ถูก mention แล้วต้องเห็นการแจ้งเตือนทันที
-    await switchUser(page, /ธนกฤต วงศ์อนันต์/)
+    await switchUser(page, /หฤทัย ทิพยประไพ/)
     await page.getByTestId("notification-bell").click()
 
     const dropdown = page.getByTestId("notification-dropdown")
@@ -197,8 +197,8 @@ test.describe("Phase 8 — Mention & notifications", () => {
   test("ปิดรับ mention ใน settings แล้วต้องไม่เกิดการแจ้งเตือนใหม่", async ({
     page,
   }) => {
-    // ธนกฤตปิดการแจ้งเตือนประเภท mention ของตัวเอง
-    await signIn(page, "thanakrit.w@company.co.th")
+    // หฤทัยปิดการแจ้งเตือนประเภท mention ของตัวเอง
+    await signIn(page, "haruthai.t@company.co.th")
     await page
       .getByTestId("sidebar-nav")
       .getByRole("link", { name: "ตั้งค่าการแจ้งเตือน", exact: true })
@@ -210,17 +210,17 @@ test.describe("Phase 8 — Mention & notifications", () => {
       "unchecked"
     )
 
-    // ปวีณา mention ธนกฤตในความคิดเห็น
-    await switchUser(page, /ปวีณา ศรีสุวรรณ/)
+    // อลิสา mention หฤทัยในความคิดเห็น
+    await switchUser(page, /อลิสา ลีลายุวัฒนกุล/)
     await openTask(page, /จัดทำลำดับพิธีการ/)
     const section = page.getByTestId("comment-section")
-    await section.getByTestId("new-comment-input").fill("ทดสอบปิดแจ้งเตือน @ธน")
-    await page.getByRole("option", { name: /ธนกฤต วงศ์อนันต์/ }).click()
+    await section.getByTestId("new-comment-input").fill("ทดสอบปิดแจ้งเตือน @หฤ")
+    await page.getByRole("option", { name: /หฤทัย ทิพยประไพ/ }).click()
     await section.getByTestId("new-comment-submit").click()
     await expect(page.getByText("เพิ่มความคิดเห็นแล้ว")).toBeVisible()
 
-    // กลับมาเป็นธนกฤต — จำนวนแจ้งเตือน "ถูกกล่าวถึง" ต้องเท่ากับ mock เดิม (1)
-    await switchUser(page, /ธนกฤต วงศ์อนันต์/)
+    // กลับมาเป็นหฤทัย — จำนวนแจ้งเตือน "ถูกกล่าวถึง" ต้องเท่ากับ mock เดิม (1)
+    await switchUser(page, /หฤทัย ทิพยประไพ/)
     await page
       .getByTestId("sidebar-nav")
       .getByRole("link", { name: "การแจ้งเตือน", exact: true })

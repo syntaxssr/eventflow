@@ -10,19 +10,16 @@ import {
 } from "@/mock/users"
 
 describe("mock users", () => {
-  it("มีสมาชิกทีมครบ 7 บทบาทตามที่ระบุไว้ใน requirement", () => {
-    expect(MOCK_USERS).toHaveLength(7)
-    expect(MOCK_USERS.map((user) => user.role).sort()).toEqual(
-      [
-        "creative_designer",
-        "event_manager",
-        "finance_coordinator",
-        "hr_coordinator",
-        "it_support",
-        "mc_coordinator",
-        "venue_coordinator",
-      ].sort()
-    )
+  it("มีสมาชิกทีมครบ 14 คน เป็น admin หนึ่งคน ที่เหลือเป็น staff", () => {
+    expect(MOCK_USERS).toHaveLength(14)
+
+    const admins = MOCK_USERS.filter((user) => user.role === "admin")
+    expect(admins).toHaveLength(1)
+    expect(admins[0].email).toBe("peerapon.c@company.co.th")
+
+    expect(
+      MOCK_USERS.filter((user) => user.role === "staff")
+    ).toHaveLength(13)
   })
 
   it("id และอีเมลไม่ซ้ำกัน", () => {

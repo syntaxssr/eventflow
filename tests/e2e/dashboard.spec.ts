@@ -17,7 +17,7 @@ test.describe("Phase 2 — Dashboard", () => {
   test("ทักทายด้วยชื่อผู้ใช้ที่เข้าสู่ระบบ", async ({ page }) => {
     await signIn(page)
     await expect(
-      page.getByRole("heading", { level: 1, name: /สวัสดี ปวีณา ศรีสุวรรณ/ })
+      page.getByRole("heading", { level: 1, name: /สวัสดี อลิสา ลีลายุวัฒนกุล/ })
     ).toBeVisible()
   })
 
@@ -134,13 +134,13 @@ test.describe("Phase 2 — Dashboard", () => {
 
     await page.getByTestId("user-menu").click()
     await page.getByTestId("switch-user-trigger").click()
-    await page.getByRole("menuitemradio", { name: /สิริพร ใจดี/ }).click()
+    await page.getByRole("menuitemradio", { name: /กิตติคุณ เจริญพานิช/ }).click()
 
     await expect(
-      page.getByRole("heading", { level: 1, name: /สวัสดี สิริพร ใจดี/ })
+      page.getByRole("heading", { level: 1, name: /สวัสดี กิตติคุณ เจริญพานิช/ })
     ).toBeVisible()
 
-    // งานของสิริพร (u-3) ต้องเข้ามาแทน และงานของปวีณาต้องหายไป
+    // งานของกิตติคุณ (u-3) ต้องเข้ามาแทน และงานของอลิสาต้องหายไป
     await expect(urgentTasks).toContainText("สรุปยอดจองโต๊ะรอบแรก")
     await expect(urgentTasks).not.toContainText("จัดทำลำดับพิธีการ (Run Down)")
   })

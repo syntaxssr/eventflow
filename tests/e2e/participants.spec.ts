@@ -27,9 +27,9 @@ test.describe("Phase 7 — Participants list", () => {
   test("แสดงการ์ดสรุปและตารางรายชื่อของงานเลี้ยงประจำปี", async ({ page }) => {
     await gotoParticipants(page)
 
-    await expect(page.getByTestId("participant-summary-total")).toHaveText("83")
+    await expect(page.getByTestId("participant-summary-total")).toHaveText("90")
     await expect(page.getByTestId("participant-summary-attending")).toHaveText(
-      "53"
+      "60"
     )
     await expect(
       page.getByTestId("participant-summary-notAttending")
@@ -37,7 +37,7 @@ test.describe("Phase 7 — Participants list", () => {
     await expect(page.getByTestId("participant-summary-pending")).toHaveText(
       "19"
     )
-    await expect(page.getByText("พบ 83 คน")).toBeVisible()
+    await expect(page.getByText("พบ 90 คน")).toBeVisible()
     await expect(page.getByTestId("participant-table")).toBeVisible()
   })
 
@@ -58,7 +58,7 @@ test.describe("Phase 7 — Participants list", () => {
     await expect(page.getByText("พบ 4 คน")).toBeVisible()
 
     await page.getByRole("button", { name: "ล้างทั้งหมด" }).click()
-    await expect(page.getByText("พบ 83 คน")).toBeVisible()
+    await expect(page.getByText("พบ 90 คน")).toBeVisible()
   })
 
   test("เพิ่มรายชื่อใหม่ + ตรวจอีเมลซ้ำ", async ({ page }) => {
@@ -81,7 +81,7 @@ test.describe("Phase 7 — Participants list", () => {
       .fill("test.e2e@company.co.th")
     await page.getByRole("button", { name: "เพิ่ม", exact: true }).click()
     await expect(page.getByText("เพิ่มผู้เข้าร่วมแล้ว")).toBeVisible()
-    await expect(page.getByTestId("participant-summary-total")).toHaveText("84")
+    await expect(page.getByTestId("participant-summary-total")).toHaveText("91")
   })
 
   test("Bulk เปลี่ยนสถานะตอบรับพร้อมกล่องยืนยัน", async ({ page }) => {
@@ -104,9 +104,9 @@ test.describe("Phase 7 — Participants list", () => {
     await page.getByRole("button", { name: "ยืนยัน", exact: true }).click()
 
     await expect(page.getByText("เปลี่ยนสถานะตอบรับ 3 รายการแล้ว")).toBeVisible()
-    // เดิม: เข้าร่วม 53 + เกวลินที่ยังไม่ตอบ/ตอบรับแล้วรวมเป็น 55
+    // เดิม: เข้าร่วม 60 + เกวลินที่ยังไม่ตอบ/ตอบรับแล้วรวมเป็น 55
     await expect(page.getByTestId("participant-summary-attending")).toHaveText(
-      "55"
+      "62"
     )
   })
 
@@ -125,7 +125,7 @@ test.describe("Phase 7 — Participants list", () => {
     await page.getByRole("button", { name: "ลบ", exact: true }).click()
 
     await expect(page.getByText("ลบ 1 รายชื่อแล้ว")).toBeVisible()
-    await expect(page.getByTestId("participant-summary-total")).toHaveText("82")
+    await expect(page.getByTestId("participant-summary-total")).toHaveText("89")
   })
 })
 
@@ -191,8 +191,8 @@ test.describe("Phase 7 — Excel import", () => {
       page.getByText("นำเข้าสำเร็จ — เพิ่มใหม่ 3 คน อัปเดต 2 คน")
     ).toBeVisible()
 
-    // ตารางและการ์ดสรุปอัปเดตทันที: 83 + 3 = 86, สมชายเปลี่ยนเป็นไม่เข้าร่วม (11 + เกศรา + สมชาย = 13)
-    await expect(page.getByTestId("participant-summary-total")).toHaveText("86")
+    // ตารางและการ์ดสรุปอัปเดตทันที: 90 + 3 = 93, สมชายเปลี่ยนเป็นไม่เข้าร่วม (11 + เกศรา + สมชาย = 13)
+    await expect(page.getByTestId("participant-summary-total")).toHaveText("93")
     await expect(
       page.getByTestId("participant-summary-notAttending")
     ).toHaveText("13")
@@ -242,7 +242,7 @@ test.describe("Phase 7 — Excel export", () => {
 
     await page.getByTestId("open-export").click()
     await expect(
-      page.getByText("รายชื่อทั้งหมด (83 คน)")
+      page.getByText("รายชื่อทั้งหมด (90 คน)")
     ).toBeVisible()
 
     const downloadPromise = page.waitForEvent("download")
@@ -268,7 +268,7 @@ test.describe("Phase 7 — Event detail tab", () => {
     await page.waitForURL("**/events/e-1")
 
     await page.getByRole("tab", { name: "ผู้เข้าร่วม" }).click()
-    await expect(page.getByTestId("participant-summary-total")).toHaveText("83")
+    await expect(page.getByTestId("participant-summary-total")).toHaveText("90")
     // ในแท็บของกิจกรรมต้องไม่มีตัวเลือกกิจกรรมซ้ำ
     await expect(
       page.getByTestId("participant-event-select")

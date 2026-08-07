@@ -175,8 +175,8 @@ export function DesignSystemView() {
                 สีของ avatar
               </p>
               <p className="text-muted-foreground text-xs">
-                ชุดสีตายตัว 30 สี — ใช้กำหนดสีพื้นหลัง Avatar ของผู้ใช้แต่ละคน
-                แบบไม่ซ้ำได้ถึง 30 คน
+                ชุดสีตายตัว 14 สี — ใช้กำหนดสีพื้นหลัง Avatar ของผู้ใช้แต่ละคน
+                แบบไม่ซ้ำได้ถึง 14 คน เกินจากนั้นจะวนซ้ำสี
               </p>
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-6">
                 {AVATAR_PALETTE_ITEMS.map((item) => (

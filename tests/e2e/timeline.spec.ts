@@ -82,7 +82,7 @@ test.describe("Phase 5 — Timeline editing", () => {
     await dialog.getByLabel("เวลาเริ่ม").fill("10:00")
     await dialog.getByLabel("เวลาสิ้นสุด").fill("11:00")
     await dialog.getByLabel("สถานที่").fill("ห้องแถลงข่าว ชั้น 1")
-    await dialog.getByLabel(/ปวีณา ศรีสุวรรณ/).check()
+    await dialog.getByLabel(/อลิสา ลีลายุวัฒนกุล/).check()
     await dialog.getByRole("button", { name: "บันทึก" }).click()
 
     await expect(page.getByText("เพิ่มรายการไทม์ไลน์แล้ว")).toBeVisible()
@@ -100,7 +100,7 @@ test.describe("Phase 5 — Timeline editing", () => {
     const dialog = page.getByRole("dialog")
     await dialog.getByLabel("ชื่อรายการ").fill("รายการทดสอบเวลา")
     await dialog.getByLabel("สถานที่").fill("ที่ไหนสักแห่ง")
-    await dialog.getByLabel(/ปวีณา ศรีสุวรรณ/).check()
+    await dialog.getByLabel(/อลิสา ลีลายุวัฒนกุล/).check()
     await dialog.getByLabel("เวลาเริ่ม").fill("15:00")
     await dialog.getByLabel("เวลาสิ้นสุด").fill("14:00")
     await dialog.getByRole("button", { name: "บันทึก" }).click()
@@ -139,10 +139,10 @@ test.describe("Phase 5 — Timeline editing", () => {
       "19:30–20:10"
     )
 
-    // สิริพร (u-3) เป็นผู้รับผิดชอบร่วม ต้องได้รับการแจ้งเตือน
+    // กิตติคุณ (u-3) เป็นผู้รับผิดชอบร่วม ต้องได้รับการแจ้งเตือน
     await page.getByTestId("user-menu").click()
     await page.getByTestId("switch-user-trigger").click()
-    await page.getByRole("menuitemradio", { name: /สิริพร ใจดี/ }).click()
+    await page.getByRole("menuitemradio", { name: /กิตติคุณ เจริญพานิช/ }).click()
 
     await expect(page.getByTestId("notification-bell")).toHaveAttribute(
       "aria-label",

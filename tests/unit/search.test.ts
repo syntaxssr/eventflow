@@ -44,9 +44,9 @@ describe("globalSearch", () => {
     const byStatus = globalSearch(source, "ถูกบล็อก")
     expect(byStatus.tasks.some((task) => task.status === "blocked")).toBe(true)
 
-    const byAssignee = globalSearch(source, "ปวีณา")
+    const byAssignee = globalSearch(source, "อลิสา")
     expect(byAssignee.tasks.length).toBeGreaterThan(0)
-    expect(byAssignee.users.some((user) => user.firstName.th === "ปวีณา")).toBe(
+    expect(byAssignee.users.some((user) => user.firstName.th === "อลิสา")).toBe(
       true
     )
   })

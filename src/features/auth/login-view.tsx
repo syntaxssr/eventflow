@@ -2,54 +2,73 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import {
-  CalendarCheckIcon,
-  ListChecksIcon,
-  MessagesSquareIcon,
-  UsersIcon,
-} from "lucide-react"
 
 import { LanguageToggle } from "@/components/common/language-toggle"
-import { Logo } from "@/components/common/logo"
 import { ThemeToggle } from "@/components/common/theme-toggle"
-import { Card, CardContent } from "@/components/ui/card"
-import { ROUTES } from "@/constants/app"
+import { APP_NAME, ROUTES } from "@/constants/app"
 import { MOCK_TODAY_ISO } from "@/constants/mock-date"
 import { useLocale } from "@/i18n"
+import { cn } from "@/lib/utils"
 import { useAppState } from "@/store"
 import { LoginForm } from "./login-form"
 
-const HIGHLIGHTS = [
-  { icon: CalendarCheckIcon, key: "timeline" },
-  { icon: ListChecksIcon, key: "tasks" },
-  { icon: UsersIcon, key: "participants" },
-  { icon: MessagesSquareIcon, key: "collaboration" },
-] as const
+/** เครื่องหมายดอกจัน 8 แฉกปลายมน — ใช้เฉพาะแผงแบรนด์หน้า Login */
+function HeroMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      fill="none"
+      aria-hidden="true"
+      className={cn("size-16 xl:size-20", className)}
+    >
+      {[0, 45, 90, 135].map((angle) => (
+        <line
+          key={angle}
+          x1={16}
+          y1={4}
+          x2={16}
+          y2={28}
+          stroke="currentColor"
+          strokeWidth={4.5}
+          strokeLinecap="round"
+          transform={`rotate(${angle} 16 16)`}
+        />
+      ))}
+    </svg>
+  )
+}
 
-const HIGHLIGHT_TEXT: Record<
-  (typeof HIGHLIGHTS)[number]["key"],
-  { th: string; en: string }
-> = {
-  timeline: {
-    th: "วางกำหนดการและไทม์ไลน์ของงานได้ในที่เดียว",
-    en: "Plan the full event timeline in one place",
-  },
-  tasks: {
-    th: "มอบหมายงาน ติดตามสถานะ และเช็กความคืบหน้า",
-    en: "Assign tasks, track status and progress",
-  },
-  participants: {
-    th: "จัดการรายชื่อผู้เข้าร่วมและสถานะตอบรับ",
-    en: "Manage participants and RSVP responses",
-  },
-  collaboration: {
-    th: "สื่อสารกับทีมผ่านความคิดเห็นและการแจ้งเตือน",
-    en: "Collaborate through comments and notifications",
-  },
+/** พื้นผิวเกรนบางๆ ทับพื้นสีทึบของแผงแบรนด์ — ตกแต่งล้วน ไม่สื่อความหมาย */
+function HeroGrain() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 size-full opacity-[0.18] mix-blend-overlay"
+    >
+      <filter id="auth-hero-grain">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.9"
+          numOctaves={4}
+          stitchTiles="stitch"
+        />
+        <feColorMatrix type="saturate" values="0" />
+        {/* จูนให้ค่ากลางอยู่ที่ 0.5 พอดี overlay จึงได้ทั้งเม็ดสว่างและเม็ดมืด
+            ไม่ใช่ฝ้าขาวทับอย่างเดียว — alpha คงที่ ความเข้มคุมด้วย opacity ข้างนอก */}
+        <feComponentTransfer>
+          <feFuncR type="linear" slope="1.8" intercept="-0.65" />
+          <feFuncG type="linear" slope="1.8" intercept="-0.65" />
+          <feFuncB type="linear" slope="1.8" intercept="-0.65" />
+          <feFuncA type="linear" slope="0" intercept="1" />
+        </feComponentTransfer>
+      </filter>
+      <rect width="100%" height="100%" filter="url(#auth-hero-grain)" />
+    </svg>
+  )
 }
 
 export function LoginView() {
-  const { t, locale } = useLocale()
+  const { t } = useLocale()
   const router = useRouter()
   const session = useAppState().session
 
@@ -60,62 +79,60 @@ export function LoginView() {
 
   return (
     <main className="flex min-h-svh flex-col lg:flex-row">
-      {/* แผงแบรนด์ — โทนเทาไล่น้ำหนักแบบมินิมอล ไม่ใช้สี accent */}
-      <section className="bg-brand-50 relative hidden flex-1 flex-col justify-between p-10 lg:flex">
-        <Logo size="lg" className="text-brand-950" />
+      {/* แผงแบรนด์ — สีนอกพาเลตที่อนุมัติเฉพาะจุดนี้ (ดู colors.md) */}
+      <section
+        data-auth-hero
+        className="from-auth-hero to-auth-hero-deep text-auth-hero-foreground relative hidden flex-col overflow-hidden bg-gradient-to-b lg:flex lg:flex-[3]"
+      >
+        <HeroGrain />
 
-        <div className="max-w-md space-y-6">
-          <h2 className="text-brand-950 text-3xl font-extrabold tracking-tight text-balance">
-            {t("common.tagline")}
-          </h2>
-          <ul className="space-y-3">
-            {HIGHLIGHTS.map(({ icon: Icon, key }) => (
-              <li key={key} className="flex items-start gap-3">
-                <span
-                  className="bg-brand-500 mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full"
-                  aria-hidden="true"
-                >
-                  <Icon className="size-4 text-foreground" />
-                </span>
-                <span className="text-brand-950 text-sm">
-                  {HIGHLIGHT_TEXT[key][locale]}
-                </span>
-              </li>
-            ))}
-          </ul>
+        {/* ไอคอน + หัวเรื่อง + คำโปรย เป็นบล็อกเดียวกันตามตัวอย่าง
+            px เป็น % ของ section เท่ากับบรรทัดลิขสิทธิ์ จึงชิดซ้ายตรงกัน */}
+        <div className="relative flex flex-1 flex-col justify-center px-[13%] pt-14 pb-8">
+          <div className="max-w-lg">
+            <HeroMark />
+            <span className="sr-only">{APP_NAME}</span>
+
+            <h2 className="mt-12 text-5xl leading-tight font-extrabold tracking-tight xl:text-6xl">
+              {t("auth.heroGreeting")}
+              {/* NBSP กันอิโมจิตกไปอยู่บรรทัดเดียวโดดๆ */}
+              <span aria-hidden="true">{" 👋🏻"}</span>
+            </h2>
+            <p className="mt-6 max-w-md text-lg leading-relaxed">
+              {t("auth.heroBody")}
+            </p>
+          </div>
         </div>
 
-        <p className="text-brand-900 text-xs">
+        <p className="relative px-[13%] pb-12 text-xs opacity-80">
           © {MOCK_TODAY_ISO.slice(0, 4)} EventFlow · Interactive Prototype
         </p>
       </section>
 
       {/* ฟอร์มเข้าสู่ระบบ */}
-      <section className="flex flex-1 flex-col">
-        <div className="flex items-center justify-between p-4 lg:justify-end">
-          <Logo className="lg:hidden" />
+      <section className="flex flex-1 flex-col lg:flex-[2]">
+        <div className="flex items-center justify-between gap-4 p-4 lg:px-[12%] lg:pt-10">
+          {/* ตามตัวอย่าง: ฝั่งฟอร์มใช้ชื่อแบรนด์ล้วน ไม่มีไอคอน (ไอคอนอยู่แผงซ้ายแล้ว) */}
+          <span className="text-lg font-extrabold tracking-tight">
+            {APP_NAME}
+          </span>
           <div className="flex items-center gap-1">
             <LanguageToggle />
             <ThemeToggle />
           </div>
         </div>
 
-        <div className="flex flex-1 items-center justify-center px-4 pb-10">
-          <div className="w-full max-w-md space-y-6">
-            <div className="space-y-1.5">
-              <h1 className="text-2xl font-bold tracking-tight">
-                {t("auth.title")}
+        <div className="flex flex-1 flex-col justify-center px-4 pb-10 lg:px-[12%]">
+          <div className="w-full max-w-md space-y-8">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-bold tracking-tight">
+                {t("auth.welcomeBack")}
               </h1>
               <p className="text-muted-foreground text-sm">
                 {t("auth.subtitle")}
               </p>
             </div>
-
-            <Card>
-              <CardContent>
-                <LoginForm />
-              </CardContent>
-            </Card>
+            <LoginForm />
           </div>
         </div>
       </section>

@@ -30,6 +30,10 @@ import { useAppDispatch } from "@/store"
 import { loginSchema, type LoginValues } from "./login-schema"
 import { MockAccountPanel } from "./mock-account-panel"
 
+/** ช่องกรอกแบบขีดเส้นใต้ (ไม่มีกรอบรอบ) — ใช้เฉพาะหน้า Login */
+const UNDERLINE_INPUT =
+  "h-11 rounded-none border-0 border-b border-input bg-transparent px-0 text-base focus-visible:border-foreground focus-visible:ring-0 aria-invalid:ring-0 dark:bg-transparent"
+
 export function LoginForm() {
   const { t, locale } = useLocale()
   const router = useRouter()
@@ -116,7 +120,7 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("auth.email")}</FormLabel>
+              <FormLabel className="sr-only">{t("auth.email")}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -125,6 +129,7 @@ export function LoginForm() {
                   inputMode="email"
                   placeholder={t("auth.emailPlaceholder")}
                   disabled={isSubmitting}
+                  className={UNDERLINE_INPUT}
                 />
               </FormControl>
               <FormMessage />
@@ -137,7 +142,7 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("auth.password")}</FormLabel>
+              <FormLabel className="sr-only">{t("auth.password")}</FormLabel>
               <div className="relative">
                 <FormControl>
                   <Input
@@ -146,7 +151,7 @@ export function LoginForm() {
                     autoComplete="current-password"
                     placeholder={t("auth.passwordPlaceholder")}
                     disabled={isSubmitting}
-                    className="pr-10"
+                    className={`${UNDERLINE_INPUT} pr-10`}
                   />
                 </FormControl>
                 <Button
@@ -173,25 +178,40 @@ export function LoginForm() {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="rememberMe"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center gap-2">
-              <FormControl>
-                <Checkbox
-                  id="rememberMe"
-                  checked={field.value}
-                  onCheckedChange={(checked) => field.onChange(checked === true)}
-                  disabled={isSubmitting}
-                />
-              </FormControl>
-              <Label htmlFor="rememberMe" className="font-normal">
-                {t("auth.rememberMe")}
-              </Label>
-            </FormItem>
-          )}
-        />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <FormField
+            control={form.control}
+            name="rememberMe"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center gap-2">
+                <FormControl>
+                  <Checkbox
+                    id="rememberMe"
+                    checked={field.value}
+                    onCheckedChange={(checked) =>
+                      field.onChange(checked === true)
+                    }
+                    disabled={isSubmitting}
+                  />
+                </FormControl>
+                <Label htmlFor="rememberMe" className="font-normal">
+                  {t("auth.rememberMe")}
+                </Label>
+              </FormItem>
+            )}
+          />
+
+          <p className="text-muted-foreground text-sm">
+            {t("auth.forgotPassword")}{" "}
+            <button
+              type="button"
+              className="text-foreground rounded-sm font-semibold underline underline-offset-4 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+              onClick={() => toast.info(t("auth.forgotPasswordUnavailable"))}
+            >
+              {t("auth.forgotPasswordCta")}
+            </button>
+          </p>
+        </div>
 
         <Button
           type="submit"

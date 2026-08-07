@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test"
 
-const DEMO_EMAIL = "paweena.s@company.co.th"
+const DEMO_EMAIL = "alisa.l@company.co.th"
 const DEMO_PASSWORD = "eventflow"
 
 async function signIn(page: Page) {
@@ -16,7 +16,7 @@ test.describe("Phase 1 — Authentication", () => {
     await page.goto("/")
     await expect(page).toHaveURL(/\/login$/)
     await expect(
-      page.getByRole("heading", { level: 1, name: "เข้าสู่ระบบ" })
+      page.getByRole("heading", { level: 1, name: "ยินดีต้อนรับกลับมา" })
     ).toBeVisible()
   })
 
@@ -88,7 +88,7 @@ test.describe("Phase 1 — Authentication", () => {
 
     await page.getByRole("button", { name: "เข้าสู่ระบบ", exact: true }).click()
     await expect(page).toHaveURL(/\/dashboard$/)
-    await expect(page.getByTestId("user-menu")).toContainText("ปวีณา ศรีสุวรรณ")
+    await expect(page.getByTestId("user-menu")).toContainText("อลิสา ลีลายุวัฒนกุล")
   })
 
   test("เข้าหน้าภายในระบบโดยยังไม่ login จะถูกส่งกลับหน้า Login", async ({
@@ -117,17 +117,17 @@ test.describe("Phase 1 — Authentication", () => {
 test.describe("Phase 1 — Application Shell", () => {
   test("สลับผู้ใช้ได้โดยไม่ต้อง login ใหม่", async ({ page }) => {
     await signIn(page)
-    await expect(page.getByTestId("user-menu")).toContainText("ปวีณา ศรีสุวรรณ")
+    await expect(page.getByTestId("user-menu")).toContainText("อลิสา ลีลายุวัฒนกุล")
 
     await page.getByTestId("user-menu").click()
     await page.getByTestId("switch-user-trigger").click()
     await page
-      .getByRole("menuitemradio", { name: /ธนกฤต วงศ์อนันต์/ })
+      .getByRole("menuitemradio", { name: /หฤทัย ทิพยประไพ/ })
       .click()
 
     await expect(page).toHaveURL(/\/dashboard$/)
     await expect(page.getByTestId("user-menu")).toContainText(
-      "ธนกฤต วงศ์อนันต์"
+      "หฤทัย ทิพยประไพ"
     )
   })
 

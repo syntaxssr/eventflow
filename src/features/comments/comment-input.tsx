@@ -17,7 +17,7 @@ import {
 import { validateFile } from "@/lib/file"
 import { formatFileSize } from "@/lib/format"
 import { newId } from "@/lib/id"
-import { getFullName } from "@/lib/user"
+import { getFullName, getLegalName } from "@/lib/user"
 import { cn } from "@/lib/utils"
 import type { CommentAttachment } from "@/types/comment"
 import type { FileType } from "@/types/file"
@@ -100,12 +100,13 @@ export function CommentInput({
     const element = textareaRef.current
     if (!element || !context) return
 
-    const fullName = getFullName(user, locale)
+    // แทรกเป็นชื่อจริงล้วน — วงเล็บชื่อเล่นทำให้ข้อความ mention รกและยาวเกิน
+    const mentionName = getLegalName(user, locale)
     const caret = element.selectionStart ?? element.value.length
-    const next = applyMention(element.value, caret, context, fullName)
+    const next = applyMention(element.value, caret, context, mentionName)
 
     setValue(next.text)
-    setMentioned((current) => new Map(current).set(user.id, fullName))
+    setMentioned((current) => new Map(current).set(user.id, mentionName))
     setContext(null)
     requestAnimationFrame(() => {
       element.focus()

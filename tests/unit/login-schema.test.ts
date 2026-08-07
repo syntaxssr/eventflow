@@ -9,7 +9,7 @@ function firstErrorFor(field: string, data: unknown): string | undefined {
 }
 
 const VALID = {
-  email: "paweena.s@company.co.th",
+  email: "alisa.l@company.co.th",
   password: "eventflow",
   rememberMe: false,
 }
@@ -39,11 +39,11 @@ describe("loginSchema", () => {
   it("ตัดช่องว่างหน้า–หลังอีเมลออกก่อนตรวจ", () => {
     const result = loginSchema.safeParse({
       ...VALID,
-      email: "  paweena.s@company.co.th  ",
+      email: "  alisa.l@company.co.th  ",
     })
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(result.data.email).toBe("paweena.s@company.co.th")
+      expect(result.data.email).toBe("alisa.l@company.co.th")
     }
   })
 

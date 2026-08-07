@@ -98,10 +98,10 @@ describe("toggleReaction", () => {
 
 describe("getMentionContext", () => {
   it("จับ @ ที่ต้นข้อความหรือหลังช่องว่าง", () => {
-    expect(getMentionContext("@ปวี", 4)).toEqual({ start: 0, query: "ปวี" })
-    expect(getMentionContext("สวัสดี @Tha", 11)).toEqual({
+    expect(getMentionContext("@อลิ", 4)).toEqual({ start: 0, query: "อลิ" })
+    expect(getMentionContext("สวัสดี @Har", 11)).toEqual({
       start: 7,
-      query: "Tha",
+      query: "Har",
     })
   })
 
@@ -116,27 +116,32 @@ describe("getMentionContext", () => {
 
 describe("applyMention", () => {
   it("แทนคำที่พิมพ์ค้างด้วยชื่อเต็ม แล้วขยับ caret ไปท้ายชื่อ", () => {
-    const result = applyMention("สวัสดี @ปวี ครับ", 11, { start: 7, query: "ปวี" }, "ปวีณา ศรีสุวรรณ")
-    expect(result.text).toBe("สวัสดี @ปวีณา ศรีสุวรรณ  ครับ")
-    expect(result.caret).toBe(7 + "@ปวีณา ศรีสุวรรณ ".length)
+    const result = applyMention(
+      "สวัสดี @อลิ ครับ",
+      11,
+      { start: 7, query: "อลิ" },
+      "อลิสา ลีลายุวัฒนกุล"
+    )
+    expect(result.text).toBe("สวัสดี @อลิสา ลีลายุวัฒนกุล  ครับ")
+    expect(result.caret).toBe(7 + "@อลิสา ลีลายุวัฒนกุล ".length)
   })
 })
 
 describe("splitMentionSegments", () => {
   it("แยกช่วง mention ออกจากข้อความ และเลือกชื่อยาวก่อน", () => {
     const segments = splitMentionSegments(
-      "ฝาก @ปวีณา ศรีสุวรรณ ตรวจไฟล์ด้วย",
-      ["ปวีณา ศรีสุวรรณ", "ปวีณา"]
+      "ฝาก @อลิสา ลีลายุวัฒนกุล ตรวจไฟล์ด้วย",
+      ["อลิสา ลีลายุวัฒนกุล", "อลิสา"]
     )
     expect(segments).toEqual([
       { type: "text", value: "ฝาก " },
-      { type: "mention", value: "@ปวีณา ศรีสุวรรณ" },
+      { type: "mention", value: "@อลิสา ลีลายุวัฒนกุล" },
       { type: "text", value: " ตรวจไฟล์ด้วย" },
     ])
   })
 
   it("@ ที่ไม่ตรงกับรายชื่อถือเป็นข้อความปกติ", () => {
-    expect(splitMentionSegments("คุยกับ @ใครก็ไม่รู้", ["ปวีณา"])).toEqual([
+    expect(splitMentionSegments("คุยกับ @ใครก็ไม่รู้", ["อลิสา"])).toEqual([
       { type: "text", value: "คุยกับ @ใครก็ไม่รู้" },
     ])
   })
