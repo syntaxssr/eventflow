@@ -43,7 +43,7 @@ function HeroGrain() {
   return (
     <svg
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 size-full opacity-[0.18] mix-blend-overlay"
+      className="pointer-events-none absolute inset-0 size-full opacity-[0.18] mix-blend-overlay dark:opacity-50"
     >
       <filter id="auth-hero-grain">
         <feTurbulence

@@ -95,12 +95,12 @@
   --color-general-blue: #a3defe;
   --color-general-purple: #7b69cc;
 
-  /* Auth hero — คู่สีไล่ระดับ (บนสว่าง ล่างเข้ม) ที่อยู่นอกพาเลตหลัก
-     อนุมัติเฉพาะแผงแบรนด์หน้า Login ห้ามนำไปใช้ที่อื่น
-     (ดู colors.md หัวข้อ "ข้อยกเว้น") */
-  --color-auth-hero: #4b4fea;
-  --color-auth-hero-deep: #131796;
-  --color-auth-hero-foreground: #f2f2f0;
+  /* Auth hero — คู่สีไล่ระดับ (บนสว่าง ล่างเข้ม) ของแผงแบรนด์หน้า Login
+     ค่าจริงสลับตามธีมใน :root / .dark ด้านล่าง (light = น้ำเงินนอกพาเลต,
+     dark = ดำ) ห้ามนำไปใช้ที่อื่น (ดู colors.md หัวข้อ "ข้อยกเว้น") */
+  --color-auth-hero: var(--auth-hero);
+  --color-auth-hero-deep: var(--auth-hero-deep);
+  --color-auth-hero-foreground: var(--auth-hero-foreground);
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -162,6 +162,11 @@
   --border: rgb(28 28 28 / 12%);
   --input: rgb(28 28 28 / 12%);
   --ring: rgb(28 28 28 / 45%);
+
+  /* ---- Auth hero (light) — น้ำเงินนอกพาเลต อนุมัติเฉพาะจุดนี้ ---- */
+  --auth-hero: #4b4fea;
+  --auth-hero-deep: #131796;
+  --auth-hero-foreground: #f2f2f0;
 
   /* ---- สถานะ (ค่าตายตัว ห้ามเปลี่ยน) — ตัวอักษร/ไอคอนใช้ดำเสมอ ---- */
   --success: #54d463;
@@ -238,6 +243,12 @@
   --input: rgb(242 242 240 / 15%);
   --ring: rgb(242 242 240 / 50%);
 
+  /* ---- Auth hero (dark) — ทิ้งน้ำเงิน ใช้ดำไล่ระดับแทน
+     ปลายบนคือดำผสมขาว 8% ปลายล่างคือดำล้วน จึงไม่มีสีใหม่นอกพาเลต ---- */
+  --auth-hero: color-mix(in srgb, #f2f2f0 8%, #1c1c1c);
+  --auth-hero-deep: #1c1c1c;
+  --auth-hero-foreground: #f2f2f0;
+
   /* ---- สถานะ (ค่าเดียวกับ light — ไม่มี dark variant) ---- */
   --success: #54d463;
   --success-foreground: #1c1c1c;
@@ -309,6 +320,30 @@
     background-color: rgb(242 242 240 / 28%);
     /* ไม่กำหนด color — ปล่อยให้สืบทอดสีขาวของแผงมาเอง
        (--color-auth-hero-foreground อยู่ใน @theme inline จึงไม่ถูก emit เป็นตัวแปรจริง) */
+  }
+
+  /* ช่องที่เบราว์เซอร์เติมรหัสที่จำไว้ให้ (autofill) จะถูกบังคับพื้นเป็นฟ้าอ่อน
+     (#e3ecfe บน Firefox / เหลืองบน Chrome) ซึ่งอยู่นอกพาเลต และ background-color
+     ถูกล็อกด้วย UA stylesheet แก้ตรง ๆ ไม่ได้ ต้องกลบด้วย inset box-shadow แทน
+     ใช้ดำ/ขาวลดความทึบจึงได้โทนเดียวกับพื้นหลังและสลับตามธีมเอง
+     (light: ~#e4e4e2) transition ยาวมากไว้กัน Chrome วาดสีเดิมกลับตอนเปลี่ยน state */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  input:autofill {
+    box-shadow: inset 0 0 0 100vh rgb(28 28 28 / 6.5%);
+    -webkit-text-fill-color: var(--foreground);
+    caret-color: var(--foreground);
+    transition: background-color 600000s 0s;
+  }
+
+  .dark input:-webkit-autofill,
+  .dark input:-webkit-autofill:hover,
+  .dark input:-webkit-autofill:focus,
+  .dark input:-webkit-autofill:active,
+  .dark input:autofill {
+    box-shadow: inset 0 0 0 100vh rgb(242 242 240 / 8%);
   }
 
   /* หัวข้อใช้น้ำหนักที่ LINE Seed Sans TH มีจริง (400/700/800) */
