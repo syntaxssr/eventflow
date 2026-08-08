@@ -61,7 +61,7 @@ export function TaskStatusChart({
   )
 
   return (
-    <Card className="flex flex-col">
+    <Card className="dashboard-detail-card dashboard-featured-color-card">
       <CardHeader>
         <CardTitle>{t("dashboard.taskStatusSummary")}</CardTitle>
         <CardDescription>

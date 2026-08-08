@@ -34,8 +34,9 @@ test.describe("Phase 2 — Dashboard", () => {
 
     for (const label of [
       "กิจกรรมที่กำลังจะมาถึง",
-      "งานเกินกำหนด",
       "งานใกล้ครบกำหนด",
+      "งานเกินกำหนด",
+      "งานติดขัด",
     ]) {
       await expect(page.getByText(label, { exact: true })).toBeVisible()
     }

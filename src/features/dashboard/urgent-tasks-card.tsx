@@ -31,7 +31,10 @@ export function UrgentTasksCard({
   const { t, tl, locale } = useLocale()
 
   return (
-    <Card data-testid="urgent-tasks">
+    <Card
+      className="dashboard-detail-card dashboard-featured-color-card"
+      data-testid="urgent-tasks"
+    >
       <CardHeader>
         <CardTitle>{t("dashboard.myUrgentTasks")}</CardTitle>
         <CardAction>

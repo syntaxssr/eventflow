@@ -10,13 +10,14 @@ import type { TranslationKey } from "@/i18n/types"
 import { formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
-type Tone = "default" | "warning" | "danger" | "brand"
+type Tone = "default" | "warning" | "danger" | "blocked" | "brand"
 
 /** ไอคอนใช้สีเดียวกับพื้นการ์ดแต่ทึบกว่า จึงยังอ่านออกบนพื้นที่จางลงแล้ว */
 const TONE_TILE: Record<Tone, string> = {
   default: "bg-muted text-muted-foreground",
   brand: "bg-stat-blue/70 text-foreground dark:bg-stat-blue/45",
   danger: "bg-stat-red/70 text-foreground dark:bg-stat-red/45",
+  blocked: "bg-stat-blocked/70 text-foreground dark:bg-stat-blocked/45",
   warning: "bg-stat-yellow/70 text-foreground dark:bg-stat-yellow/45",
 }
 
@@ -29,6 +30,7 @@ const TONE_SURFACE: Record<Tone, string> = {
   default: "",
   brand: "bg-stat-blue/40 dark:bg-stat-blue/22",
   danger: "bg-stat-red/40 dark:bg-stat-red/22",
+  blocked: "bg-stat-blocked/40 dark:bg-stat-blocked/22",
   warning: "bg-stat-yellow/40 dark:bg-stat-yellow/22",
 }
 

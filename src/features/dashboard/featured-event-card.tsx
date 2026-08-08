@@ -1,8 +1,14 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
-import { ArrowRightIcon, CalendarIcon, ClockIcon, MapPinIcon, UsersIcon } from "lucide-react"
+import {
+  ArrowRightIcon,
+  CalendarDaysIcon,
+  CalendarIcon,
+  ClockIcon,
+  MapPinIcon,
+  UsersIcon,
+} from "lucide-react"
 
 import { StatusBadge } from "@/components/common/status-badge"
 import { Button } from "@/components/ui/button"
@@ -13,6 +19,7 @@ import { getToday } from "@/constants/mock-date"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
 import { daysBetween, fromDateKey } from "@/constants/mock-date"
+import { getEventColor } from "@/lib/event"
 import { formatDateRange, formatNumber } from "@/lib/format"
 import type { EventItem, EventProgress } from "@/types/event"
 
@@ -27,6 +34,7 @@ export function FeaturedEventCard({
 }) {
   const { t, tl, locale } = useLocale()
   const daysLeft = daysBetween(getToday(), fromDateKey(event.startDate))
+  const eventColor = getEventColor(event.id)
 
   const countdown =
     daysLeft > 0
@@ -36,37 +44,32 @@ export function FeaturedEventCard({
         : t("dashboard.eventPassed", { days: Math.abs(daysLeft) })
 
   return (
-    <Card className="overflow-hidden pt-0">
-      <div className="relative h-36 w-full sm:h-44">
-        {/* ภาพปกเป็น SVG จึงข้าม image optimizer ของ Next.js ไป */}
-        <Image
-          src={event.coverImage}
-          alt=""
-          fill
-          sizes="(min-width: 1024px) 66vw, 100vw"
-          className="object-cover"
-          unoptimized
-          priority
-        />
-        <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+    <Card className="dashboard-featured-color-card overflow-hidden">
+      <CardContent className="space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
           <StatusBadge
             style={EVENT_STATUS_STYLE[event.status]}
-            className="shadow-sm"
           />
-          <span className="bg-background/90 rounded-full px-2.5 py-1 text-xs font-semibold shadow-sm">
+          <span className="bg-muted rounded-full px-2.5 py-1 text-xs font-semibold">
             {countdown}
           </span>
         </div>
-      </div>
-
-      <CardContent className="space-y-4">
-        <div className="space-y-1">
-          <p className="text-brand-text text-xs font-semibold">
-            {t("dashboard.mainEvent")}
-          </p>
-          <h2 className="text-xl font-bold tracking-tight text-balance">
-            {tl(event.title)}
-          </h2>
+        <div className="flex items-center gap-3">
+          <span
+            className="flex size-11 shrink-0 items-center justify-center rounded-lg"
+            style={{ backgroundColor: eventColor }}
+            aria-hidden="true"
+          >
+            <CalendarDaysIcon className="size-5 text-black" />
+          </span>
+          <div className="min-w-0 space-y-1">
+            <p className="text-brand-text text-xs font-semibold">
+              {t("dashboard.mainEvent")}
+            </p>
+            <h2 className="text-xl font-bold tracking-tight text-balance">
+              {tl(event.title)}
+            </h2>
+          </div>
         </div>
 
         <ul className="text-muted-foreground grid gap-2 text-sm sm:grid-cols-2">

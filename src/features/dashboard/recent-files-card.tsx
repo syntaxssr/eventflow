@@ -31,7 +31,10 @@ export function RecentFilesCard({
   const { t, locale } = useLocale()
 
   return (
-    <Card data-testid="recent-files">
+    <Card
+      className="dashboard-detail-card dashboard-featured-color-card"
+      data-testid="recent-files"
+    >
       <CardHeader>
         <CardTitle>{t("dashboard.recentFiles")}</CardTitle>
         <CardAction>

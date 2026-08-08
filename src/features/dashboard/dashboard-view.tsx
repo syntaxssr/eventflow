@@ -7,6 +7,7 @@ import {
   CalendarPlusIcon,
   CircleAlertIcon,
   ClockAlertIcon,
+  OctagonXIcon,
 } from "lucide-react"
 
 import { EmptyState } from "@/components/common/empty-state"
@@ -35,6 +36,7 @@ import {
   summariseRsvp,
 } from "@/store/selectors"
 import { isDueSoon, isIncomplete, isOverdue } from "@/lib/due-date"
+import { getEventColor } from "@/lib/event"
 import { DashboardCalendarCard } from "./dashboard-calendar-card"
 import { DashboardSkeleton } from "./dashboard-skeleton"
 import { FeaturedEventCard } from "./featured-event-card"
@@ -80,6 +82,7 @@ export function DashboardView() {
       myTasks,
       overdueCount: activeTasks.filter((task) => isOverdue(task, today)).length,
       dueSoonCount: activeTasks.filter((task) => isDueSoon(task, today)).length,
+      blockedCount: activeTasks.filter((task) => task.status === "blocked").length,
       // ปฏิทินต้องเห็นได้ทุกเดือนที่เลื่อนไปดู จึงใช้ชุดเต็มไม่ใช่เฉพาะที่กำลังจะมาถึง
       calendarEvents: selectActiveEvents(state),
       calendarTasks: activeTasks,
@@ -135,14 +138,22 @@ export function DashboardView() {
 
   return (
     <PageContainer>
-      {/* คอลัมน์ซ้าย (2/3) เป็นตัวกำหนดความสูงของแถว ปฏิทินฝั่งขวายืดตาม
+      <div
+        className="space-y-6"
+        style={
+          {
+            "--dashboard-event-color": getEventColor(data.featuredEvent.id),
+          } as React.CSSProperties
+        }
+      >
+        {/* คอลัมน์ซ้าย (2/3) เป็นตัวกำหนดความสูงของแถว ปฏิทินฝั่งขวายืดตาม
           ไม่ใช่กลับกัน — ไม่งั้นการ์ดกิจกรรมหลักจะโดนบีบจนเนื้อหาขาด */}
-      <div className="grid items-start gap-4 lg:grid-cols-3">
+        <div className="grid items-start gap-4 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
           {/* ชั้น 1 — ตัวเลขที่ต้องลงมือทำวันนี้เท่านั้น
               ตัด "งานที่ยังไม่เสร็จ" ออกเพราะนับซ้อนกับอีกสองใบ และตัดการแจ้งเตือน
               ที่ยังไม่อ่านออกเพราะมีกระดิ่งบน topbar อยู่แล้ว */}
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
               labelKey="dashboard.upcomingEvents"
               value={data.upcomingEvents.length}
@@ -152,20 +163,28 @@ export function DashboardView() {
               tone="brand"
             />
             <StatCard
-              labelKey="dashboard.overdueTasks"
-              value={data.overdueCount}
-              unitKey="dashboard.unitTask"
-              icon={CircleAlertIcon}
-              href={`${ROUTES.myTasks}?scope=all&due=overdue`}
-              tone="danger"
-            />
-            <StatCard
               labelKey="dashboard.tasksDueSoon"
               value={data.dueSoonCount}
               unitKey="dashboard.unitTask"
               icon={ClockAlertIcon}
               href={`${ROUTES.myTasks}?scope=all&due=soon`}
               tone="warning"
+            />
+            <StatCard
+              labelKey="dashboard.blockedTasks"
+              value={data.blockedCount}
+              unitKey="dashboard.unitTask"
+              icon={OctagonXIcon}
+              href={`${ROUTES.myTasks}?scope=all&status=blocked`}
+              tone="blocked"
+            />
+            <StatCard
+              labelKey="dashboard.overdueTasks"
+              value={data.overdueCount}
+              unitKey="dashboard.unitTask"
+              icon={CircleAlertIcon}
+              href={`${ROUTES.myTasks}?scope=all&due=overdue`}
+              tone="danger"
             />
           </div>
 
@@ -181,13 +200,13 @@ export function DashboardView() {
           events={data.calendarEvents}
           tasks={data.calendarTasks}
         />
-      </div>
+        </div>
 
-      {/* ชั้น 3 — ข้อมูลประกอบ ยุบเป็นแท็บเดียวเพื่อไม่ให้แย่งความสนใจกับสองชั้นบน
+        {/* ชั้น 3 — ข้อมูลประกอบ ยุบเป็นแท็บเดียวเพื่อไม่ให้แย่งความสนใจกับสองชั้นบน
           งานเร่งด่วนของผู้ใช้เป็นแท็บแรกและเปิดค้างไว้ เพราะเป็นสิ่งเดียวในหน้านี้
           ที่ผูกกับคนที่ล็อกอินอยู่ */}
-      <Tabs defaultValue="urgent" data-testid="dashboard-detail-tabs">
-        <TabsList>
+        <Tabs className="w-full" defaultValue="urgent" data-testid="dashboard-detail-tabs">
+        <TabsList className="dashboard-featured-tabs-list">
           <TabsTrigger value="urgent">
             {t("dashboard.myUrgentTasks")}
           </TabsTrigger>
@@ -201,28 +220,29 @@ export function DashboardView() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="urgent">
+        <TabsContent className="w-full" value="urgent">
           <UrgentTasksCard tasks={urgentTasks} eventsById={data.eventsById} />
         </TabsContent>
-        <TabsContent value="taskStatus">
+        <TabsContent className="w-full" value="taskStatus">
           <TaskStatusChart
             counts={countTasksByStatus(data.featuredTasks)}
             total={data.featuredTasks.length}
           />
         </TabsContent>
-        <TabsContent value="rsvp">
+        <TabsContent className="w-full" value="rsvp">
           <RsvpSummaryCard summary={summariseRsvp(data.featuredParticipants)} />
         </TabsContent>
-        <TabsContent value="files">
+        <TabsContent className="w-full" value="files">
           <RecentFilesCard files={data.recentFiles} usersById={data.usersById} />
         </TabsContent>
-        <TabsContent value="activity">
+        <TabsContent className="w-full" value="activity">
           <RecentActivityCard
             activities={data.recentActivities}
             usersById={data.usersById}
           />
         </TabsContent>
-      </Tabs>
+        </Tabs>
+      </div>
     </PageContainer>
   )
 }

@@ -33,7 +33,7 @@ export function RsvpSummaryCard({ summary }: { summary: RsvpSummary }) {
       : Math.round((summary.attending / summary.total) * 100)
 
   return (
-    <Card>
+    <Card className="dashboard-detail-card dashboard-featured-color-card">
       <CardHeader>
         <CardTitle>{t("dashboard.rsvpSummary")}</CardTitle>
         <CardDescription className="flex items-center gap-1.5">

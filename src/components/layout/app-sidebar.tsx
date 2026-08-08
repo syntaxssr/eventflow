@@ -15,12 +15,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar"
 import { ROUTES } from "@/constants/app"
 import { useT } from "@/i18n"
-import { ACCOUNT_NAV, MAIN_NAV, type NavItem, isNavItemActive } from "./nav-items"
+import { MAIN_NAV, type NavItem, isNavItemActive } from "./nav-items"
 
 /**
  * เมนูที่กำลังใช้งานอยู่ต้องเห็นชัดโดยไม่พึ่งสีอย่างเดียว
@@ -91,13 +90,6 @@ export function AppSidebar() {
             <SidebarGroupLabel>{t("shell.mainNavigation")}</SidebarGroupLabel>
             <SidebarGroupContent>
               <NavList items={MAIN_NAV} />
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          <SidebarGroup className="mt-auto">
-            <SidebarSeparator className="mb-1" />
-            <SidebarGroupContent>
-              <NavList items={ACCOUNT_NAV} />
             </SidebarGroupContent>
           </SidebarGroup>
         </nav>

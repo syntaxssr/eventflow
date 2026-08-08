@@ -107,6 +107,7 @@ export const en: Dictionary = {
     upcomingEvents: "Upcoming events",
     tasksDueSoon: "Tasks due soon",
     overdueTasks: "Overdue tasks",
+    blockedTasks: "Blocked tasks",
     incompleteTasks: "Incomplete tasks",
     unreadNotifications: "Unread notifications",
     mainEvent: "Featured event",

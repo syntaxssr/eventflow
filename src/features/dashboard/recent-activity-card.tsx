@@ -31,7 +31,10 @@ export function RecentActivityCard({
   const { t, tl, locale } = useLocale()
 
   return (
-    <Card data-testid="recent-activity">
+    <Card
+      className="dashboard-detail-card dashboard-featured-color-card"
+      data-testid="recent-activity"
+    >
       <CardHeader>
         <CardTitle>{t("dashboard.recentActivity")}</CardTitle>
         <CardAction>

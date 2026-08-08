@@ -7,8 +7,8 @@ export function DashboardSkeleton() {
     <div className="space-y-6" aria-hidden="true">
       <div className="grid items-start gap-4 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
-          <div className="grid gap-3 sm:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, index) => (
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
               <Card key={index}>
                 <CardContent className="flex items-center gap-3 p-4">
                   <Skeleton className="size-10 rounded-lg" />
@@ -21,9 +21,12 @@ export function DashboardSkeleton() {
             ))}
           </div>
 
-          <Card className="overflow-hidden pt-0">
-            <Skeleton className="h-36 w-full rounded-none sm:h-44" />
+          <Card>
             <CardContent className="space-y-3">
+              <div className="flex gap-2">
+                <Skeleton className="h-6 w-20 rounded-full" />
+                <Skeleton className="h-6 w-24 rounded-full" />
+              </div>
               <Skeleton className="h-6 w-2/3" />
               <Skeleton className="h-4 w-1/2" />
               <Skeleton className="h-2 w-full" />

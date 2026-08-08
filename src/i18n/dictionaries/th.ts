@@ -108,6 +108,7 @@ export const th = {
     upcomingEvents: "กิจกรรมที่กำลังจะมาถึง",
     tasksDueSoon: "งานใกล้ครบกำหนด",
     overdueTasks: "งานเกินกำหนด",
+    blockedTasks: "งานติดขัด",
     incompleteTasks: "งานที่ยังไม่เสร็จ",
     unreadNotifications: "การแจ้งเตือนที่ยังไม่อ่าน",
     mainEvent: "กิจกรรมหลัก",

@@ -135,14 +135,14 @@ export function DashboardCalendarCard({
   ).format(fromDateKey(selectedKey))
 
   return (
-    <Card className="h-full" data-testid="dashboard-calendar">
+    <Card className="dashboard-featured-color-card h-full" data-testid="dashboard-calendar">
       <CardHeader>
         <CardTitle aria-live="polite">{monthLabel}</CardTitle>
         <CardAction className="flex items-center gap-1">
           <Button
             variant="outline"
             size="icon-sm"
-            className="rounded-full"
+            className="dashboard-featured-color-control rounded-full border-0 hover:opacity-85"
             onClick={() => shiftMonth(-1)}
             aria-label={t("common.previous")}
           >
@@ -151,7 +151,7 @@ export function DashboardCalendarCard({
           <Button
             variant="outline"
             size="icon-sm"
-            className="rounded-full"
+            className="dashboard-featured-color-control rounded-full border-0 hover:opacity-85"
             onClick={() => shiftMonth(1)}
             aria-label={t("common.next")}
           >
