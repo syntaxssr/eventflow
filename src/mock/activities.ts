@@ -10,8 +10,8 @@ const STATUS_LABEL: Record<string, LocalizedText> = {
   not_started: { th: "ยังไม่เริ่ม", en: "Not Started" },
   in_progress: { th: "กำลังดำเนินการ", en: "In Progress" },
   awaiting_review: { th: "รอตรวจสอบ", en: "Awaiting Review" },
+  blocked: { th: "งานติดขัด", en: "Blocked" },
   completed: { th: "เสร็จสิ้น", en: "Completed" },
-  blocked: { th: "ถูกบล็อก", en: "Blocked" },
 }
 
 // อ้างอิง TASK_STATUS_STYLE เพื่อให้แน่ใจว่ารายการสถานะทั้งสองที่ตรงกันเสมอ

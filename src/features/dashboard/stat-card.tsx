@@ -12,26 +12,13 @@ import { cn } from "@/lib/utils"
 
 type Tone = "default" | "warning" | "danger" | "blocked" | "brand"
 
-/** ไอคอนใช้สีเดียวกับพื้นการ์ดแต่ทึบกว่า จึงยังอ่านออกบนพื้นที่จางลงแล้ว */
+/** กล่องไอคอนใช้สีประจำการ์ด ส่วนไอคอนลดน้ำหนักลงเพื่อให้สมดุล */
 const TONE_TILE: Record<Tone, string> = {
   default: "bg-muted text-muted-foreground",
-  brand: "bg-stat-blue/70 text-foreground dark:bg-stat-blue/45",
-  danger: "bg-stat-red/70 text-foreground dark:bg-stat-red/45",
-  blocked: "bg-stat-blocked/70 text-foreground dark:bg-stat-blocked/45",
-  warning: "bg-stat-yellow/70 text-foreground dark:bg-stat-yellow/45",
-}
-
-/**
- * พื้นหลังการ์ด — สีละใบเพื่อให้สแกนแยกได้ทันทีโดยไม่ต้องอ่าน
- * ความทึบต่างกันตามธีมเพราะพื้นคนละขั้ว: light รับได้ถึง 40% ส่วน dark
- * ต้องหยุดที่ 22% ไม่งั้นสีอ่อน (ฟ้า/เหลือง) ดันพื้นสว่างจนตัวอักษรขาวหลุด AA
- */
-const TONE_SURFACE: Record<Tone, string> = {
-  default: "",
-  brand: "bg-stat-blue/40 dark:bg-stat-blue/22",
-  danger: "bg-stat-red/40 dark:bg-stat-red/22",
-  blocked: "bg-stat-blocked/40 dark:bg-stat-blocked/22",
-  warning: "bg-stat-yellow/40 dark:bg-stat-yellow/22",
+  brand: "bg-stat-blue text-foreground/70",
+  danger: "bg-stat-red text-foreground/70",
+  blocked: "bg-stat-blocked text-foreground/70",
+  warning: "bg-stat-yellow text-foreground/70",
 }
 
 /**
@@ -57,13 +44,7 @@ export function StatCard({
   const animated = useCountUp(value)
 
   return (
-    <Card
-      className={cn(
-        // Card ใช้ ring ไม่ใช่ border — hover จึงเน้นที่ ring
-        "overflow-hidden transition-colors hover:ring-foreground/25",
-        TONE_SURFACE[tone]
-      )}
-    >
+    <Card className="dashboard-card-surface overflow-hidden transition-colors hover:ring-foreground/25">
       <CardContent className="p-0">
         <Link
           href={href}

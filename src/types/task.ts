@@ -9,8 +9,8 @@ export const TASK_STATUSES = [
   "not_started",
   "in_progress",
   "awaiting_review",
-  "completed",
   "blocked",
+  "completed",
 ] as const
 
 export type TaskStatus = (typeof TASK_STATUSES)[number]

@@ -245,7 +245,7 @@ export function useTaskActions() {
         notify(
           {
             type: "task_blocked",
-            title: { th: "งานของคุณถูกบล็อก", en: "Your task is blocked" },
+            title: { th: "งานของคุณติดขัด", en: "Your task is blocked" },
             body: {
               th: `${task.title.th} — รอ “${dependency.title.th}”`,
               en: `${task.title.en} — waiting on “${dependency.title.en}”`,

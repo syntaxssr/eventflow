@@ -87,6 +87,7 @@
   --color-danger: var(--danger);
   --color-danger-foreground: var(--danger-foreground);
   --color-danger-surface: var(--danger-surface);
+  --color-blocked: var(--blocked);
 
   /* ทั่วไป (decorative/non-status) — ใช้ตามที่กำหนดเท่านั้น */
   --color-general-green: #73bfa3;
@@ -103,7 +104,14 @@
   --color-stat-blue: #80c3e0;
   --color-stat-red: #e06659;
   --color-stat-yellow: #f4d887;
-  --color-stat-blocked: #e79c75;
+  --color-stat-blocked: var(--blocked);
+
+  /* สีไอคอนประเภทไฟล์ */
+  --color-file-powerpoint: #e79c75;
+  --color-file-excel: var(--success);
+  --color-file-pdf: var(--danger);
+  --color-file-word: var(--info);
+  --color-file-image: #ac81af;
 
   --color-auth-hero: var(--auth-hero);
   --color-auth-hero-deep: var(--auth-hero-deep);
@@ -118,28 +126,20 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* การ์ดข้อมูลของ Dashboard ใช้สีเดียวกับกิจกรรมหลักที่กำลังแสดง */
-.dashboard-featured-color-card {
-  background-color: color-mix(
-    in oklch,
-    var(--dashboard-event-color) 18%,
-    var(--card)
-  );
-  border-color: color-mix(
-    in oklch,
-    var(--dashboard-event-color) 45%,
-    var(--border)
-  );
+/* ปุ่มควบคุมใช้พื้นดำเพื่อให้เด่นจากการ์ด */
+.dashboard-featured-color-control {
+  background-color: #1c1c1c;
+  color: #f2f2f0;
 }
 
-/* ปุ่มควบคุมใช้สีเดียวกับพื้นการ์ดกิจกรรมหลัก */
-.dashboard-featured-color-control {
-  background-color: color-mix(
-    in oklch,
-    var(--dashboard-event-color) 18%,
-    var(--card)
-  );
-  color: var(--foreground);
+/* การ์ดบน Dashboard ใช้เฉด off-white เดียวกันทั้งสองโหมด */
+.dashboard-card-surface {
+  --card: #efefec;
+  --card-foreground: #1c1c1c;
+  --muted: rgb(28 28 28 / 6%);
+  --muted-foreground: rgb(28 28 28 / 62%);
+  --border: rgb(28 28 28 / 12%);
+  background-color: #efefec;
 }
 
 /* ทุกการ์ดใต้แท็บ Dashboard สูงเท่ากัน เพื่อไม่ให้หน้าเลื่อนเมื่อสลับแท็บ */
@@ -181,12 +181,8 @@
 }
 
 .dashboard-featured-tabs-list > [data-slot="tabs-trigger"][data-state="active"] {
-  background-color: color-mix(
-    in oklch,
-    var(--dashboard-event-color) 32%,
-    var(--card)
-  );
-  color: var(--foreground);
+  background-color: #1c1c1c;
+  color: #f2f2f0;
 }
 
 :root {
@@ -257,6 +253,7 @@
   --info-foreground: #1c1c1c;
   --info-surface: rgb(69 134 238 / 15%);
   --danger: #f83e32;
+  --blocked: #e79c75;
   --danger-foreground: #1c1c1c;
   --danger-surface: rgb(248 62 50 / 15%);
 
@@ -338,6 +335,7 @@
   --info-foreground: #1c1c1c;
   --info-surface: rgb(69 134 238 / 22%);
   --danger: #f83e32;
+  --blocked: #e79c75;
   --danger-foreground: #1c1c1c;
   --danger-surface: rgb(248 62 50 / 22%);
 

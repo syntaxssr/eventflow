@@ -135,7 +135,10 @@ export function DashboardCalendarCard({
   ).format(fromDateKey(selectedKey))
 
   return (
-    <Card className="dashboard-featured-color-card h-full" data-testid="dashboard-calendar">
+    <Card
+      className="dashboard-card-surface h-full"
+      data-testid="dashboard-calendar"
+    >
       <CardHeader>
         <CardTitle aria-live="polite">{monthLabel}</CardTitle>
         <CardAction className="flex items-center gap-1">
@@ -271,7 +274,7 @@ export function DashboardCalendarCard({
               {t("dashboard.calendarNoItems")}
             </p>
           ) : (
-            <ul className="divide-border min-h-0 flex-1 divide-y overflow-y-auto">
+            <ul className="divide-border min-h-0 flex-1 divide-y overflow-x-hidden overflow-y-auto">
               {selectedEntries.map((entry) => (
                 <li key={`${entry.kind}-${entry.id}`}>
                   <Link

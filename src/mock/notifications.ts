@@ -147,11 +147,11 @@ for (const userId of ["u-1", "u-2", "u-4", "u-7"]) {
   })
 }
 
-/* ---- งานถูกบล็อก ---- */
+/* ---- งานติดขัด ---- */
 add({
   userId: "u-2",
   type: "task_blocked",
-  title: { th: "งานของคุณถูกบล็อก", en: "Your task is blocked" },
+  title: { th: "งานของคุณติดขัด", en: "Your task is blocked" },
   body: {
     th: "จัดทำป้ายชื่อผู้เข้าร่วม — รอ “สรุปรายชื่อผู้เข้าร่วมทั้งหมด”",
     en: "Produce the guest name badges — waiting on “Finalise the full guest list”",

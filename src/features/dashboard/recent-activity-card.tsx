@@ -32,7 +32,7 @@ export function RecentActivityCard({
 
   return (
     <Card
-      className="dashboard-detail-card dashboard-featured-color-card"
+      className="dashboard-card-surface dashboard-detail-card"
       data-testid="recent-activity"
     >
       <CardHeader>

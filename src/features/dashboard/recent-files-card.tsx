@@ -32,7 +32,7 @@ export function RecentFilesCard({
 
   return (
     <Card
-      className="dashboard-detail-card dashboard-featured-color-card"
+      className="dashboard-card-surface dashboard-detail-card"
       data-testid="recent-files"
     >
       <CardHeader>
@@ -73,11 +73,11 @@ export function RecentFilesCard({
                     <span
                       className={cn(
                         "flex size-9 shrink-0 items-center justify-center rounded-lg",
-                        style.tile
+                        style.dashboardTile
                       )}
                       aria-hidden="true"
                     >
-                      <Icon className="size-4.5" />
+                      <Icon className={cn("size-4.5", style.iconColor)} />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">

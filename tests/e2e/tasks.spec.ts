@@ -107,10 +107,10 @@ test.describe("Phase 4 — Task views", () => {
     )
 
     await page.getByTestId("task-status-filter").click()
-    await page.getByRole("menuitemcheckbox", { name: "ถูกบล็อก" }).click()
+    await page.getByRole("menuitemcheckbox", { name: "งานติดขัด" }).click()
     await page.keyboard.press("Escape")
 
-    await expect(page.getByTestId("filter-chips")).toContainText("ถูกบล็อก")
+    await expect(page.getByTestId("filter-chips")).toContainText("งานติดขัด")
     const after = Number(
       (await page.getByText(/พบ \d+ งาน/).innerText()).replace(/\D/g, "")
     )
@@ -239,7 +239,7 @@ test.describe("Phase 4 — Dependency & status", () => {
     await page.getByTestId("task-status-select").click()
     await page.getByRole("option", { name: "กำลังดำเนินการ" }).click()
 
-    await expect(page.getByText("งานนี้ยังถูกบล็อกอยู่")).toBeVisible()
+    await expect(page.getByText("งานนี้ยังติดขัดอยู่")).toBeVisible()
     await page.getByRole("button", { name: "เริ่มงานนี้เลย" }).click()
 
     await expect(page.getByTestId("task-status-select")).toContainText(
@@ -335,7 +335,7 @@ test.describe("Phase 4 — Create & delete", () => {
 
     await expect(page.getByText("ยืนยันการลบงาน")).toBeVisible()
     await expect(
-      page.getByText("งาน 1 งานที่รองานนี้อยู่จะไม่ถูกบล็อกอีกต่อไป")
+      page.getByText("งาน 1 งานที่รองานนี้อยู่จะไม่ติดขัดอีกต่อไป")
     ).toBeVisible()
 
     await page.getByRole("button", { name: "ลบ", exact: true }).click()

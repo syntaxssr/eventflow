@@ -32,7 +32,7 @@ export function UrgentTasksCard({
 
   return (
     <Card
-      className="dashboard-detail-card dashboard-featured-color-card"
+      className="dashboard-card-surface dashboard-detail-card"
       data-testid="urgent-tasks"
     >
       <CardHeader>

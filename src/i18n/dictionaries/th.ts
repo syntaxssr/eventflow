@@ -427,8 +427,8 @@ export const th = {
     notStarted: "ยังไม่เริ่ม",
     inProgress: "กำลังดำเนินการ",
     awaitingReview: "รอตรวจสอบ",
+    blocked: "งานติดขัด",
     completed: "เสร็จสิ้น",
-    blocked: "ถูกบล็อก",
   },
   priority: {
     label: "ความสำคัญ",
@@ -508,7 +508,7 @@ export const th = {
     confirmDeleteTitle: "ยืนยันการลบงาน",
     confirmDeleteDescription:
       "งานนี้จะถูกนำออกจากทุกมุมมอง และความคืบหน้าของกิจกรรมจะถูกคำนวณใหม่",
-    confirmDeleteImpactBlocking: "งาน {count} งานที่รองานนี้อยู่จะไม่ถูกบล็อกอีกต่อไป",
+    confirmDeleteImpactBlocking: "งาน {count} งานที่รองานนี้อยู่จะไม่ติดขัดอีกต่อไป",
     confirmDeleteImpactChecklist: "รายการตรวจสอบ {count} รายการจะถูกลบไปด้วย",
     confirmDeleteChecklistTitle: "ยืนยันการลบรายการตรวจสอบ",
     confirmDeleteChecklistDescription:
@@ -531,7 +531,7 @@ export const th = {
     dependencyCrossEventError: "เลือกได้เฉพาะงานในกิจกรรมเดียวกัน",
     dependencyAdded: "เพิ่มความสัมพันธ์ระหว่างงานแล้ว",
     dependencyRemoved: "นำความสัมพันธ์ออกแล้ว",
-    blockedWarningTitle: "งานนี้ยังถูกบล็อกอยู่",
+    blockedWarningTitle: "งานนี้ยังติดขัดอยู่",
     blockedWarningDescription:
       "ยังมีงานที่ต้องเสร็จก่อนค้างอยู่ หากต้องการเริ่มงานนี้เลย ระบบจะบันทึกว่าคุณยืนยันข้ามคำเตือน",
     blockedOverrideConfirm: "เริ่มงานนี้เลย",
@@ -710,8 +710,8 @@ export const th = {
     typeMentioned: "ถูกกล่าวถึง",
     typeTimelineChanged: "ไทม์ไลน์เปลี่ยนแปลง",
     typeChecklistCompleted: "รายการตรวจสอบครบ",
-    typeTaskBlocked: "งานถูกบล็อก",
-    typeTaskUnblocked: "งานพ้นการบล็อก",
+    typeTaskBlocked: "งานติดขัด",
+    typeTaskUnblocked: "งานพ้นสถานะติดขัด",
     settingsSubtitle: "เลือกประเภทการแจ้งเตือนที่ต้องการรับ",
     settingsHint:
       "ประเภทที่ปิดไว้จะไม่สร้างการแจ้งเตือนใหม่ถึงคุณ รายการเดิมยังอยู่ครบ",

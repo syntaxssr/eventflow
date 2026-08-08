@@ -36,7 +36,7 @@ import type { ReadinessStatus } from "@/types/timeline"
  * กติกา: ห้ามใช้สีเป็นตัวสื่อความหมายเพียงอย่างเดียว
  * ทุกสถานะจึงมี `icon` + `labelKey` ควบคู่กับสีเสมอ
  *
- * กติกาสี: ใช้ได้เฉพาะ --success / --warning / --info / --danger (สื่อความหมาย)
+ * กติกาสี: ใช้ได้เฉพาะ --success / --warning / --info / --danger / --blocked (สื่อความหมาย)
  * กับดำ/ขาวไล่ความทึบ (--muted, --border, --foreground) เท่านั้น ห้ามใช้ Tailwind
  * palette อื่น (slate/blue/orange/green/red ฯลฯ) — ดู colors.md
  */
@@ -78,6 +78,11 @@ const SUCCESS_DOT = "bg-success"
 const DANGER_BADGE =
   "bg-danger/15 text-foreground border-danger/35 dark:bg-danger/25 dark:border-danger/45"
 const DANGER_DOT = "bg-danger"
+
+/** blocked = Apricot (#e79c75) — งานติดขัดที่ต้องตามต่อ */
+const BLOCKED_BADGE =
+  "bg-blocked/25 text-foreground border-blocked/45 dark:bg-blocked/30 dark:border-blocked/55"
+const BLOCKED_DOT = "bg-blocked"
 
 export const EVENT_STATUS_STYLE: Record<EventStatus, StatusStyle> = {
   draft: {
@@ -144,7 +149,14 @@ export const TASK_STATUS_STYLE: Record<TaskStatus, StatusStyle> = {
     icon: EyeIcon,
     badge: WARNING_BADGE,
     dot: WARNING_DOT,
-    chartColor: "var(--chart-4)",
+    chartColor: "var(--warning)",
+  },
+  blocked: {
+    labelKey: "taskStatus.blocked",
+    icon: OctagonXIcon,
+    badge: BLOCKED_BADGE,
+    dot: BLOCKED_DOT,
+    chartColor: "var(--blocked)",
   },
   completed: {
     labelKey: "taskStatus.completed",
@@ -152,13 +164,6 @@ export const TASK_STATUS_STYLE: Record<TaskStatus, StatusStyle> = {
     badge: SUCCESS_BADGE,
     dot: SUCCESS_DOT,
     chartColor: "var(--success)",
-  },
-  blocked: {
-    labelKey: "taskStatus.blocked",
-    icon: OctagonXIcon,
-    badge: DANGER_BADGE,
-    dot: DANGER_DOT,
-    chartColor: "var(--danger)",
   },
 }
 

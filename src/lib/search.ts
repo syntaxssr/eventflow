@@ -9,13 +9,13 @@ import type { User } from "@/types/user"
  * เป็น pure function เพื่อให้ unit test ครอบคลุมได้ทุกกรณี
  */
 
-/** ป้ายสถานะงานสองภาษา — ให้ค้นด้วยคำว่า "ถูกบล็อก" หรือ "blocked" ได้ */
+/** ป้ายสถานะงานสองภาษา — รองรับชื่อใหม่และชื่อเดิมของงานติดขัด */
 const TASK_STATUS_TEXT: Record<TaskStatus, string> = {
   not_started: "ยังไม่เริ่ม not started",
   in_progress: "กำลังดำเนินการ in progress",
   awaiting_review: "รอตรวจสอบ awaiting review",
   completed: "เสร็จสิ้น completed",
-  blocked: "ถูกบล็อก blocked",
+  blocked: "งานติดขัด ถูกบล็อก blocked",
 }
 
 /** ประเภทไฟล์ที่ผู้ใช้พิมพ์ค้นได้ */

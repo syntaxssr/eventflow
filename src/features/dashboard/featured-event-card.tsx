@@ -44,7 +44,7 @@ export function FeaturedEventCard({
         : t("dashboard.eventPassed", { days: Math.abs(daysLeft) })
 
   return (
-    <Card className="dashboard-featured-color-card overflow-hidden">
+    <Card className="dashboard-card-surface overflow-hidden">
       <CardContent className="space-y-4">
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge
@@ -60,7 +60,7 @@ export function FeaturedEventCard({
             style={{ backgroundColor: eventColor }}
             aria-hidden="true"
           >
-            <CalendarDaysIcon className="size-5 text-black" />
+            <CalendarDaysIcon className="size-5 text-foreground/70" />
           </span>
           <div className="min-w-0 space-y-1">
             <p className="text-brand-text text-xs font-semibold">
