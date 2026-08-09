@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
 import { ArrowRightIcon, PartyPopperIcon } from "lucide-react"
 
@@ -20,6 +21,10 @@ import { useLocale } from "@/i18n"
 import { formatDate } from "@/lib/format"
 import type { EventItem } from "@/types/event"
 import type { Task } from "@/types/task"
+import {
+  DASHBOARD_LIST_PAGE_SIZE,
+  DashboardListPagination,
+} from "./dashboard-list-pagination"
 
 export function UrgentTasksCard({
   tasks,
@@ -29,6 +34,13 @@ export function UrgentTasksCard({
   eventsById: Map<string, EventItem>
 }) {
   const { t, tl, locale } = useLocale()
+  const [page, setPage] = React.useState(0)
+  const totalPages = Math.ceil(tasks.length / DASHBOARD_LIST_PAGE_SIZE)
+  const currentPage = Math.min(page, Math.max(0, totalPages - 1))
+  const visibleTasks = tasks.slice(
+    currentPage * DASHBOARD_LIST_PAGE_SIZE,
+    (currentPage + 1) * DASHBOARD_LIST_PAGE_SIZE
+  )
 
   return (
     <Card
@@ -56,7 +68,7 @@ export function UrgentTasksCard({
           />
         ) : (
           <ul className="divide-border divide-y">
-            {tasks.map((task) => {
+            {visibleTasks.map((task) => {
               const event = eventsById.get(task.eventId)
               return (
                 <li key={task.id}>
@@ -96,6 +108,11 @@ export function UrgentTasksCard({
             })}
           </ul>
         )}
+        <DashboardListPagination
+          page={currentPage}
+          totalItems={tasks.length}
+          onPageChange={setPage}
+        />
       </CardContent>
     </Card>
   )

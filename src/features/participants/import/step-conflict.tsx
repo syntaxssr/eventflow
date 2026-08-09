@@ -205,7 +205,7 @@ function ConflictPanel({
               <dd className="min-w-0 break-words">
                 {valueOf(field) || "—"}
                 {isDifferent ? (
-                  <span className="ml-1.5 inline-flex items-center gap-0.5 rounded-full bg-warning/30 px-1.5 py-0.5 text-[0.625rem] font-medium text-foreground dark:bg-warning/35">
+                  <span className="ml-1.5 inline-flex items-center gap-0.5 rounded-full bg-warning/30 px-1.5 py-0.5 text-[0.625rem] font-medium text-warning-foreground dark:bg-warning/35">
                     <GitCompareIcon className="size-2.5" aria-hidden="true" />
                     {t("participant.differentBadge")}
                   </span>

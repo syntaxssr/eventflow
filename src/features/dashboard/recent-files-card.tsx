@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
 import { ArrowRightIcon, FolderOpenIcon } from "lucide-react"
 
@@ -20,6 +21,10 @@ import { getFullName } from "@/lib/user"
 import { cn } from "@/lib/utils"
 import type { FileItem } from "@/types/file"
 import type { User } from "@/types/user"
+import {
+  DASHBOARD_LIST_PAGE_SIZE,
+  DashboardListPagination,
+} from "./dashboard-list-pagination"
 
 export function RecentFilesCard({
   files,
@@ -29,6 +34,13 @@ export function RecentFilesCard({
   usersById: Map<string, User>
 }) {
   const { t, locale } = useLocale()
+  const [page, setPage] = React.useState(0)
+  const totalPages = Math.ceil(files.length / DASHBOARD_LIST_PAGE_SIZE)
+  const currentPage = Math.min(page, Math.max(0, totalPages - 1))
+  const visibleFiles = files.slice(
+    currentPage * DASHBOARD_LIST_PAGE_SIZE,
+    (currentPage + 1) * DASHBOARD_LIST_PAGE_SIZE
+  )
 
   return (
     <Card
@@ -56,7 +68,7 @@ export function RecentFilesCard({
           />
         ) : (
           <ul className="divide-border divide-y">
-            {files.map((file) => {
+            {visibleFiles.map((file) => {
               const style = FILE_TYPE_STYLE[file.type]
               const Icon = style.icon
               const uploader = usersById.get(file.updatedBy)
@@ -100,6 +112,11 @@ export function RecentFilesCard({
             })}
           </ul>
         )}
+        <DashboardListPagination
+          page={currentPage}
+          totalItems={files.length}
+          onPageChange={setPage}
+        />
       </CardContent>
     </Card>
   )

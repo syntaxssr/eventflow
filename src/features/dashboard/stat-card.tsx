@@ -15,13 +15,13 @@ type Tone = "default" | "warning" | "danger" | "blocked" | "brand"
 /** พื้นการ์ดสรุปใช้ surface กลางของระบบ สีอยู่ที่กล่องไอคอนเท่านั้น */
 const CARD_TONE: Record<Tone, string> = {
   default: "",
-  brand: "",
-  danger: "",
-  blocked: "",
-  warning: "",
+  brand: "dashboard-stat-card--blue",
+  danger: "dashboard-stat-card--red",
+  blocked: "dashboard-stat-card--orange",
+  warning: "dashboard-stat-card--yellow",
 }
 
-/** กล่องไอคอนของสี่การ์ดบน ใช้ชุดสีสถานะตามลำดับความเร่งด่วน */
+/** กล่องไอคอนใช้สีสถานะคู่กับสีตัวอักษรของสีนั้น */
 const TONE_TILE: Record<Tone, string> = {
   default: "bg-muted text-muted-foreground",
   brand: "bg-status-blue text-status-blue-foreground",
@@ -66,12 +66,12 @@ export function StatCard({
         >
           <span
             className={cn(
-              "flex size-10 shrink-0 items-center justify-center rounded-lg",
+              "flex size-12 shrink-0 items-center justify-center rounded-xl",
               TONE_TILE[tone]
             )}
             aria-hidden="true"
           >
-            <Icon className="size-5" />
+            <Icon className="size-8" />
           </span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-sm font-medium opacity-75">

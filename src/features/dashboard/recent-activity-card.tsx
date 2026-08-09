@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import Link from "next/link"
 import { ActivityIcon, ArrowRightIcon } from "lucide-react"
 
@@ -20,6 +21,10 @@ import { formatRelativeTime } from "@/lib/format"
 import { getFullName } from "@/lib/user"
 import type { Activity } from "@/types/activity"
 import type { User } from "@/types/user"
+import {
+  DASHBOARD_LIST_PAGE_SIZE,
+  DashboardListPagination,
+} from "./dashboard-list-pagination"
 
 export function RecentActivityCard({
   activities,
@@ -29,6 +34,13 @@ export function RecentActivityCard({
   usersById: Map<string, User>
 }) {
   const { t, tl, locale } = useLocale()
+  const [page, setPage] = React.useState(0)
+  const totalPages = Math.ceil(activities.length / DASHBOARD_LIST_PAGE_SIZE)
+  const currentPage = Math.min(page, Math.max(0, totalPages - 1))
+  const visibleActivities = activities.slice(
+    currentPage * DASHBOARD_LIST_PAGE_SIZE,
+    (currentPage + 1) * DASHBOARD_LIST_PAGE_SIZE
+  )
 
   return (
     <Card
@@ -56,7 +68,7 @@ export function RecentActivityCard({
           />
         ) : (
           <ol className="space-y-3">
-            {activities.map((activity) => {
+            {visibleActivities.map((activity) => {
               const actor = usersById.get(activity.actorId)
               const meta = ACTIVITY_META[activity.action]
               const Icon = meta.icon
@@ -105,6 +117,11 @@ export function RecentActivityCard({
             })}
           </ol>
         )}
+        <DashboardListPagination
+          page={currentPage}
+          totalItems={activities.length}
+          onPageChange={setPage}
+        />
       </CardContent>
     </Card>
   )

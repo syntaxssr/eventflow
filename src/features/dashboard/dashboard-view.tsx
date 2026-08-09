@@ -146,10 +146,10 @@ export function DashboardView() {
           } as React.CSSProperties
         }
       >
-        {/* คอลัมน์ซ้าย (2/3) เป็นตัวกำหนดความสูงของแถว ปฏิทินฝั่งขวายืดตาม
-          ไม่ใช่กลับกัน — ไม่งั้นการ์ดกิจกรรมหลักจะโดนบีบจนเนื้อหาขาด */}
-        <div className="grid items-start gap-4 lg:grid-cols-3">
-        <div className="space-y-4 lg:col-span-2">
+        {/* ปฏิทินฝั่งขวาใช้ความสูงคงที่จาก 6 สัปดาห์ + รายการ 3 งาน
+          ฝั่งซ้ายยืดการ์ดกิจกรรมหลักให้สูงเท่ากับแถวเดียวกัน */}
+        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="flex h-full min-h-0 flex-col gap-4 overflow-hidden lg:col-span-2">
           {/* ชั้น 1 — ตัวเลขที่ต้องลงมือทำวันนี้เท่านั้น
               ตัด "งานที่ยังไม่เสร็จ" ออกเพราะนับซ้อนกับอีกสองใบ และตัดการแจ้งเตือน
               ที่ยังไม่อ่านออกเพราะมีกระดิ่งบน topbar อยู่แล้ว */}
@@ -193,7 +193,57 @@ export function DashboardView() {
             event={data.featuredEvent}
             progress={data.featuredProgress}
             participantCount={data.featuredParticipants.length}
-          />
+          >
+            <Tabs
+              className="dashboard-featured-event-tabs"
+              defaultValue="urgent"
+              data-testid="dashboard-detail-tabs"
+            >
+              <TabsList className="dashboard-featured-tabs-list">
+                <TabsTrigger value="urgent">
+                  {t("dashboard.myUrgentTasks")}
+                </TabsTrigger>
+                <TabsTrigger value="rsvp">{t("dashboard.rsvpSummary")}</TabsTrigger>
+                <TabsTrigger value="taskStatus">
+                  {t("dashboard.taskStatusSummary")}
+                </TabsTrigger>
+                <TabsTrigger value="files">{t("dashboard.recentFiles")}</TabsTrigger>
+                <TabsTrigger value="activity">
+                  {t("dashboard.recentActivity")}
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent className="min-h-0" value="urgent">
+                <UrgentTasksCard
+                  tasks={urgentTasks}
+                  eventsById={data.eventsById}
+                />
+              </TabsContent>
+              <TabsContent className="min-h-0" value="rsvp">
+                <RsvpSummaryCard
+                  summary={summariseRsvp(data.featuredParticipants)}
+                />
+              </TabsContent>
+              <TabsContent className="min-h-0" value="taskStatus">
+                <TaskStatusChart
+                  counts={countTasksByStatus(data.featuredTasks)}
+                  total={data.featuredTasks.length}
+                />
+              </TabsContent>
+              <TabsContent className="min-h-0" value="files">
+                <RecentFilesCard
+                  files={data.recentFiles}
+                  usersById={data.usersById}
+                />
+              </TabsContent>
+              <TabsContent className="min-h-0" value="activity">
+                <RecentActivityCard
+                  activities={data.recentActivities}
+                  usersById={data.usersById}
+                />
+              </TabsContent>
+            </Tabs>
+          </FeaturedEventCard>
         </div>
 
         <DashboardCalendarCard
@@ -202,46 +252,6 @@ export function DashboardView() {
         />
         </div>
 
-        {/* ชั้น 3 — ข้อมูลประกอบ ยุบเป็นแท็บเดียวเพื่อไม่ให้แย่งความสนใจกับสองชั้นบน
-          งานเร่งด่วนของผู้ใช้เป็นแท็บแรกและเปิดค้างไว้ เพราะเป็นสิ่งเดียวในหน้านี้
-          ที่ผูกกับคนที่ล็อกอินอยู่ */}
-        <Tabs className="w-full" defaultValue="urgent" data-testid="dashboard-detail-tabs">
-        <TabsList className="dashboard-featured-tabs-list">
-          <TabsTrigger value="urgent">
-            {t("dashboard.myUrgentTasks")}
-          </TabsTrigger>
-          <TabsTrigger value="taskStatus">
-            {t("dashboard.taskStatusSummary")}
-          </TabsTrigger>
-          <TabsTrigger value="rsvp">{t("dashboard.rsvpSummary")}</TabsTrigger>
-          <TabsTrigger value="files">{t("dashboard.recentFiles")}</TabsTrigger>
-          <TabsTrigger value="activity">
-            {t("dashboard.recentActivity")}
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent className="w-full" value="urgent">
-          <UrgentTasksCard tasks={urgentTasks} eventsById={data.eventsById} />
-        </TabsContent>
-        <TabsContent className="w-full" value="taskStatus">
-          <TaskStatusChart
-            counts={countTasksByStatus(data.featuredTasks)}
-            total={data.featuredTasks.length}
-          />
-        </TabsContent>
-        <TabsContent className="w-full" value="rsvp">
-          <RsvpSummaryCard summary={summariseRsvp(data.featuredParticipants)} />
-        </TabsContent>
-        <TabsContent className="w-full" value="files">
-          <RecentFilesCard files={data.recentFiles} usersById={data.usersById} />
-        </TabsContent>
-        <TabsContent className="w-full" value="activity">
-          <RecentActivityCard
-            activities={data.recentActivities}
-            usersById={data.usersById}
-          />
-        </TabsContent>
-        </Tabs>
       </div>
     </PageContainer>
   )

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { CalendarDaysIcon } from "lucide-react"
 import { toast } from "sonner"
 
 import { LanguageToggle } from "@/components/common/language-toggle"
@@ -559,6 +560,29 @@ export function DesignSystemView() {
                 <div className="flex flex-wrap gap-2">
                   <StatusBadge style={OVERDUE_STYLE} />
                   <StatusBadge style={DUE_SOON_STYLE} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                  {t("designSystem.iconColors")}
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="border-border flex items-center gap-3 rounded-lg border p-3">
+                    <span
+                      className="bg-info text-info-foreground flex size-9 shrink-0 items-center justify-center rounded-lg"
+                      aria-hidden="true"
+                    >
+                      <CalendarDaysIcon className="size-4" />
+                    </span>
+                    <p className="text-sm">{t("designSystem.iconWithBackground")}</p>
+                  </div>
+                  <div className="border-border flex items-center gap-3 rounded-lg border p-3">
+                    <CalendarDaysIcon
+                      className="text-info size-5 shrink-0"
+                      aria-hidden="true"
+                    />
+                    <p className="text-sm">{t("designSystem.iconWithoutBackground")}</p>
+                  </div>
                 </div>
               </div>
             </CardContent>

@@ -160,6 +160,24 @@
   color: #1c1c1c;
 }
 
+/* การ์ดสรุปบน Dashboard: hover ใช้เฉดเดียวกับไอคอนที่อ่อนลงหนึ่งระดับ
+   (Version 3 -> Version 2) เพื่อให้ feedback ชัดแต่ยังอ่านเนื้อหาได้ง่าย */
+.dashboard-stat-card--blue:hover {
+  background-color: #c3dcff;
+}
+
+.dashboard-stat-card--yellow:hover {
+  background-color: #ffe4a9;
+}
+
+.dashboard-stat-card--orange:hover {
+  background-color: #fed5be;
+}
+
+.dashboard-stat-card--red:hover {
+  background-color: #ffcbcd;
+}
+
 /* ทุกการ์ดใต้แท็บ Dashboard สูงเท่ากัน เพื่อไม่ให้หน้าเลื่อนเมื่อสลับแท็บ */
 .dashboard-detail-card {
   display: flex;
@@ -201,6 +219,51 @@
 .dashboard-featured-tabs-list > [data-slot="tabs-trigger"][data-state="active"] {
   background-color: #1c1c1c;
   color: #f2f2f0;
+}
+
+/* แท็บรายละเอียดเป็นส่วนหนึ่งของการ์ดกิจกรรมหลัก จึงใช้พื้นที่ที่เหลือของการ์ด
+   และให้เฉพาะเนื้อหาเลื่อนภายใน โดยไม่ทำให้ความสูง Dashboard เปลี่ยน */
+.dashboard-featured-event-tabs {
+  display: flex;
+  min-height: 0;
+  min-width: 0;
+  flex: 0 0 30rem;
+  overflow: hidden;
+}
+
+.dashboard-featured-event-tabs > [data-slot="tabs-content"] {
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dashboard-featured-event-tabs .dashboard-featured-tabs-list,
+.dashboard-featured-event-tabs .dashboard-detail-card,
+.dashboard-featured-event-tabs .dashboard-detail-card > [data-slot="card-content"] {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.dashboard-featured-detail .dashboard-detail-card {
+  height: 100%;
+  min-height: 0;
+  gap: 1rem;
+  background-color: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+.dashboard-featured-detail .dashboard-detail-card > [data-slot="card-header"],
+.dashboard-featured-detail .dashboard-detail-card > [data-slot="card-content"] {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.dashboard-featured-detail .dashboard-detail-card > [data-slot="card-content"] {
+  min-width: 0;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  overflow-x: hidden;
 }
 
 :root {

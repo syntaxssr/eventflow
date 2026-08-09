@@ -65,7 +65,7 @@ const DANGER_DOT = "bg-danger"
 /** สถานะกิจกรรมใช้สี Version 4 เต็มสี เพื่อให้ตรงกับ Design System */
 const EVENT_DEFAULT_BADGE =
   "bg-status-default text-status-default-foreground border-status-gray"
-const EVENT_GRAY_BADGE =
+const STATUS_GRAY_BADGE =
   "bg-status-gray text-status-gray-foreground border-status-gray"
 const EVENT_PURPLE_BADGE =
   "bg-event-status-purple text-event-status-purple-foreground border-event-status-purple"
@@ -74,19 +74,16 @@ const EVENT_SUCCESS_BADGE =
   "bg-success text-success-foreground border-success"
 const EVENT_DANGER_BADGE = "bg-danger text-danger-foreground border-danger"
 const EVENT_DEFAULT_DOT = "bg-status-default"
-const EVENT_GRAY_DOT = "bg-status-gray"
+const STATUS_GRAY_DOT = "bg-status-gray"
 const EVENT_PURPLE_DOT = "bg-event-status-purple"
 
 /** สถานะงานใช้สี Version 4 เต็มสีตามลำดับการทำงาน */
-const TASK_DEFAULT_BADGE =
-  "bg-status-default text-status-default-foreground border-status-gray"
 const TASK_INFO_BADGE = "bg-info text-info-foreground border-info"
 const TASK_WARNING_BADGE =
   "bg-warning text-warning-foreground border-warning"
 const TASK_ORANGE_BADGE =
   "bg-task-status-orange text-task-status-orange-foreground border-task-status-orange"
 const TASK_SUCCESS_BADGE = "bg-success text-success-foreground border-success"
-const TASK_DEFAULT_DOT = "bg-status-default"
 const TASK_ORANGE_DOT = "bg-task-status-orange"
 
 /** ความสำคัญใช้สี Version 4 เพื่อให้ระดับความเร่งด่วนแยกชัดเจน */
@@ -123,13 +120,10 @@ const PARTICIPANT_GUEST_DOT = "bg-event-status-purple"
 const PARTICIPANT_ORGANIZER_DOT = "bg-danger"
 
 /** สถานะความพร้อมใช้สี Version 4 ตามลำดับการเตรียมงาน */
-const READINESS_DEFAULT_BADGE =
-  "bg-status-default text-status-default-foreground border-status-gray"
 const READINESS_PREPARING_BADGE = "bg-info text-info-foreground border-info"
 const READINESS_READY_BADGE =
   "bg-event-status-purple text-event-status-purple-foreground border-event-status-purple"
 const READINESS_DONE_BADGE = "bg-success text-success-foreground border-success"
-const READINESS_DEFAULT_DOT = "bg-status-default"
 const READINESS_PREPARING_DOT = "bg-info"
 const READINESS_READY_DOT = "bg-event-status-purple"
 const READINESS_DONE_DOT = "bg-success"
@@ -152,8 +146,8 @@ export const EVENT_STATUS_STYLE: Record<EventStatus, StatusStyle> = {
   planning: {
     labelKey: "eventStatus.planning",
     icon: ClipboardListIcon,
-    badge: EVENT_GRAY_BADGE,
-    dot: EVENT_GRAY_DOT,
+    badge: STATUS_GRAY_BADGE,
+    dot: STATUS_GRAY_DOT,
     chartColor: "var(--status-gray)",
   },
   ready: {
@@ -190,9 +184,9 @@ export const TASK_STATUS_STYLE: Record<TaskStatus, StatusStyle> = {
   not_started: {
     labelKey: "taskStatus.notStarted",
     icon: CircleDashedIcon,
-    badge: TASK_DEFAULT_BADGE,
-    dot: TASK_DEFAULT_DOT,
-    chartColor: "var(--status-default)",
+    badge: STATUS_GRAY_BADGE,
+    dot: STATUS_GRAY_DOT,
+    chartColor: "var(--status-gray)",
   },
   in_progress: {
     labelKey: "taskStatus.inProgress",
@@ -321,9 +315,9 @@ export const READINESS_STYLE: Record<ReadinessStatus, StatusStyle> = {
   not_ready: {
     labelKey: "readiness.notReady",
     icon: CircleDashedIcon,
-    badge: READINESS_DEFAULT_BADGE,
-    dot: READINESS_DEFAULT_DOT,
-    chartColor: "var(--status-default)",
+    badge: STATUS_GRAY_BADGE,
+    dot: STATUS_GRAY_DOT,
+    chartColor: "var(--status-gray)",
   },
   preparing: {
     labelKey: "readiness.preparing",

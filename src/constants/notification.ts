@@ -24,10 +24,10 @@ interface NotificationMeta {
 
 /** ใช้ได้เฉพาะ --info / --warning / --success / --danger กับดำ/ขาวไล่ความทึบ */
 const NEUTRAL_TILE = "bg-muted text-muted-foreground"
-const INFO_TILE = "bg-info/15 text-foreground dark:bg-info/25"
-const WARNING_TILE = "bg-warning/25 text-foreground dark:bg-warning/30"
-const SUCCESS_TILE = "bg-success/20 text-foreground dark:bg-success/25"
-const DANGER_TILE = "bg-danger/15 text-foreground dark:bg-danger/25"
+const INFO_TILE = "bg-info/15 text-info-foreground dark:bg-info/25"
+const WARNING_TILE = "bg-warning/25 text-warning-foreground dark:bg-warning/30"
+const SUCCESS_TILE = "bg-success/20 text-success-foreground dark:bg-success/25"
+const DANGER_TILE = "bg-danger/15 text-danger-foreground dark:bg-danger/25"
 
 export const NOTIFICATION_META: Record<NotificationType, NotificationMeta> = {
   task_assigned: {

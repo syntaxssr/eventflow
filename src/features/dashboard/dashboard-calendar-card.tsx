@@ -30,10 +30,10 @@ const WEEKDAY_LABELS: Record<"th" | "en", string[]> = {
 /** สีตัวอย่างในคำอธิบาย — สื่อว่าจุดกิจกรรมเปลี่ยนสีตามโปรเจกต์ */
 const LEGEND_EVENT_COLORS = AVATAR_PALETTE.slice(0, 3)
 
-/**
- * จำนวนสัปดาห์ที่เดือนนั้นต้องใช้จริง (4–6)
- * ตรึงไว้ 6 แถวเสมอจะทำให้บางเดือนมีแถวว่างเปล่าเกินมา
- */
+/** เดือนที่กินพื้นที่มากสุดใช้ 6 แถว (เช่น พฤษภาคม/สิงหาคม 2569) */
+const MAX_CALENDAR_WEEKS = 6
+const ENTRIES_PER_PAGE = 3
+
 function weeksInMonth(year: number, month: number): number {
   const leading = new Date(year, month, 1).getDay()
   const days = new Date(year, month + 1, 0).getDate()
@@ -45,7 +45,10 @@ function buildMonthGrid(year: number, month: number): Date[] {
   const start = new Date(first)
   start.setDate(first.getDate() - first.getDay())
 
-  return Array.from({ length: weeksInMonth(year, month) * 7 }, (_, index) => {
+  // ใช้จำนวนแถวสูงสุดเสมอ เพื่อไม่ให้ความสูง Dashboard เปลี่ยนเมื่อสลับเดือน
+  const totalWeeks = Math.max(weeksInMonth(year, month), MAX_CALENDAR_WEEKS)
+
+  return Array.from({ length: totalWeeks * 7 }, (_, index) => {
     const day = new Date(start)
     day.setDate(start.getDate() + index)
     return day
@@ -81,6 +84,7 @@ export function DashboardCalendarCard({
     () => new Date(today.getFullYear(), today.getMonth(), 1)
   )
   const [selectedKey, setSelectedKey] = React.useState(todayKey)
+  const [selectedPage, setSelectedPage] = React.useState(0)
 
   const days = React.useMemo(
     () => buildMonthGrid(cursor.getFullYear(), cursor.getMonth()),
@@ -129,6 +133,15 @@ export function DashboardCalendarCard({
     )
 
   const selectedEntries = byDate.get(selectedKey) ?? []
+  const totalPages = Math.max(
+    1,
+    Math.ceil(selectedEntries.length / ENTRIES_PER_PAGE)
+  )
+  const currentPage = Math.min(selectedPage, totalPages - 1)
+  const pagedEntries = selectedEntries.slice(
+    currentPage * ENTRIES_PER_PAGE,
+    (currentPage + 1) * ENTRIES_PER_PAGE
+  )
   const selectedLabel = new Intl.DateTimeFormat(
     locale === "th" ? "th-TH" : "en-GB",
     { day: "numeric", month: "long", year: "numeric" }
@@ -136,7 +149,7 @@ export function DashboardCalendarCard({
 
   return (
     <Card
-      className="h-full"
+      className="dashboard-calendar-card h-full"
       data-testid="dashboard-calendar"
     >
       <CardHeader>
@@ -196,7 +209,10 @@ export function DashboardCalendarCard({
                 <button
                   key={key}
                   type="button"
-                  onClick={() => setSelectedKey(key)}
+                  onClick={() => {
+                    setSelectedKey(key)
+                    setSelectedPage(0)
+                  }}
                   aria-pressed={selected}
                   aria-label={[
                     key,
@@ -265,46 +281,81 @@ export function DashboardCalendarCard({
           </li>
         </ul>
 
-        <div className="flex min-h-0 flex-1 flex-col gap-2 border-t pt-3">
+        <div className="flex flex-col gap-2 border-t pt-3">
           <p className="text-sm font-semibold">{selectedLabel}</p>
 
-          {selectedEntries.length === 0 ? (
-            <p className="text-muted-foreground flex items-center gap-2 text-sm">
-              <CalendarIcon className="size-4 shrink-0" aria-hidden="true" />
-              {t("dashboard.calendarNoItems")}
-            </p>
-          ) : (
-            <ul className="divide-border min-h-0 flex-1 divide-y overflow-x-hidden overflow-y-auto">
-              {selectedEntries.map((entry) => (
-                <li key={`${entry.kind}-${entry.id}`}>
-                  <Link
-                    href={
-                      entry.kind === "event"
-                        ? `${ROUTES.events}?event=${entry.id}`
-                        : `${ROUTES.myTasks}?task=${entry.id}`
-                    }
-                    className="hover:bg-muted/60 focus-visible:outline-ring -mx-2 flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors focus-visible:outline-2"
-                  >
-                    <span
-                      className={cn(
-                        "size-1.5 shrink-0 rounded-full",
-                        entry.kind === "task" && "bg-foreground/70"
-                      )}
-                      style={
+          <div className="min-h-[8.25rem]">
+            {selectedEntries.length === 0 ? (
+              <p className="text-muted-foreground flex items-center gap-2 text-sm">
+                <CalendarIcon className="size-4 shrink-0" aria-hidden="true" />
+                {t("dashboard.calendarNoItems")}
+              </p>
+            ) : (
+              <ul className="divide-border divide-y overflow-x-hidden">
+                {pagedEntries.map((entry) => (
+                  <li key={`${entry.kind}-${entry.id}`}>
+                    <Link
+                      href={
                         entry.kind === "event"
-                          ? { backgroundColor: entry.color }
-                          : undefined
+                          ? `${ROUTES.events}?event=${entry.id}`
+                          : `${ROUTES.myTasks}?task=${entry.id}`
                       }
-                      aria-hidden="true"
-                    />
-                    <span className="min-w-0 flex-1 truncate">
-                      {entry.label}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+                      className="hover:bg-muted/60 focus-visible:outline-ring -mx-2 flex items-center gap-2 rounded-md px-2 py-2 text-sm transition-colors focus-visible:outline-2"
+                    >
+                      <span
+                        className={cn(
+                          "size-1.5 shrink-0 rounded-full",
+                          entry.kind === "task" && "bg-foreground/70"
+                        )}
+                        style={
+                          entry.kind === "event"
+                            ? { backgroundColor: entry.color }
+                            : undefined
+                        }
+                        aria-hidden="true"
+                      />
+                      <span className="min-w-0 flex-1 truncate">
+                        {entry.label}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="flex h-8 items-center justify-center gap-2">
+            {totalPages > 1 ? (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => setSelectedPage((page) => Math.max(0, page - 1))}
+                  disabled={currentPage === 0}
+                  aria-label={t("dashboard.calendarPreviousPage")}
+                >
+                  <ChevronLeftIcon className="size-4" aria-hidden="true" />
+                </Button>
+                <span className="text-muted-foreground text-xs tabular-nums">
+                  {t("dashboard.calendarPage", {
+                    current: currentPage + 1,
+                    total: totalPages,
+                  })}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() =>
+                    setSelectedPage((page) => Math.min(totalPages - 1, page + 1))
+                  }
+                  disabled={currentPage === totalPages - 1}
+                  aria-label={t("dashboard.calendarNextPage")}
+                >
+                  <ChevronRightIcon className="size-4" aria-hidden="true" />
+                </Button>
+              </>
+            ) : null}
+          </div>
         </div>
       </CardContent>
     </Card>

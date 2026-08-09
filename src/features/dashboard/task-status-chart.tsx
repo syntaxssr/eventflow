@@ -51,7 +51,11 @@ export function TaskStatusChart({
     label: t(TASK_STATUS_STYLE[status].labelKey as TranslationKey),
     value: counts[status],
     percent: total === 0 ? 0 : Math.round((counts[status] / total) * 100),
-    fill: TASK_STATUS_STYLE[status].chartColor,
+    // วง "ยังไม่เริ่ม" ใช้สีตัวอักษร Gray เฉพาะในกราฟ เพื่อไม่กลืนกับพื้นการ์ด
+    fill:
+      status === "not_started"
+        ? "var(--status-gray-foreground)"
+        : TASK_STATUS_STYLE[status].chartColor,
   }))
 
   return (
@@ -64,7 +68,7 @@ export function TaskStatusChart({
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="grid flex-1 content-center gap-8 sm:grid-cols-[minmax(18rem,1fr)_minmax(15rem,0.85fr)] sm:items-center">
+      <CardContent className="grid min-w-0 flex-1 content-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:items-center">
         {/* วงแหวนแยกตามสถานะ อ่านสัดส่วนเทียบงานทั้งหมดได้โดยไม่ต้องเดาชิ้นโดนัท */}
         <div className="relative mx-auto aspect-square w-64 sm:w-72 lg:w-80">
           <ChartContainer config={config} className="size-full">
@@ -109,7 +113,12 @@ export function TaskStatusChart({
                   className="hover:bg-muted focus-visible:outline-ring flex items-center gap-2 rounded-md px-2 py-1 text-sm transition-colors focus-visible:outline-2"
                 >
                   <span
-                    className={cn("size-2.5 shrink-0 rounded-full", style.dot)}
+                    className={cn(
+                      "size-2.5 shrink-0 rounded-full",
+                      status === "not_started"
+                        ? "bg-status-gray-foreground"
+                        : style.dot
+                    )}
                     aria-hidden="true"
                   />
                   <Icon
