@@ -105,7 +105,7 @@ export const th = {
   dashboard: {
     greeting: "สวัสดี {name}",
     subtitle: "ภาพรวมกิจกรรมและงานที่คุณต้องดูแลวันนี้",
-    upcomingEvents: "กิจกรรมที่กำลังจะมาถึง",
+    upcomingEvents: "กำลังจะมาถึง",
     tasksDueSoon: "งานใกล้ครบกำหนด",
     overdueTasks: "งานเกินกำหนด",
     blockedTasks: "งานติดขัด",

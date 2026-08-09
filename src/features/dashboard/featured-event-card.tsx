@@ -49,6 +49,7 @@ export function FeaturedEventCard({
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge
             style={EVENT_STATUS_STYLE[event.status]}
+            className="border-stat-blue/35 bg-stat-blue/15"
           />
           <span className="bg-muted rounded-full px-2.5 py-1 text-xs font-semibold">
             {countdown}

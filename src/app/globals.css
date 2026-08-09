@@ -126,20 +126,56 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* ปุ่มควบคุมใช้พื้นดำเพื่อให้เด่นจากการ์ด */
+/* ปุ่มควบคุมใช้พื้น off-white เดียวกับการ์ด */
 .dashboard-featured-color-control {
-  background-color: #1c1c1c;
-  color: #f2f2f0;
+  background-color: #f4f4f1;
+  color: #1c1c1c;
 }
 
-/* การ์ดบน Dashboard ใช้เฉด off-white เดียวกันทั้งสองโหมด */
+/* การ์ดบน Dashboard: off-white ใน light และ near-black ใน dark */
 .dashboard-card-surface {
-  --card: #efefec;
+  --card: #f4f4f1;
   --card-foreground: #1c1c1c;
   --muted: rgb(28 28 28 / 6%);
   --muted-foreground: rgb(28 28 28 / 62%);
   --border: rgb(28 28 28 / 12%);
-  background-color: #efefec;
+  background-color: #f4f4f1 !important;
+}
+
+.dark .dashboard-card-surface {
+  --card: #202020;
+  --card-foreground: #f2f2f0;
+  --muted: rgb(242 242 240 / 8%);
+  --muted-foreground: rgb(242 242 240 / 65%);
+  --border: rgb(242 242 240 / 12%);
+  background-color: #202020 !important;
+}
+
+/* พื้นหลังเฉพาะหน้า Dashboard */
+.dashboard-page {
+  background-color: #ebebe7;
+}
+
+.dashboard-page [data-slot="card"] {
+  --card: #f4f4f1;
+  --card-foreground: #1c1c1c;
+  --muted: rgb(28 28 28 / 6%);
+  --muted-foreground: rgb(28 28 28 / 62%);
+  --border: rgb(28 28 28 / 12%);
+  background-color: #f4f4f1 !important;
+}
+
+.dark .dashboard-page {
+  background-color: var(--background);
+}
+
+.dark .dashboard-page [data-slot="card"] {
+  --card: #202020;
+  --card-foreground: #f2f2f0;
+  --muted: rgb(242 242 240 / 8%);
+  --muted-foreground: rgb(242 242 240 / 65%);
+  --border: rgb(242 242 240 / 12%);
+  background-color: #202020 !important;
 }
 
 /* ทุกการ์ดใต้แท็บ Dashboard สูงเท่ากัน เพื่อไม่ให้หน้าเลื่อนเมื่อสลับแท็บ */
@@ -157,19 +193,19 @@
   overflow-y: auto;
 }
 
-/* แถบแท็บ Dashboard ใช้สีของกิจกรรมหลัก และแบ่งพื้นที่ให้ทุกแท็บเท่ากัน */
+/* แถบแท็บ Dashboard ใช้พื้น off-white และแบ่งพื้นที่ให้ทุกแท็บเท่ากัน */
 .dashboard-featured-tabs-list {
   display: grid;
   height: auto;
   width: 100%;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  background-color: color-mix(
-    in oklch,
-    var(--dashboard-event-color) 18%,
-    var(--card)
-  );
-  box-shadow: inset 0 0 0 1px
-    color-mix(in oklch, var(--dashboard-event-color) 45%, var(--border));
+  background-color: #f4f4f1;
+  box-shadow: inset 0 0 0 1px rgb(28 28 28 / 18%);
+}
+
+.dark .dashboard-featured-tabs-list {
+  background-color: #202020;
+  box-shadow: inset 0 0 0 1px rgb(242 242 240 / 18%);
 }
 
 .dashboard-featured-tabs-list > [data-slot="tabs-trigger"] {

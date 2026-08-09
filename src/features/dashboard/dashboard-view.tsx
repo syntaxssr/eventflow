@@ -97,7 +97,7 @@ export function DashboardView() {
 
   if (pageState === "loading") {
     return (
-      <PageContainer>
+      <PageContainer className="dashboard-page">
         <PageHeader title={t("nav.dashboard")} />
         <DashboardSkeleton />
       </PageContainer>
@@ -106,7 +106,7 @@ export function DashboardView() {
 
   if (pageState === "error") {
     return (
-      <PageContainer>
+      <PageContainer className="dashboard-page">
         <PageHeader title={t("nav.dashboard")} />
         <ErrorState onRetry={retry} />
       </PageContainer>
@@ -115,7 +115,7 @@ export function DashboardView() {
 
   if (pageState === "empty" || !data.featuredEvent || !data.featuredProgress) {
     return (
-      <PageContainer>
+      <PageContainer className="dashboard-page">
         <PageHeader title={t("nav.dashboard")} />
         <EmptyState
           icon={CalendarPlusIcon}
@@ -137,7 +137,7 @@ export function DashboardView() {
   ).slice(0, 5)
 
   return (
-    <PageContainer>
+    <PageContainer className="dashboard-page">
       <div
         className="space-y-6"
         style={

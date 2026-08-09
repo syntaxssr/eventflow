@@ -62,13 +62,13 @@ export function StatCard({
           <span className="min-w-0 flex-1">
             {/* ไม่ใช้ --muted-foreground (ดำ 62%) เพราะพอมีสีทับพื้นการ์ดแล้ว
                 contrast ตกต่ำกว่า AA (danger เหลือ 4.27) ดำ 70% ได้ 5.1–5.7 */}
-            <span className="text-foreground/70 block truncate text-xs font-medium">
+            <span className="text-foreground/70 block truncate text-sm font-medium">
               {t(labelKey)}
             </span>
-            <span className="block text-2xl leading-tight font-bold tabular-nums">
+            <span className="block text-3xl leading-tight font-bold tabular-nums">
               {formatNumber(animated, locale)}
               {unitKey ? (
-                <span className="text-foreground/70 ml-1 text-xs font-normal">
+                <span className="text-foreground/70 ml-1 text-sm font-normal">
                   {t(unitKey)}
                 </span>
               ) : null}
