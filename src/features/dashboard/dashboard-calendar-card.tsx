@@ -136,7 +136,7 @@ export function DashboardCalendarCard({
 
   return (
     <Card
-      className="dashboard-card-surface h-full"
+      className="h-full"
       data-testid="dashboard-calendar"
     >
       <CardHeader>

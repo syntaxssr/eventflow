@@ -44,7 +44,7 @@ export function StatCard({
   const animated = useCountUp(value)
 
   return (
-    <Card className="dashboard-card-surface overflow-hidden transition-colors hover:ring-foreground/25">
+    <Card className="overflow-hidden transition-colors hover:ring-foreground/25">
       <CardContent className="p-0">
         <Link
           href={href}

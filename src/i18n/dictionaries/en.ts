@@ -818,6 +818,8 @@ export const en: Dictionary = {
     semantic: "Semantic colors",
     typography: "Typography",
     statuses: "Statuses",
+    statusColors: "Status colors",
+    statusColorSample: "Sample text",
     eventStatuses: "Event status",
     taskStatuses: "Task status",
     components: "Components",

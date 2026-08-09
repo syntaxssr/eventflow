@@ -55,10 +55,43 @@ const BRAND_STEPS = [
 ] as const
 
 const SEMANTIC_TOKENS = [
-  { name: "success", surface: "bg-success-surface", solid: "bg-success" },
-  { name: "warning", surface: "bg-warning-surface", solid: "bg-warning" },
-  { name: "info", surface: "bg-info-surface", solid: "bg-info" },
-  { name: "danger", surface: "bg-danger-surface", solid: "bg-danger" },
+  {
+    name: "success",
+    surface: "bg-success-surface",
+    solid: "bg-success",
+    foreground: "text-success-foreground",
+  },
+  {
+    name: "warning",
+    surface: "bg-warning-surface",
+    solid: "bg-warning",
+    foreground: "text-warning-foreground",
+  },
+  {
+    name: "info",
+    surface: "bg-info-surface",
+    solid: "bg-info",
+    foreground: "text-info-foreground",
+  },
+  {
+    name: "danger",
+    surface: "bg-danger-surface",
+    solid: "bg-danger",
+    foreground: "text-danger-foreground",
+  },
+] as const
+
+const STATUS_COLOR_TOKENS = [
+  { name: "default", label: "Default" },
+  { name: "gray", label: "Gray" },
+  { name: "brown", label: "Brown" },
+  { name: "orange", label: "Orange" },
+  { name: "yellow", label: "Yellow" },
+  { name: "green", label: "Green" },
+  { name: "blue", label: "Blue" },
+  { name: "purple", label: "Purple" },
+  { name: "pink", label: "Pink" },
+  { name: "red", label: "Red" },
 ] as const
 
 function Section({
@@ -100,6 +133,36 @@ function BadgeRow({
           <StatusBadge key={key} style={style} />
         ))}
       </div>
+    </div>
+  )
+}
+
+function StatusColorRow({
+  label,
+  colorName,
+  sampleText,
+}: {
+  label: string
+  colorName: (typeof STATUS_COLOR_TOKENS)[number]["name"]
+  sampleText: string
+}) {
+  const backgroundColor = `var(--status-${colorName})`
+  const color = `var(--status-${colorName}-foreground)`
+
+  return (
+    <div className="flex items-center gap-3">
+      <span
+        className="border-border size-5 shrink-0 rounded border"
+        style={{ backgroundColor }}
+        aria-hidden="true"
+      />
+      <span className="min-w-20 text-sm">{label}</span>
+      <span
+        className="rounded-sm px-1.5 py-0.5 text-xs font-medium"
+        style={{ backgroundColor, color }}
+      >
+        {sampleText}
+      </span>
     </div>
   )
 }
@@ -162,7 +225,9 @@ export function DesignSystemView() {
                     className="border-border overflow-hidden rounded-lg border"
                   >
                     <div className={`${token.solid} h-10`} />
-                    <div className={`${token.surface} px-3 py-2`}>
+                    <div
+                      className={`${token.surface} ${token.foreground} px-3 py-2`}
+                    >
                       <p className="text-sm font-semibold">{token.name}</p>
                     </div>
                   </div>
@@ -230,6 +295,21 @@ export function DesignSystemView() {
         <Section title={t("designSystem.statuses")}>
           <Card>
             <CardContent className="space-y-5">
+              <div className="space-y-3">
+                <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                  {t("designSystem.statusColors")}
+                </p>
+                <div className="space-y-2">
+                  {STATUS_COLOR_TOKENS.map((token) => (
+                    <StatusColorRow
+                      key={token.name}
+                      colorName={token.name}
+                      label={token.label}
+                      sampleText={t("designSystem.statusColorSample")}
+                    />
+                  ))}
+                </div>
+              </div>
               <BadgeRow
                 label={t("designSystem.eventStatuses")}
                 styles={EVENT_STATUS_STYLE}

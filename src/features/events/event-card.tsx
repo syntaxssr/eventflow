@@ -1,8 +1,7 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
-import { CalendarIcon, ImageOffIcon, MapPinIcon, UsersIcon } from "lucide-react"
+import { CalendarDaysIcon, CalendarIcon, MapPinIcon, UsersIcon } from "lucide-react"
 
 import { StatusBadge } from "@/components/common/status-badge"
 import { UserAvatar } from "@/components/common/user-avatar"
@@ -11,6 +10,7 @@ import { Progress } from "@/components/ui/progress"
 import { ROUTES } from "@/constants/app"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
+import { getEventColor } from "@/lib/event"
 import { formatDateRange, formatNumber } from "@/lib/format"
 import { getFullName } from "@/lib/user"
 import type { EventItem, EventProgress } from "@/types/event"
@@ -28,44 +28,28 @@ export function EventCard({
   participantCount: number
 }) {
   const { t, tl, locale } = useLocale()
+  const eventColor = getEventColor(event.id)
 
   return (
-    <Card className="hover:border-brand-300 overflow-hidden pt-0 transition-colors">
+    <Card className="hover:border-brand-300 overflow-hidden transition-colors">
       <Link
         href={ROUTES.eventDetail(event.id)}
         className="focus-visible:outline-ring block focus-visible:outline-2 focus-visible:-outline-offset-2"
       >
-        <div className="bg-muted relative h-32 w-full">
-          {event.coverImage ? (
-            <Image
-              src={event.coverImage}
-              alt=""
-              fill
-              sizes="(min-width: 1024px) 33vw, 100vw"
-              className="object-cover"
-              unoptimized
-            />
-          ) : (
+        <CardContent className="space-y-3">
+          <StatusBadge size="sm" style={EVENT_STATUS_STYLE[event.status]} />
+          <div className="flex items-start gap-3">
             <span
-              className="text-muted-foreground flex h-full items-center justify-center"
+              className="flex size-10 shrink-0 items-center justify-center rounded-lg"
+              style={{ backgroundColor: eventColor }}
               aria-hidden="true"
             >
-              <ImageOffIcon className="size-6" />
+              <CalendarDaysIcon className="size-4.5 text-foreground/70" />
             </span>
-          )}
-          <span className="absolute top-2 left-2">
-            <StatusBadge
-              size="sm"
-              style={EVENT_STATUS_STYLE[event.status]}
-              className="shadow-sm"
-            />
-          </span>
-        </div>
-
-        <CardContent className="space-y-3 pt-4">
-          <h3 className="line-clamp-2 leading-snug font-semibold text-balance">
-            {tl(event.title)}
-          </h3>
+            <h3 className="line-clamp-2 leading-snug font-semibold text-balance">
+              {tl(event.title)}
+            </h3>
+          </div>
 
           <ul className="text-muted-foreground space-y-1 text-xs">
             <li className="flex items-center gap-1.5">

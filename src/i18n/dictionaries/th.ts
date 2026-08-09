@@ -819,6 +819,8 @@ export const th = {
     semantic: "สีเชิงความหมาย",
     typography: "ตัวอักษร",
     statuses: "สถานะ",
+    statusColors: "สีสถานะ",
+    statusColorSample: "ตัวอย่างข้อความ",
     eventStatuses: "สถานะกิจกรรม",
     taskStatuses: "สถานะงาน",
     components: "คอมโพเนนต์",

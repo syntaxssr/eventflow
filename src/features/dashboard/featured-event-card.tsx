@@ -44,7 +44,7 @@ export function FeaturedEventCard({
         : t("dashboard.eventPassed", { days: Math.abs(daysLeft) })
 
   return (
-    <Card className="dashboard-card-surface overflow-hidden">
+    <Card className="overflow-hidden">
       <CardContent className="space-y-4">
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge

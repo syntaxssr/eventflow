@@ -55,7 +55,7 @@ export function TaskStatusChart({
   }))
 
   return (
-    <Card className="dashboard-card-surface dashboard-detail-card">
+    <Card className="dashboard-detail-card">
       <CardHeader>
         <CardTitle>{t("dashboard.taskStatusSummary")}</CardTitle>
         <CardDescription>

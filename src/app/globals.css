@@ -113,6 +113,28 @@
   --color-file-word: var(--info);
   --color-file-image: #ac81af;
 
+  /* สีสถานะกลาง — พื้นและข้อความต้องใช้เป็นคู่ตาม Design System */
+  --color-status-default: var(--status-default);
+  --color-status-default-foreground: var(--status-default-foreground);
+  --color-status-gray: var(--status-gray);
+  --color-status-gray-foreground: var(--status-gray-foreground);
+  --color-status-brown: var(--status-brown);
+  --color-status-brown-foreground: var(--status-brown-foreground);
+  --color-status-orange: var(--status-orange);
+  --color-status-orange-foreground: var(--status-orange-foreground);
+  --color-status-yellow: var(--status-yellow);
+  --color-status-yellow-foreground: var(--status-yellow-foreground);
+  --color-status-green: var(--status-green);
+  --color-status-green-foreground: var(--status-green-foreground);
+  --color-status-blue: var(--status-blue);
+  --color-status-blue-foreground: var(--status-blue-foreground);
+  --color-status-purple: var(--status-purple);
+  --color-status-purple-foreground: var(--status-purple-foreground);
+  --color-status-pink: var(--status-pink);
+  --color-status-pink-foreground: var(--status-pink-foreground);
+  --color-status-red: var(--status-red);
+  --color-status-red-foreground: var(--status-red-foreground);
+
   --color-auth-hero: var(--auth-hero);
   --color-auth-hero-deep: var(--auth-hero-deep);
   --color-auth-hero-foreground: var(--auth-hero-foreground);
@@ -128,54 +150,8 @@
 
 /* ปุ่มควบคุมใช้พื้น off-white เดียวกับการ์ด */
 .dashboard-featured-color-control {
-  background-color: #f4f4f1;
+  background-color: #efefed;
   color: #1c1c1c;
-}
-
-/* การ์ดบน Dashboard: off-white ใน light และ near-black ใน dark */
-.dashboard-card-surface {
-  --card: #f4f4f1;
-  --card-foreground: #1c1c1c;
-  --muted: rgb(28 28 28 / 6%);
-  --muted-foreground: rgb(28 28 28 / 62%);
-  --border: rgb(28 28 28 / 12%);
-  background-color: #f4f4f1 !important;
-}
-
-.dark .dashboard-card-surface {
-  --card: #202020;
-  --card-foreground: #f2f2f0;
-  --muted: rgb(242 242 240 / 8%);
-  --muted-foreground: rgb(242 242 240 / 65%);
-  --border: rgb(242 242 240 / 12%);
-  background-color: #202020 !important;
-}
-
-/* พื้นหลังเฉพาะหน้า Dashboard */
-.dashboard-page {
-  background-color: #ebebe7;
-}
-
-.dashboard-page [data-slot="card"] {
-  --card: #f4f4f1;
-  --card-foreground: #1c1c1c;
-  --muted: rgb(28 28 28 / 6%);
-  --muted-foreground: rgb(28 28 28 / 62%);
-  --border: rgb(28 28 28 / 12%);
-  background-color: #f4f4f1 !important;
-}
-
-.dark .dashboard-page {
-  background-color: var(--background);
-}
-
-.dark .dashboard-page [data-slot="card"] {
-  --card: #202020;
-  --card-foreground: #f2f2f0;
-  --muted: rgb(242 242 240 / 8%);
-  --muted-foreground: rgb(242 242 240 / 65%);
-  --border: rgb(242 242 240 / 12%);
-  background-color: #202020 !important;
 }
 
 /* ทุกการ์ดใต้แท็บ Dashboard สูงเท่ากัน เพื่อไม่ให้หน้าเลื่อนเมื่อสลับแท็บ */
@@ -199,7 +175,7 @@
   height: auto;
   width: 100%;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  background-color: #f4f4f1;
+  background-color: #efefed;
   box-shadow: inset 0 0 0 1px rgb(28 28 28 / 18%);
 }
 
@@ -248,11 +224,11 @@
   --brand-text: #1c1c1c;
 
   /* ---- ธีมหลัก: ขาว/ดำ ---- */
-  --background: #f2f2f0;
+  --background: #e5e5e3;
   --foreground: #1c1c1c;
-  --card: #f2f2f0;
+  --card: #efefed;
   --card-foreground: #1c1c1c;
-  --popover: #f2f2f0;
+  --popover: #efefed;
   --popover-foreground: #1c1c1c;
 
   /* ---- Primary/active = invert (ดำพื้น + ขาวตัวอักษร) ---- */
@@ -279,19 +255,41 @@
   --auth-hero-foreground: #f2f2f0;
 
   /* ---- สถานะ (ค่าตายตัว ห้ามเปลี่ยน) — ตัวอักษร/ไอคอนใช้ดำเสมอ ---- */
-  --success: #54d463;
-  --success-foreground: #1c1c1c;
-  --success-surface: rgb(84 212 99 / 18%);
-  --warning: #ffcf49;
-  --warning-foreground: #1c1c1c;
-  --warning-surface: rgb(255 207 73 / 20%);
-  --info: #4586ee;
-  --info-foreground: #1c1c1c;
-  --info-surface: rgb(69 134 238 / 15%);
-  --danger: #f83e32;
+  --success: var(--status-green);
+  --success-foreground: var(--status-green-foreground);
+  --success-surface: var(--status-green);
+  --warning: var(--status-yellow);
+  --warning-foreground: var(--status-yellow-foreground);
+  --warning-surface: var(--status-yellow);
+  --info: var(--status-blue);
+  --info-foreground: var(--status-blue-foreground);
+  --info-surface: var(--status-blue);
+  --danger: var(--status-red);
   --blocked: #e79c75;
-  --danger-foreground: #1c1c1c;
-  --danger-surface: rgb(248 62 50 / 15%);
+  --danger-foreground: var(--status-red-foreground);
+  --danger-surface: var(--status-red);
+
+  /* ---- สีสถานะกลาง ---- */
+  --status-default: #efefed;
+  --status-default-foreground: #212120;
+  --status-gray: #e5e5e3;
+  --status-gray-foreground: #393836;
+  --status-brown: #e8ddd8;
+  --status-brown-foreground: #48372c;
+  --status-orange: #f0d9cc;
+  --status-orange-foreground: #56321a;
+  --status-yellow: #efdeb9;
+  --status-yellow-foreground: #524019;
+  --status-green: #d9e3db;
+  --status-green-foreground: #21432e;
+  --status-blue: #cddef5;
+  --status-blue-foreground: #1d385f;
+  --status-purple: #e5dbf0;
+  --status-purple-foreground: #432a56;
+  --status-pink: #f1d8e1;
+  --status-pink-foreground: #54263d;
+  --status-red: #f5d5d6;
+  --status-red-foreground: #592725;
 
   /* ---- Chart ----
      1 สีเน้น (--chart-1 = info/ฟ้า) + ไล่น้ำหนักดำสำหรับหมวดที่เหลือ */
@@ -331,9 +329,9 @@
 
   --background: #1c1c1c;
   --foreground: #f2f2f0;
-  --card: #1c1c1c;
+  --card: #202020;
   --card-foreground: #f2f2f0;
-  --popover: #1c1c1c;
+  --popover: #202020;
   --popover-foreground: #f2f2f0;
 
   /* ---- Primary/active = invert (ขาวพื้น + ดำตัวอักษร) ---- */
@@ -361,19 +359,19 @@
   --auth-hero-foreground: #f2f2f0;
 
   /* ---- สถานะ (ค่าเดียวกับ light — ไม่มี dark variant) ---- */
-  --success: #54d463;
-  --success-foreground: #1c1c1c;
-  --success-surface: rgb(84 212 99 / 22%);
-  --warning: #ffcf49;
-  --warning-foreground: #1c1c1c;
-  --warning-surface: rgb(255 207 73 / 24%);
-  --info: #4586ee;
-  --info-foreground: #1c1c1c;
-  --info-surface: rgb(69 134 238 / 22%);
-  --danger: #f83e32;
+  --success: var(--status-green);
+  --success-foreground: var(--status-green-foreground);
+  --success-surface: var(--status-green);
+  --warning: var(--status-yellow);
+  --warning-foreground: var(--status-yellow-foreground);
+  --warning-surface: var(--status-yellow);
+  --info: var(--status-blue);
+  --info-foreground: var(--status-blue-foreground);
+  --info-surface: var(--status-blue);
+  --danger: var(--status-red);
   --blocked: #e79c75;
-  --danger-foreground: #1c1c1c;
-  --danger-surface: rgb(248 62 50 / 22%);
+  --danger-foreground: var(--status-red-foreground);
+  --danger-surface: var(--status-red);
 
   --chart-1: var(--info);
   --chart-2: rgb(242 242 240 / 25%);

@@ -32,7 +32,7 @@ export function RecentFilesCard({
 
   return (
     <Card
-      className="dashboard-card-surface dashboard-detail-card"
+      className="dashboard-detail-card"
       data-testid="recent-files"
     >
       <CardHeader>

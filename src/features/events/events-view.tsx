@@ -181,9 +181,9 @@ export function EventsView() {
         {header}
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
-            <Card key={index} className="overflow-hidden pt-0">
-              <Skeleton className="h-32 w-full rounded-none" />
-              <CardContent className="space-y-3 pt-4">
+            <Card key={index} className="overflow-hidden">
+              <CardContent className="space-y-3">
+                <Skeleton className="h-5 w-1/3" />
                 <Skeleton className="h-5 w-3/4" />
                 <Skeleton className="h-3 w-1/2" />
                 <Skeleton className="h-2 w-full" />
