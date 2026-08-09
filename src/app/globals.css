@@ -135,6 +135,12 @@
   --color-status-red: var(--status-red);
   --color-status-red-foreground: var(--status-red-foreground);
 
+  /* สถานะกิจกรรม — เฉด Version 4 ที่ไม่ซ้ำกับ semantic palette */
+  --color-event-status-purple: var(--event-status-purple);
+  --color-event-status-purple-foreground: var(--event-status-purple-foreground);
+  --color-task-status-orange: var(--task-status-orange);
+  --color-task-status-orange-foreground: var(--task-status-orange-foreground);
+
   --color-auth-hero: var(--auth-hero);
   --color-auth-hero-deep: var(--auth-hero-deep);
   --color-auth-hero-foreground: var(--auth-hero-foreground);
@@ -254,7 +260,7 @@
   --auth-hero-deep: #131796;
   --auth-hero-foreground: #f2f2f0;
 
-  /* ---- สถานะ (ค่าตายตัว ห้ามเปลี่ยน) — ตัวอักษร/ไอคอนใช้ดำเสมอ ---- */
+  /* ---- สีเชิงความหมาย — ใช้น้ำหนัก Version 3 ---- */
   --success: var(--status-green);
   --success-foreground: var(--status-green-foreground);
   --success-surface: var(--status-green);
@@ -265,7 +271,7 @@
   --info-foreground: var(--status-blue-foreground);
   --info-surface: var(--status-blue);
   --danger: var(--status-red);
-  --blocked: #e79c75;
+  --blocked: var(--task-status-orange);
   --danger-foreground: var(--status-red-foreground);
   --danger-surface: var(--status-red);
 
@@ -274,22 +280,27 @@
   --status-default-foreground: #212120;
   --status-gray: #e5e5e3;
   --status-gray-foreground: #393836;
-  --status-brown: #e8ddd8;
-  --status-brown-foreground: #48372c;
-  --status-orange: #f0d9cc;
-  --status-orange-foreground: #56321a;
-  --status-yellow: #efdeb9;
-  --status-yellow-foreground: #524019;
-  --status-green: #d9e3db;
-  --status-green-foreground: #21432e;
-  --status-blue: #cddef5;
-  --status-blue-foreground: #1d385f;
-  --status-purple: #e5dbf0;
-  --status-purple-foreground: #432a56;
-  --status-pink: #f1d8e1;
-  --status-pink-foreground: #54263d;
-  --status-red: #f5d5d6;
-  --status-red-foreground: #592725;
+  --status-brown: #b68a49;
+  --status-brown-foreground: #332714;
+  --status-orange: #ffb78f;
+  --status-orange-foreground: #702d00;
+  --status-yellow: #ffd67b;
+  --status-yellow-foreground: #6b4900;
+  --status-green: #67c567;
+  --status-green-foreground: #143414;
+  --status-blue: #95c1ff;
+  --status-blue-foreground: #00337c;
+  --status-purple: #cb9eff;
+  --status-purple-foreground: #490080;
+  --status-pink: #ff9cc0;
+  --status-pink-foreground: #7a003d;
+  --status-red: #ff9da1;
+  --status-red-foreground: #7e0500;
+
+  --event-status-purple: var(--status-purple);
+  --event-status-purple-foreground: var(--status-purple-foreground);
+  --task-status-orange: var(--status-orange);
+  --task-status-orange-foreground: #702d00;
 
   /* ---- Chart ----
      1 สีเน้น (--chart-1 = info/ฟ้า) + ไล่น้ำหนักดำสำหรับหมวดที่เหลือ */
@@ -358,7 +369,7 @@
   --auth-hero-deep: #1c1c1c;
   --auth-hero-foreground: #f2f2f0;
 
-  /* ---- สถานะ (ค่าเดียวกับ light — ไม่มี dark variant) ---- */
+  /* ---- สีเชิงความหมาย Version 3 (เหมือน Light) ---- */
   --success: var(--status-green);
   --success-foreground: var(--status-green-foreground);
   --success-surface: var(--status-green);
@@ -369,7 +380,7 @@
   --info-foreground: var(--status-blue-foreground);
   --info-surface: var(--status-blue);
   --danger: var(--status-red);
-  --blocked: #e79c75;
+  --blocked: var(--task-status-orange);
   --danger-foreground: var(--status-red-foreground);
   --danger-surface: var(--status-red);
 

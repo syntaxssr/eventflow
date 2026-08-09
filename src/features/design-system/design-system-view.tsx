@@ -25,7 +25,6 @@ import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { APP_NAME } from "@/constants/app"
-import { AVATAR_PALETTE_ITEMS } from "@/constants/avatar-colors"
 import {
   DUE_SOON_STYLE,
   EVENT_STATUS_STYLE,
@@ -38,7 +37,6 @@ import {
   type StatusStyle,
 } from "@/constants/status"
 import { useT } from "@/i18n"
-import { getReadableTextColor } from "@/lib/color"
 
 const BRAND_STEPS = [
   "50",
@@ -82,17 +80,143 @@ const SEMANTIC_TOKENS = [
 ] as const
 
 const STATUS_COLOR_TOKENS = [
-  { name: "default", label: "Default" },
-  { name: "gray", label: "Gray" },
-  { name: "brown", label: "Brown" },
-  { name: "orange", label: "Orange" },
-  { name: "yellow", label: "Yellow" },
-  { name: "green", label: "Green" },
-  { name: "blue", label: "Blue" },
-  { name: "purple", label: "Purple" },
-  { name: "pink", label: "Pink" },
-  { name: "red", label: "Red" },
+  {
+    name: "default",
+    label: "Default",
+    version1Background: "#efefed",
+    version1Foreground: "#212120",
+    version2Background: undefined,
+    version2Foreground: undefined,
+    version3Background: undefined,
+    version3Foreground: undefined,
+  },
+  {
+    name: "gray",
+    label: "Gray",
+    version1Background: "#e5e5e3",
+    version1Foreground: "#393836",
+    version2Background: undefined,
+    version2Foreground: undefined,
+    version3Background: undefined,
+    version3Foreground: undefined,
+  },
+  {
+    name: "brown",
+    label: "Brown",
+    version1Background: "#eaddca",
+    version1Foreground: "#48372c",
+    version2Background: "#d0b48a",
+    version2Foreground: "#75592f",
+    version3Background: "#b68a49",
+    version3Foreground: "#332714",
+  },
+  {
+    name: "orange",
+    label: "Orange",
+    version1Background: "#f0d9cc",
+    version1Foreground: "#56321a",
+    version2Background: "#fed5be",
+    version2Foreground: "#702d00",
+    version3Background: "#ffb78f",
+    version3Foreground: "#702d00",
+  },
+  {
+    name: "yellow",
+    label: "Yellow",
+    version1Background: "#efdeb9",
+    version1Foreground: "#524019",
+    version2Background: "#ffe4a9",
+    version2Foreground: "#6b4900",
+    version3Background: "#ffd67b",
+    version3Foreground: "#6b4900",
+  },
+  {
+    name: "green",
+    label: "Green",
+    version1Background: "#d9e3db",
+    version1Foreground: "#21432e",
+    version2Background: "#afe1af",
+    version2Foreground: "#205520",
+    version3Background: "#67c567",
+    version3Foreground: "#143414",
+  },
+  {
+    name: "blue",
+    label: "Blue",
+    version1Background: "#cddef5",
+    version1Foreground: "#1d385f",
+    version2Background: "#c3dcff",
+    version2Foreground: "#00337c",
+    version3Background: "#95c1ff",
+    version3Foreground: "#00337c",
+  },
+  {
+    name: "purple",
+    label: "Purple",
+    version1Background: "#e5dbf0",
+    version1Foreground: "#432a56",
+    version2Background: "#e4d0fb",
+    version2Foreground: "#470b75",
+    version3Background: "#cb9eff",
+    version3Foreground: "#490080",
+  },
+  {
+    name: "pink",
+    label: "Pink",
+    version1Background: "#f1d8e1",
+    version1Foreground: "#54263d",
+    version2Background: "#fccdde",
+    version2Foreground: "#71093d",
+    version3Background: "#ff9cc0",
+    version3Foreground: "#7a003d",
+  },
+  {
+    name: "red",
+    label: "Red",
+    version1Background: "#f5d5d6",
+    version1Foreground: "#592725",
+    version2Background: "#ffcbcd",
+    version2Foreground: "#770b07",
+    version3Background: "#ff9da1",
+    version3Foreground: "#7e0500",
+  },
 ] as const
+
+type StatusVersion = 1 | 2 | 3
+type StatusColorToken = (typeof STATUS_COLOR_TOKENS)[number]
+
+function getStatusVersionColor(
+  token: StatusColorToken,
+  version: StatusVersion,
+  channel: "Background" | "Foreground"
+) {
+  if (version === 1) return token[`version1${channel}`]
+  if (version === 2) return token[`version2${channel}`] ?? token[`version1${channel}`]
+  return token[`version3${channel}`] ?? token[`version1${channel}`]
+}
+
+function StatusVersionHeading({
+  version,
+  selectedVersion,
+  onSelect,
+}: {
+  version: StatusVersion
+  selectedVersion: StatusVersion
+  onSelect: (version: StatusVersion) => void
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+        Version {version}
+      </p>
+      <Checkbox
+        checked={selectedVersion === version}
+        onCheckedChange={() => onSelect(version)}
+        aria-label={`ใช้สี Version ${version}`}
+      />
+    </div>
+  )
+}
 
 function Section({
   title,
@@ -141,24 +265,59 @@ function StatusColorRow({
   label,
   colorName,
   sampleText,
+  version = 1,
+  version1Background,
+  version1Foreground,
+  version2Background,
+  version2Foreground,
+  version3Background,
+  version3Foreground,
 }: {
   label: string
   colorName: (typeof STATUS_COLOR_TOKENS)[number]["name"]
   sampleText: string
+  version?: StatusVersion
+  version1Background?: string
+  version1Foreground?: string
+  version2Background?: string
+  version2Foreground?: string
+  version3Background?: string
+  version3Foreground?: string
 }) {
-  const backgroundColor = `var(--status-${colorName})`
-  const color = `var(--status-${colorName}-foreground)`
+  const isDefault = colorName === "default"
+  const backgroundColor =
+    version === 3 && version3Background
+      ? version3Background
+      : version === 2 && version2Background
+        ? version2Background
+        : version === 1 && version1Background
+          ? version1Background
+      : `var(--status-${colorName})`
+  const color =
+    version === 3 && version3Foreground
+      ? version3Foreground
+      : version === 2 && version2Foreground
+        ? version2Foreground
+        : version === 1 && version1Foreground
+          ? version1Foreground
+      : `var(--status-${colorName}-foreground)`
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       <span
-        className="border-border size-5 shrink-0 rounded border"
+        className={
+          isDefault
+            ? "border-status-gray size-5 shrink-0 rounded border"
+            : "border-border size-5 shrink-0 rounded border"
+        }
         style={{ backgroundColor }}
         aria-hidden="true"
       />
-      <span className="min-w-20 text-sm">{label}</span>
+      <span className="min-w-16 text-sm">{label}</span>
       <span
-        className="rounded-sm px-1.5 py-0.5 text-xs font-medium"
+        className={`rounded-sm px-1.5 py-0.5 text-[0.6875rem] font-medium whitespace-nowrap${
+          isDefault ? " border border-status-gray" : ""
+        }`}
         style={{ backgroundColor, color }}
       >
         {sampleText}
@@ -170,6 +329,53 @@ function StatusColorRow({
 export function DesignSystemView() {
   const t = useT()
   const [progress, setProgress] = React.useState(42)
+  const [selectedStatusVersion, setSelectedStatusVersion] =
+    React.useState<StatusVersion>(3)
+
+  const selectedStatusPalette = React.useMemo(() => {
+    const getColor = (
+      name: StatusColorToken["name"],
+      channel: "Background" | "Foreground"
+    ) => {
+      const token = STATUS_COLOR_TOKENS.find((item) => item.name === name)
+      return token
+        ? getStatusVersionColor(token, selectedStatusVersion, channel)
+        : undefined
+    }
+
+    return {
+      "--status-default": getColor("default", "Background"),
+      "--status-default-foreground": getColor("default", "Foreground"),
+      "--status-gray": getColor("gray", "Background"),
+      "--status-gray-foreground": getColor("gray", "Foreground"),
+      "--status-yellow": getColor("yellow", "Background"),
+      "--status-yellow-foreground": getColor("yellow", "Foreground"),
+      "--status-green": getColor("green", "Background"),
+      "--status-green-foreground": getColor("green", "Foreground"),
+      "--status-blue": getColor("blue", "Background"),
+      "--status-blue-foreground": getColor("blue", "Foreground"),
+      "--status-purple": getColor("purple", "Background"),
+      "--status-purple-foreground": getColor("purple", "Foreground"),
+      "--status-red": getColor("red", "Background"),
+      "--status-red-foreground": getColor("red", "Foreground"),
+      "--event-status-purple": getColor("purple", "Background"),
+      "--event-status-purple-foreground": getColor("purple", "Foreground"),
+      "--task-status-orange": getColor("orange", "Background"),
+      "--task-status-orange-foreground": getColor("orange", "Foreground"),
+      "--success": getColor("green", "Background"),
+      "--success-foreground": getColor("green", "Foreground"),
+      "--success-surface": getColor("green", "Background"),
+      "--warning": getColor("yellow", "Background"),
+      "--warning-foreground": getColor("yellow", "Foreground"),
+      "--warning-surface": getColor("yellow", "Background"),
+      "--info": getColor("blue", "Background"),
+      "--info-foreground": getColor("blue", "Foreground"),
+      "--info-surface": getColor("blue", "Background"),
+      "--danger": getColor("red", "Background"),
+      "--danger-foreground": getColor("red", "Foreground"),
+      "--danger-surface": getColor("red", "Background"),
+    } as React.CSSProperties
+  }, [selectedStatusVersion])
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
@@ -214,55 +420,6 @@ export function DesignSystemView() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
-                {t("designSystem.semantic")}
-              </p>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {SEMANTIC_TOKENS.map((token) => (
-                  <div
-                    key={token.name}
-                    className="border-border overflow-hidden rounded-lg border"
-                  >
-                    <div className={`${token.solid} h-10`} />
-                    <div
-                      className={`${token.surface} ${token.foreground} px-3 py-2`}
-                    >
-                      <p className="text-sm font-semibold">{token.name}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
-                สีของ avatar
-              </p>
-              <p className="text-muted-foreground text-xs">
-                ชุดสีตายตัว 14 สี — ใช้กำหนดสีพื้นหลัง Avatar ของผู้ใช้แต่ละคน
-                แบบไม่ซ้ำได้ถึง 14 คน เกินจากนั้นจะวนซ้ำสี
-              </p>
-              <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-6">
-                {AVATAR_PALETTE_ITEMS.map((item) => (
-                  <div
-                    key={item.hex}
-                    className="border-border flex h-16 flex-col items-center justify-center gap-0.5 rounded-md border text-center"
-                    style={{
-                      background: item.hex,
-                      color: getReadableTextColor(item.hex),
-                    }}
-                  >
-                    <p className="text-[0.6875rem] leading-tight font-semibold">
-                      {item.name}
-                    </p>
-                    <p className="text-[0.625rem] leading-tight opacity-90">
-                      {item.hex}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </Section>
 
@@ -293,20 +450,87 @@ export function DesignSystemView() {
         </Section>
 
         <Section title={t("designSystem.statuses")}>
-          <Card>
+          <Card style={selectedStatusPalette}>
             <CardContent className="space-y-5">
               <div className="space-y-3">
                 <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
                   {t("designSystem.statusColors")}
                 </p>
-                <div className="space-y-2">
-                  {STATUS_COLOR_TOKENS.map((token) => (
-                    <StatusColorRow
-                      key={token.name}
-                      colorName={token.name}
-                      label={token.label}
-                      sampleText={t("designSystem.statusColorSample")}
+                <div className="grid gap-6 lg:grid-cols-3">
+                  <div className="space-y-2">
+                    <StatusVersionHeading
+                      version={1}
+                      selectedVersion={selectedStatusVersion}
+                      onSelect={setSelectedStatusVersion}
                     />
+                    <div className="space-y-2">
+                      {STATUS_COLOR_TOKENS.map((token) => (
+                        <StatusColorRow
+                          key={token.name}
+                          colorName={token.name}
+                          label={token.label}
+                          sampleText={t("designSystem.statusColorSample")}
+                          version1Background={token.version1Background}
+                          version1Foreground={token.version1Foreground}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border-border space-y-2 md:border-l md:pl-6">
+                    <StatusVersionHeading
+                      version={2}
+                      selectedVersion={selectedStatusVersion}
+                      onSelect={setSelectedStatusVersion}
+                    />
+                    <div className="space-y-2">
+                      {STATUS_COLOR_TOKENS.map((token) => (
+                        <StatusColorRow
+                          key={token.name}
+                          colorName={token.name}
+                          label={token.label}
+                          sampleText={t("designSystem.statusColorSample")}
+                          version={2}
+                          version2Background={token.version2Background}
+                          version2Foreground={token.version2Foreground}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border-border space-y-2 md:border-l md:pl-6">
+                    <StatusVersionHeading
+                      version={3}
+                      selectedVersion={selectedStatusVersion}
+                      onSelect={setSelectedStatusVersion}
+                    />
+                    <div className="space-y-2">
+                      {STATUS_COLOR_TOKENS.map((token) => (
+                        <StatusColorRow
+                          key={token.name}
+                          colorName={token.name}
+                          label={token.label}
+                          sampleText={t("designSystem.statusColorSample")}
+                          version={3}
+                          version3Background={token.version3Background}
+                          version3Foreground={token.version3Foreground}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                  {t("designSystem.semantic")}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {SEMANTIC_TOKENS.map((token) => (
+                    <Badge
+                      key={token.name}
+                      variant="outline"
+                      className={`${token.surface} ${token.foreground} border-current/20 h-auto px-2.5 py-1`}
+                    >
+                      {token.name}
+                    </Badge>
                   ))}
                 </div>
               </div>

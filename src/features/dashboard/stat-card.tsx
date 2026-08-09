@@ -12,13 +12,22 @@ import { cn } from "@/lib/utils"
 
 type Tone = "default" | "warning" | "danger" | "blocked" | "brand"
 
-/** กล่องไอคอนใช้สีประจำการ์ด ส่วนไอคอนลดน้ำหนักลงเพื่อให้สมดุล */
+/** พื้นการ์ดสรุปใช้ surface กลางของระบบ สีอยู่ที่กล่องไอคอนเท่านั้น */
+const CARD_TONE: Record<Tone, string> = {
+  default: "",
+  brand: "",
+  danger: "",
+  blocked: "",
+  warning: "",
+}
+
+/** กล่องไอคอนของสี่การ์ดบน ใช้ชุดสีสถานะตามลำดับความเร่งด่วน */
 const TONE_TILE: Record<Tone, string> = {
   default: "bg-muted text-muted-foreground",
-  brand: "bg-stat-blue text-foreground/70",
-  danger: "bg-stat-red text-foreground/70",
-  blocked: "bg-stat-blocked text-foreground/70",
-  warning: "bg-stat-yellow text-foreground/70",
+  brand: "bg-status-blue text-status-blue-foreground",
+  warning: "bg-status-yellow text-status-yellow-foreground",
+  blocked: "bg-status-orange text-status-orange-foreground",
+  danger: "bg-status-red text-status-red-foreground",
 }
 
 /**
@@ -44,7 +53,12 @@ export function StatCard({
   const animated = useCountUp(value)
 
   return (
-    <Card className="overflow-hidden transition-colors hover:ring-foreground/25">
+    <Card
+      className={cn(
+        "overflow-hidden transition-colors hover:ring-foreground/25",
+        CARD_TONE[tone]
+      )}
+    >
       <CardContent className="p-0">
         <Link
           href={href}
@@ -60,15 +74,13 @@ export function StatCard({
             <Icon className="size-5" />
           </span>
           <span className="min-w-0 flex-1">
-            {/* ไม่ใช้ --muted-foreground (ดำ 62%) เพราะพอมีสีทับพื้นการ์ดแล้ว
-                contrast ตกต่ำกว่า AA (danger เหลือ 4.27) ดำ 70% ได้ 5.1–5.7 */}
-            <span className="text-foreground/70 block truncate text-sm font-medium">
+            <span className="block truncate text-sm font-medium opacity-75">
               {t(labelKey)}
             </span>
             <span className="block text-3xl leading-tight font-bold tabular-nums">
               {formatNumber(animated, locale)}
               {unitKey ? (
-                <span className="text-foreground/70 ml-1 text-sm font-normal">
+                <span className="ml-1 text-sm font-normal opacity-75">
                   {t(unitKey)}
                 </span>
               ) : null}
