@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 import { AVATAR_PALETTE_ITEMS } from "@/constants/avatar-colors"
+import { EVENT_COLORS } from "@/constants/event-colors"
 import { EVENT_STATUSES } from "@/types/event"
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
@@ -29,6 +30,7 @@ export const eventSchema = z
       .int({ message: "event.attendeesInvalid" })
       .min(0, { message: "event.attendeesInvalid" }),
     status: z.enum(EVENT_STATUSES),
+    color: z.enum(EVENT_COLORS),
     coverImage: z.string(),
   })
   .refine((values) => values.endDate >= values.startDate, {

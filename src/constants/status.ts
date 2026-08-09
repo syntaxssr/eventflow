@@ -11,7 +11,6 @@ import {
   ClipboardListIcon,
   CrownIcon,
   EyeIcon,
-  FileTextIcon,
   FlagIcon,
   LoaderIcon,
   MicIcon,
@@ -67,6 +66,8 @@ const EVENT_DEFAULT_BADGE =
   "bg-status-default text-status-default-foreground border-status-gray"
 const STATUS_GRAY_BADGE =
   "bg-status-gray text-status-gray-foreground border-status-gray"
+const EVENT_PLANNING_BADGE =
+  "bg-status-gray text-status-gray-foreground border-status-gray-foreground"
 const EVENT_PURPLE_BADGE =
   "bg-event-status-purple text-event-status-purple-foreground border-event-status-purple"
 const EVENT_INFO_BADGE = "bg-info text-info-foreground border-info"
@@ -138,7 +139,7 @@ const DUE_SOON_DOT = "bg-task-status-orange"
 export const EVENT_STATUS_STYLE: Record<EventStatus, StatusStyle> = {
   draft: {
     labelKey: "eventStatus.draft",
-    icon: FileTextIcon,
+    icon: CircleDashedIcon,
     badge: EVENT_DEFAULT_BADGE,
     dot: EVENT_DEFAULT_DOT,
     chartColor: "var(--status-default)",
@@ -146,7 +147,7 @@ export const EVENT_STATUS_STYLE: Record<EventStatus, StatusStyle> = {
   planning: {
     labelKey: "eventStatus.planning",
     icon: ClipboardListIcon,
-    badge: STATUS_GRAY_BADGE,
+    badge: EVENT_PLANNING_BADGE,
     dot: STATUS_GRAY_DOT,
     chartColor: "var(--status-gray)",
   },

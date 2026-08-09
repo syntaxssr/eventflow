@@ -98,7 +98,6 @@ export function DashboardView() {
   if (pageState === "loading") {
     return (
       <PageContainer>
-        <PageHeader title={t("nav.dashboard")} />
         <DashboardSkeleton />
       </PageContainer>
     )
@@ -142,7 +141,7 @@ export function DashboardView() {
         className="space-y-6"
         style={
           {
-            "--dashboard-event-color": getEventColor(data.featuredEvent.id),
+            "--dashboard-event-color": getEventColor(data.featuredEvent),
           } as React.CSSProperties
         }
       >

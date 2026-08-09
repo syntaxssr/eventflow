@@ -4,6 +4,8 @@ import * as React from "react"
 import {
   ArrowUpDownIcon,
   CalendarPlusIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   FilterIcon,
   LayoutGridIcon,
   PlusIcon,
@@ -13,7 +15,9 @@ import {
 import { EmptyState } from "@/components/common/empty-state"
 import { ErrorState } from "@/components/common/error-state"
 import { FilterChips, type FilterChip } from "@/components/common/filter-chips"
-import { PageContainer, PageHeader } from "@/components/common/page-header"
+import { PageContainer } from "@/components/common/page-header"
+import { StatusBadge } from "@/components/common/status-badge"
+import { UserAvatar } from "@/components/common/user-avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -26,15 +30,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { getToday } from "@/constants/mock-date"
@@ -48,14 +49,26 @@ import {
   selectActiveEvents,
   selectEventProgress,
   selectParticipantsByEvent,
+  selectTasksByEvent,
 } from "@/store/selectors"
 import { EVENT_STATUSES, type EventStatus } from "@/types/event"
 import { EventCard } from "./event-card"
+import { EventDateRangePicker } from "./event-date-range-picker"
 import { EventFormDialog } from "./event-form-dialog"
 import { EventTable, type EventRow } from "./event-table"
 
 type SortKey = "startDate" | "name" | "progress" | "updated"
 type ViewMode = "grid" | "table"
+
+const EVENTS_PER_PAGE = 8
+
+function getCurrentYearDateRange() {
+  const currentYear = getToday().getFullYear()
+  return {
+    from: `${currentYear}-01-01`,
+    to: `${currentYear}-12-31`,
+  }
+}
 
 const SORT_LABEL: Record<SortKey, TranslationKey> = {
   startDate: "event.sortStartDate",
@@ -68,29 +81,48 @@ export function EventsView() {
   const { t, tl, locale } = useLocale()
   const state = useAppState()
   const today = React.useMemo(() => getToday(), [])
+  const defaultDateRange = React.useMemo(() => getCurrentYearDateRange(), [])
 
   const [view, setView] = React.useState<ViewMode>("grid")
   const [statuses, setStatuses] = React.useState<EventStatus[]>([])
   const [ownerId, setOwnerId] = React.useState<string>("all")
-  const [dateFrom, setDateFrom] = React.useState("")
-  const [dateTo, setDateTo] = React.useState("")
+  const [dateFrom, setDateFrom] = React.useState(defaultDateRange.from)
+  const [dateTo, setDateTo] = React.useState(defaultDateRange.to)
   const [sort, setSort] = React.useState<SortKey>("startDate")
   const [formOpen, setFormOpen] = React.useState(false)
+  const [page, setPage] = React.useState(0)
+  const isDefaultDateRange =
+    dateFrom === defaultDateRange.from && dateTo === defaultDateRange.to
 
   const allRows = React.useMemo<EventRow[]>(() => {
     const usersById = new Map(state.users.map((user) => [user.id, user]))
-    return selectActiveEvents(state).map((event) => ({
-      event,
-      progress: selectEventProgress(state, event.id, today),
-      owner: usersById.get(event.ownerId),
-      participantCount: selectParticipantsByEvent(state, event.id).length,
-    }))
+    return selectActiveEvents(state).map((event) => {
+      const memberIds = [
+        event.ownerId,
+        event.createdBy,
+        ...selectTasksByEvent(state, event.id).flatMap((task) => task.assigneeIds),
+      ]
+      const members = [...new Set(memberIds)].flatMap((id) => {
+        const user = usersById.get(id)
+        return user ? [user] : []
+      })
+
+      return {
+        event,
+        progress: selectEventProgress(state, event.id, today),
+        owner: usersById.get(event.ownerId),
+        members,
+        participantCount: selectParticipantsByEvent(state, event.id).length,
+      }
+    })
   }, [state, today])
 
   const rows = React.useMemo(() => {
-    const filtered = allRows.filter(({ event }) => {
+    const filtered = allRows.filter(({ event, members }) => {
       if (statuses.length > 0 && !statuses.includes(event.status)) return false
-      if (ownerId !== "all" && event.ownerId !== ownerId) return false
+      if (ownerId !== "all" && !members.some((user) => user.id === ownerId)) {
+        return false
+      }
       if (dateFrom && event.endDate < dateFrom) return false
       if (dateTo && event.startDate > dateTo) return false
       return true
@@ -110,25 +142,51 @@ export function EventsView() {
     })
   }, [allRows, statuses, ownerId, dateFrom, dateTo, sort, tl, locale])
 
+  const totalPages = Math.ceil(rows.length / EVENTS_PER_PAGE)
+  const currentPage = Math.min(page, Math.max(totalPages - 1, 0))
+  const visibleRows = rows.slice(
+    currentPage * EVENTS_PER_PAGE,
+    (currentPage + 1) * EVENTS_PER_PAGE
+  )
+  const selectedOwnerLabel =
+    ownerId === "all"
+      ? t("common.all")
+      : state.users.find((user) => user.id === ownerId)
+        ? getFullName(
+            state.users.find((user) => user.id === ownerId)!,
+            locale
+          )
+        : ownerId
+
   const clearAll = () => {
     setStatuses([])
     setOwnerId("all")
-    setDateFrom("")
-    setDateTo("")
+    setDateFrom(defaultDateRange.from)
+    setDateTo(defaultDateRange.to)
+    setPage(0)
   }
 
   const chips: FilterChip[] = [
-    ...statuses.map((status) => ({
-      key: `status-${status}`,
-      label: t(EVENT_STATUS_STYLE[status].labelKey as TranslationKey),
-      onRemove: () =>
-        setStatuses((current) => current.filter((item) => item !== status)),
-    })),
+    ...statuses.map((status) => {
+      const style = EVENT_STATUS_STYLE[status]
+      const Icon = style.icon
+
+      return {
+        key: `status-${status}`,
+        label: t(style.labelKey as TranslationKey),
+        icon: <Icon className="size-3 shrink-0" aria-hidden="true" />,
+        className: style.badge,
+        onRemove: () => {
+          setStatuses((current) => current.filter((item) => item !== status))
+          setPage(0)
+        },
+      }
+    }),
     ...(ownerId !== "all"
       ? [
           {
             key: "owner",
-            label: `${t("event.owner")}: ${
+            label: `${t("event.assignees")}: ${
               state.users.find((user) => user.id === ownerId)
                 ? getFullName(
                     state.users.find((user) => user.id === ownerId)!,
@@ -136,25 +194,34 @@ export function EventsView() {
                   )
                 : ownerId
             }`,
-            onRemove: () => setOwnerId("all"),
+            onRemove: () => {
+              setOwnerId("all")
+              setPage(0)
+            },
           },
         ]
       : []),
-    ...(dateFrom
+    ...(dateFrom && !isDefaultDateRange
       ? [
           {
             key: "from",
             label: `${t("event.startDate")}: ${dateFrom}`,
-            onRemove: () => setDateFrom(""),
+            onRemove: () => {
+              setDateFrom("")
+              setPage(0)
+            },
           },
         ]
       : []),
-    ...(dateTo
+    ...(dateTo && !isDefaultDateRange
       ? [
           {
             key: "to",
             label: `${t("event.endDate")}: ${dateTo}`,
-            onRemove: () => setDateTo(""),
+            onRemove: () => {
+              setDateTo("")
+              setPage(0)
+            },
           },
         ]
       : []),
@@ -162,25 +229,11 @@ export function EventsView() {
 
   const { state: pageState, retry } = usePageState(allRows.length === 0)
 
-  const header = (
-    <PageHeader
-      title={t("nav.events")}
-      description={t("event.listSubtitle")}
-      actions={
-        <Button onClick={() => setFormOpen(true)} data-testid="create-event">
-          <PlusIcon className="size-4" aria-hidden="true" />
-          {t("event.create")}
-        </Button>
-      }
-    />
-  )
-
   if (pageState === "loading") {
     return (
       <PageContainer>
-        {header}
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, index) => (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: EVENTS_PER_PAGE }).map((_, index) => (
             <Card key={index} className="overflow-hidden">
               <CardContent className="space-y-3">
                 <Skeleton className="h-5 w-1/3" />
@@ -198,7 +251,6 @@ export function EventsView() {
   if (pageState === "error") {
     return (
       <PageContainer>
-        {header}
         <ErrorState onRetry={retry} />
       </PageContainer>
     )
@@ -206,108 +258,136 @@ export function EventsView() {
 
   return (
     <PageContainer>
-      {header}
-
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" data-testid="status-filter">
-                <FilterIcon className="size-4" aria-hidden="true" />
-                {t("event.filterByStatus")}
-                {statuses.length > 0 ? (
-                  <span className="bg-brand-500 text-brand-950 ml-1 rounded-full px-1.5 text-[0.6875rem] font-bold">
-                    {statuses.length}
-                  </span>
-                ) : null}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-52">
-              <DropdownMenuLabel>{t("event.filterByStatus")}</DropdownMenuLabel>
-              {EVENT_STATUSES.map((status) => (
-                <DropdownMenuCheckboxItem
-                  key={status}
-                  checked={statuses.includes(status)}
-                  onCheckedChange={(checked) =>
-                    setStatuses((current) =>
-                      checked
-                        ? [...current, status]
-                        : current.filter((item) => item !== status)
-                    )
-                  }
-                  onSelect={(selectEvent) => selectEvent.preventDefault()}
-                >
-                  {t(EVENT_STATUS_STYLE[status].labelKey as TranslationKey)}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Select value={ownerId} onValueChange={setOwnerId}>
-            <SelectTrigger size="sm" className="w-44" aria-label={t("event.owner")}>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">
-                {t("event.owner")}: {t("common.all")}
-              </SelectItem>
-              {state.users.map((user) => (
-                <SelectItem key={user.id} value={user.id}>
-                  {getFullName(user, locale)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <div className="flex items-center gap-1.5">
-            <Label htmlFor="event-from" className="sr-only">
-              {t("event.startDate")}
-            </Label>
-            <Input
-              id="event-from"
-              type="date"
-              value={dateFrom}
-              onChange={(changeEvent) => setDateFrom(changeEvent.target.value)}
-              className="h-7 w-36 text-xs"
-            />
-            <span className="text-muted-foreground text-xs">–</span>
-            <Label htmlFor="event-to" className="sr-only">
-              {t("event.endDate")}
-            </Label>
-            <Input
-              id="event-to"
-              type="date"
-              value={dateTo}
-              onChange={(changeEvent) => setDateTo(changeEvent.target.value)}
-              className="h-7 w-36 text-xs"
-            />
+          <div className="flex flex-col gap-1">
+            <span className="text-muted-foreground pl-1 text-xs font-medium">
+              {t("event.filterByStatus")}
+            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" data-testid="status-filter">
+                  <FilterIcon className="size-4" aria-hidden="true" />
+                  {statuses.length > 0 ? (
+                    <span className="bg-brand-500 text-brand-950 ml-1 rounded-full px-1.5 text-[0.6875rem] font-bold">
+                      {statuses.length}
+                    </span>
+                  ) : null}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuLabel>{t("event.filterByStatus")}</DropdownMenuLabel>
+                {EVENT_STATUSES.map((status) => (
+                  <DropdownMenuCheckboxItem
+                    key={status}
+                    checked={statuses.includes(status)}
+                    onCheckedChange={(checked) => {
+                      setStatuses((current) =>
+                        checked
+                          ? [...current, status]
+                          : current.filter((item) => item !== status)
+                      )
+                      setPage(0)
+                    }}
+                    onSelect={(selectEvent) => selectEvent.preventDefault()}
+                  >
+                    <StatusBadge
+                      size="sm"
+                      style={EVENT_STATUS_STYLE[status]}
+                      className="pointer-events-none"
+                    />
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <ArrowUpDownIcon className="size-4" aria-hidden="true" />
-                {t(SORT_LABEL[sort])}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuLabel>{t("event.sortBy")}</DropdownMenuLabel>
-              <DropdownMenuRadioGroup
-                value={sort}
-                onValueChange={(value) => setSort(value as SortKey)}
+          <div className="flex flex-col gap-1">
+            <span className="text-muted-foreground pl-1 text-xs font-medium">
+              {t("event.assignees")}
+            </span>
+            <Select
+              value={ownerId}
+              onValueChange={(value) => {
+                setOwnerId(value)
+                setPage(0)
+              }}
+            >
+              <SelectTrigger
+                size="sm"
+                className="w-72 max-w-none"
+                aria-label={t("event.assignees")}
               >
-                {(Object.keys(SORT_LABEL) as SortKey[]).map((key) => (
-                  <DropdownMenuRadioItem key={key} value={key}>
-                    {t(SORT_LABEL[key])}
-                  </DropdownMenuRadioItem>
+                <span>{selectedOwnerLabel}</span>
+              </SelectTrigger>
+              <SelectContent position="popper" align="start" className="w-72">
+                <SelectItem value="all">
+                  {t("event.assignees")}: {t("common.all")}
+                </SelectItem>
+                {state.users.map((user) => (
+                  <SelectItem key={user.id} value={user.id} className="py-1.5">
+                    <span className="flex items-center gap-2">
+                      <UserAvatar user={user} size="sm" />
+                      <span className="truncate">{getFullName(user, locale)}</span>
+                    </span>
+                  </SelectItem>
                 ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <EventDateRangePicker
+            from={dateFrom}
+            to={dateTo}
+            onFromChange={(from) => {
+              setDateFrom(from)
+              if (dateTo && from > dateTo) setDateTo(from)
+              setPage(0)
+            }}
+            onToChange={(to) => {
+              setDateTo(to)
+              if (dateFrom && to < dateFrom) setDateFrom(to)
+              setPage(0)
+            }}
+          />
+
+          <div className="flex flex-col gap-1">
+            <span className="text-muted-foreground pl-1 text-xs font-medium">
+              {t("event.sortBy")}
+            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <ArrowUpDownIcon className="size-4" aria-hidden="true" />
+                  {t(SORT_LABEL[sort])}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuLabel>{t("event.sortBy")}</DropdownMenuLabel>
+                <DropdownMenuRadioGroup
+                  value={sort}
+                  onValueChange={(value) => {
+                    setSort(value as SortKey)
+                    setPage(0)
+                  }}
+                >
+                  {(Object.keys(SORT_LABEL) as SortKey[]).map((key) => (
+                    <DropdownMenuRadioItem key={key} value={key}>
+                      {t(SORT_LABEL[key])}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
           <DropdownMenuSeparator className="hidden" />
 
           <div className="ml-auto flex items-center gap-1">
+            <Button onClick={() => setFormOpen(true)} data-testid="create-event">
+              <PlusIcon className="size-4" aria-hidden="true" />
+              {t("event.create")}
+            </Button>
             <Button
               variant={view === "grid" ? "secondary" : "ghost"}
               size="icon-sm"
@@ -331,9 +411,6 @@ export function EventsView() {
 
         <FilterChips chips={chips} onClearAll={clearAll} />
 
-        <p className="text-muted-foreground text-sm" aria-live="polite">
-          {t("event.resultCount", { count: rows.length })}
-        </p>
       </div>
 
       {pageState === "empty" || allRows.length === 0 ? (
@@ -361,16 +438,47 @@ export function EventsView() {
         />
       ) : view === "grid" ? (
         <div
-          className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-3")}
+          className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-4")}
           data-testid="event-grid"
         >
-          {rows.map((row) => (
+          {visibleRows.map((row) => (
             <EventCard key={row.event.id} {...row} />
           ))}
         </div>
       ) : (
-        <EventTable rows={rows} />
+        <EventTable rows={visibleRows} />
       )}
+
+      {totalPages > 1 ? (
+        <nav
+          className="flex items-center justify-center gap-2"
+          aria-label={t("event.pagination")}
+        >
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setPage((current) => Math.max(current - 1, 0))}
+            disabled={currentPage === 0}
+            aria-label={t("common.previous")}
+          >
+            <ChevronLeftIcon className="size-4" aria-hidden="true" />
+          </Button>
+          <span className="text-muted-foreground min-w-12 text-center text-sm tabular-nums">
+            {currentPage + 1} / {totalPages}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() =>
+              setPage((current) => Math.min(current + 1, totalPages - 1))
+            }
+            disabled={currentPage >= totalPages - 1}
+            aria-label={t("common.next")}
+          >
+            <ChevronRightIcon className="size-4" aria-hidden="true" />
+          </Button>
+        </nav>
+      ) : null}
 
       <EventFormDialog open={formOpen} onOpenChange={setFormOpen} />
     </PageContainer>

@@ -1,34 +1,35 @@
 "use client"
 
 import Link from "next/link"
-import { CalendarDaysIcon, CalendarIcon, MapPinIcon, UsersIcon } from "lucide-react"
+import { CalendarIcon, Clock3Icon, MapPinIcon, UsersIcon } from "lucide-react"
 
 import { StatusBadge } from "@/components/common/status-badge"
-import { UserAvatar } from "@/components/common/user-avatar"
+import { AvatarGroup } from "@/components/common/avatar-group"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { ROUTES } from "@/constants/app"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
-import { getEventColor } from "@/lib/event"
+import { getReadableTextColor } from "@/lib/color"
+import { getEventColor, getEventEmoji } from "@/lib/event"
 import { formatDateRange, formatNumber } from "@/lib/format"
-import { getFullName } from "@/lib/user"
 import type { EventItem, EventProgress } from "@/types/event"
 import type { User } from "@/types/user"
 
 export function EventCard({
   event,
   progress,
-  owner,
+  members,
   participantCount,
 }: {
   event: EventItem
   progress: EventProgress
-  owner: User | undefined
+  members: User[]
   participantCount: number
 }) {
   const { t, tl, locale } = useLocale()
-  const eventColor = getEventColor(event.id)
+  const eventEmoji = getEventEmoji(event)
+  const eventColor = getEventColor(event)
 
   return (
     <Card className="hover:border-brand-300 overflow-hidden transition-colors">
@@ -38,13 +39,12 @@ export function EventCard({
       >
         <CardContent className="space-y-3">
           <StatusBadge size="sm" style={EVENT_STATUS_STYLE[event.status]} />
-          <div className="flex items-start gap-3">
+          <div className="flex items-center gap-3">
             <span
-              className="flex size-10 shrink-0 items-center justify-center rounded-lg"
-              style={{ backgroundColor: eventColor }}
+              className="flex size-10 shrink-0 items-center justify-center text-[2.2rem] leading-none"
               aria-hidden="true"
             >
-              <CalendarDaysIcon className="size-4.5 text-foreground/70" />
+              {eventEmoji}
             </span>
             <h3 className="line-clamp-2 leading-snug font-semibold text-balance">
               {tl(event.title)}
@@ -55,6 +55,12 @@ export function EventCard({
             <li className="flex items-center gap-1.5">
               <CalendarIcon className="size-3.5 shrink-0" aria-hidden="true" />
               <span>{formatDateRange(event.startDate, event.endDate, locale)}</span>
+            </li>
+            <li className="flex items-center gap-1.5">
+              <Clock3Icon className="size-3.5 shrink-0" aria-hidden="true" />
+              <span>
+                {event.startTime} – {event.endTime}
+              </span>
             </li>
             <li className="flex items-center gap-1.5">
               <MapPinIcon className="size-3.5 shrink-0" aria-hidden="true" />
@@ -86,14 +92,19 @@ export function EventCard({
             </p>
           </div>
 
-          {owner ? (
-            <div className="flex items-center gap-2 border-t pt-3">
-              <UserAvatar user={owner} size="xs" />
-              <span className="text-muted-foreground truncate text-xs">
-                {getFullName(owner, locale)}
-              </span>
-            </div>
-          ) : null}
+          <div className="flex min-h-6 items-center justify-between gap-2 border-t pt-3">
+            <span className="text-muted-foreground text-xs">
+              {t("event.assignees")}
+            </span>
+            <AvatarGroup
+              users={members}
+              max={10}
+              overflowStyle={{
+                backgroundColor: eventColor,
+                color: getReadableTextColor(eventColor),
+              }}
+            />
+          </div>
         </CardContent>
       </Link>
     </Card>

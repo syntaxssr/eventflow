@@ -1,13 +1,17 @@
 "use client"
 
 import { XIcon } from "lucide-react"
+import type { ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
 import { useT } from "@/i18n"
+import { cn } from "@/lib/utils"
 
 export interface FilterChip {
   key: string
   label: string
+  icon?: ReactNode
+  className?: string
   onRemove: () => void
 }
 
@@ -41,8 +45,12 @@ function FilterChipList({
       {chips.map((chip) => (
         <span
           key={chip.key}
-          className="bg-muted inline-flex items-center gap-1 rounded-full py-1 pr-1 pl-2.5 text-xs font-medium"
+          className={cn(
+            "inline-flex items-center gap-1 rounded-full border py-1 pr-1 pl-2.5 text-xs font-medium",
+            chip.className ?? "border-transparent bg-muted"
+          )}
         >
+          {chip.icon}
           {chip.label}
           <Button
             variant="ghost"

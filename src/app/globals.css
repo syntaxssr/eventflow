@@ -255,14 +255,12 @@
 
 .dashboard-featured-detail .dashboard-detail-card > [data-slot="card-header"],
 .dashboard-featured-detail .dashboard-detail-card > [data-slot="card-content"] {
-  padding-right: 0;
-  padding-left: 0;
+  padding-right: 1rem;
+  padding-left: 1rem;
 }
 
 .dashboard-featured-detail .dashboard-detail-card > [data-slot="card-content"] {
   min-width: 0;
-  padding-right: 0.5rem;
-  padding-left: 0.5rem;
   overflow-x: hidden;
 }
 

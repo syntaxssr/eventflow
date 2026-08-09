@@ -35,10 +35,12 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
+import { EVENT_COLOR_OPTIONS } from "@/constants/event-colors"
 import { useActivityLog } from "@/hooks/use-activity-log"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
 import { nowIso } from "@/lib/clock"
+import { getReadableTextColor } from "@/lib/color"
 import { newId } from "@/lib/id"
 import { getFullName } from "@/lib/user"
 import { cn } from "@/lib/utils"
@@ -59,7 +61,8 @@ function toFormValues(event: EventItem | null, locale: "th" | "en", ownerId: str
       ownerId,
       expectedAttendees: 0,
       status: "draft",
-      coverImage: COVER_OPTIONS[0],
+      color: EVENT_COLOR_OPTIONS[4].value,
+      coverImage: "",
     }
   }
   return {
@@ -73,6 +76,7 @@ function toFormValues(event: EventItem | null, locale: "th" | "en", ownerId: str
     ownerId: event.ownerId,
     expectedAttendees: event.expectedAttendees,
     status: event.status,
+    color: event.color,
     coverImage: event.coverImage,
   }
 }
@@ -160,6 +164,7 @@ export function EventFormDialog({
           ownerId: values.ownerId,
           expectedAttendees: values.expectedAttendees,
           status: values.status,
+          color: values.color,
           coverImage: values.coverImage,
         },
       })
@@ -189,6 +194,7 @@ export function EventFormDialog({
         ownerId: values.ownerId,
         expectedAttendees: values.expectedAttendees,
         status: values.status,
+        color: values.color,
         coverImage: values.coverImage,
         createdAt: at,
         createdBy: currentUser.id,
@@ -436,6 +442,52 @@ export function EventFormDialog({
                   )}
                 />
               </div>
+
+              <FormField
+                control={form.control}
+                name="color"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("event.color")}</FormLabel>
+                    <div
+                      role="radiogroup"
+                      aria-label={t("event.color")}
+                      className="flex flex-wrap gap-2"
+                    >
+                      {EVENT_COLOR_OPTIONS.map((option) => {
+                        const selected = field.value === option.value
+                        return (
+                          <button
+                            key={option.value}
+                            type="button"
+                            role="radio"
+                            aria-checked={selected}
+                            aria-label={option.name}
+                            onClick={() => field.onChange(option.value)}
+                            disabled={isSubmitting}
+                            style={{ backgroundColor: option.value }}
+                            className={cn(
+                              "focus-visible:outline-ring flex size-10 items-center justify-center rounded-full border-2 transition-transform focus-visible:outline-2 disabled:cursor-not-allowed disabled:opacity-50",
+                              selected
+                                ? "border-foreground scale-110"
+                                : "border-transparent hover:scale-105"
+                            )}
+                          >
+                            {selected ? (
+                              <CheckIcon
+                                className="size-4"
+                                style={{ color: getReadableTextColor(option.value) }}
+                                aria-hidden="true"
+                              />
+                            ) : null}
+                          </button>
+                        )
+                      })}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}

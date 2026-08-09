@@ -141,6 +141,11 @@ export const en: Dictionary = {
   },
   event: {
     listSubtitle: "Every event your team is currently looking after",
+    pagination: "Event pagination",
+    members: "Event members",
+    assignees: "Assignees",
+    dateRange: "Select date range",
+    color: "Event color",
     create: "Create event",
     createTitle: "Create a new event",
     createDescription:

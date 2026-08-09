@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { ROUTES } from "@/constants/app"
-import { AVATAR_PALETTE } from "@/constants/avatar-colors"
+import { EVENT_COLOR_OPTIONS } from "@/constants/event-colors"
 import { fromDateKey, getToday, toDateKey } from "@/constants/mock-date"
 import { useLocale } from "@/i18n"
 import { getReadableTextColor } from "@/lib/color"
@@ -28,7 +28,9 @@ const WEEKDAY_LABELS: Record<"th" | "en", string[]> = {
 }
 
 /** สีตัวอย่างในคำอธิบาย — สื่อว่าจุดกิจกรรมเปลี่ยนสีตามโปรเจกต์ */
-const LEGEND_EVENT_COLORS = AVATAR_PALETTE.slice(0, 3)
+const LEGEND_EVENT_COLORS = EVENT_COLOR_OPTIONS.slice(0, 3).map(
+  (option) => option.value
+)
 
 /** เดือนที่กินพื้นที่มากสุดใช้ 6 แถว (เช่น พฤษภาคม/สิงหาคม 2569) */
 const MAX_CALENDAR_WEEKS = 6
@@ -108,7 +110,7 @@ export function DashboardCalendarCard({
           kind: "event",
           id: event.id,
           label: tl(event.title),
-          color: getEventColor(event.id),
+          color: getEventColor(event),
         })
         cursorDay.setDate(cursorDay.getDate() + 1)
       }

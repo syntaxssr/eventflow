@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 
+import { AvatarGroup } from "@/components/common/avatar-group"
 import { StatusBadge } from "@/components/common/status-badge"
-import { UserAvatar } from "@/components/common/user-avatar"
 import { Progress } from "@/components/ui/progress"
 import {
   Table,
@@ -16,8 +16,9 @@ import {
 import { ROUTES } from "@/constants/app"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
+import { getReadableTextColor } from "@/lib/color"
+import { getEventColor } from "@/lib/event"
 import { formatDateRange, formatNumber } from "@/lib/format"
-import { getFullName } from "@/lib/user"
 import type { EventItem, EventProgress } from "@/types/event"
 import type { User } from "@/types/user"
 
@@ -25,6 +26,7 @@ export interface EventRow {
   event: EventItem
   progress: EventProgress
   owner: User | undefined
+  members: User[]
   participantCount: number
 }
 
@@ -42,7 +44,7 @@ export function EventTable({ rows }: { rows: EventRow[] }) {
               {t("designSystem.eventStatuses")}
             </TableHead>
             <TableHead className="min-w-40">{t("event.startDate")}</TableHead>
-            <TableHead className="min-w-40">{t("event.owner")}</TableHead>
+            <TableHead className="min-w-40">{t("event.assignees")}</TableHead>
             <TableHead className="min-w-20 text-right">
               {t("dashboard.participantSummary")}
             </TableHead>
@@ -50,8 +52,11 @@ export function EventTable({ rows }: { rows: EventRow[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rows.map(({ event, progress, owner, participantCount }) => (
-            <TableRow key={event.id}>
+          {rows.map(({ event, progress, members, participantCount }) => {
+            const eventColor = getEventColor(event)
+
+            return (
+              <TableRow key={event.id}>
               <TableCell>
                 <Link
                   href={ROUTES.eventDetail(event.id)}
@@ -67,14 +72,14 @@ export function EventTable({ rows }: { rows: EventRow[] }) {
                 {formatDateRange(event.startDate, event.endDate, locale)}
               </TableCell>
               <TableCell>
-                {owner ? (
-                  <span className="flex items-center gap-2">
-                    <UserAvatar user={owner} size="xs" />
-                    <span className="truncate text-sm">
-                      {getFullName(owner, locale)}
-                    </span>
-                  </span>
-                ) : null}
+                <AvatarGroup
+                  users={members}
+                  max={10}
+                  overflowStyle={{
+                    backgroundColor: eventColor,
+                    color: getReadableTextColor(eventColor),
+                  }}
+                />
               </TableCell>
               <TableCell className="text-right text-sm tabular-nums">
                 {formatNumber(participantCount, locale)}
@@ -91,8 +96,9 @@ export function EventTable({ rows }: { rows: EventRow[] }) {
                   </span>
                 </span>
               </TableCell>
-            </TableRow>
-          ))}
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
     </div>

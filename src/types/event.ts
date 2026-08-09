@@ -6,6 +6,7 @@ import type {
   LocalizedText,
   TimeString,
 } from "./common"
+import type { EventColor } from "@/constants/event-colors"
 
 export const EVENT_STATUSES = [
   "draft",
@@ -31,6 +32,8 @@ export interface EventItem extends AuditFields {
   ownerId: Id
   /** จำนวนผู้เข้าร่วมที่คาดการณ์ */
   expectedAttendees: number
+  /** สีประจำกิจกรรม — เลือกได้จาก EVENT_COLOR_OPTIONS */
+  color: EventColor
   status: EventStatus
   coverImage: string
   /** ถูกย้ายไป Trash เมื่อใด (null = ยังอยู่ในระบบ) */

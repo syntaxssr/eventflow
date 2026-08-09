@@ -1,5 +1,7 @@
 "use client"
 
+import type { CSSProperties } from "react"
+
 import { UserAvatar } from "@/components/common/user-avatar"
 import {
   Tooltip,
@@ -17,11 +19,13 @@ export function AvatarGroup({
   max = 3,
   size = "xs",
   className,
+  overflowStyle,
 }: {
   users: User[]
   max?: number
   size?: "xs" | "sm"
   className?: string
+  overflowStyle?: CSSProperties
 }) {
   const { t, locale } = useLocale()
 
@@ -54,6 +58,7 @@ export function AvatarGroup({
                 "bg-muted text-muted-foreground ring-background inline-flex items-center justify-center rounded-full font-semibold ring-2",
                 size === "xs" ? "size-6 text-[0.625rem]" : "size-8 text-xs"
               )}
+              style={overflowStyle}
             >
               +{overflow}
             </span>

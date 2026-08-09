@@ -1,4 +1,3 @@
-import { AVATAR_PALETTE } from "@/constants/avatar-colors"
 import { daysBetween, fromDateKey, toDateKey } from "@/constants/mock-date"
 import type { DateKey } from "@/types/common"
 import type { DuplicateEventOptions, EventItem } from "@/types/event"
@@ -8,16 +7,24 @@ import type { TimelineItem } from "@/types/timeline"
 import { newId } from "./id"
 
 /**
- * สีประจำกิจกรรม — หยิบจากพาเลต avatar ด้วย hash ของ id
- * เป็นฟังก์ชันบริสุทธิ์ กิจกรรมเดิมจึงได้สีเดิมเสมอทุกครั้งที่เรนเดอร์
- * โดยไม่ต้องเก็บสีลงในข้อมูล
+ * สีประจำกิจกรรมเก็บไว้กับข้อมูลกิจกรรม เพื่อให้ผู้ใช้เลือกและคงสีเดิมได้
  */
-export function getEventColor(eventId: string): string {
-  let hash = 0
-  for (let i = 0; i < eventId.length; i += 1) {
-    hash = (hash * 31 + eventId.charCodeAt(i)) % 100000
-  }
-  return AVATAR_PALETTE[hash % AVATAR_PALETTE.length]
+export function getEventColor(event: Pick<EventItem, "color">): string {
+  return event.color
+}
+
+/** Emoji สำหรับใช้เป็นภาพนำกิจกรรม โดยอิงจากคำสำคัญของชื่อทั้งไทยและอังกฤษ */
+export function getEventEmoji(event: Pick<EventItem, "title">): string {
+  const title = `${event.title.th} ${event.title.en}`.toLowerCase()
+
+  if (/ปฐมนิเทศ|orientation|onboarding/.test(title)) return "👋"
+  if (/ความปลอดภัย|security|อบรม|training/.test(title)) return "🔐"
+  if (/ปลูกป่า|ป่าชายเลน|mangrove|csr/.test(title)) return "🌱"
+  if (/ประชุม|meeting|town hall/.test(title)) return "📊"
+  if (/เปิดตัว|launch/.test(title)) return "🚀"
+  if (/งานเลี้ยง|party|celebration/.test(title)) return "🎉"
+
+  return "📅"
 }
 
 export interface DuplicateEventInput {
