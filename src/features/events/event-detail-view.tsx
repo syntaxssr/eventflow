@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import {
   CalendarIcon,
@@ -35,6 +34,7 @@ import { RecentActivityCard } from "@/features/dashboard/recent-activity-card"
 import { TaskStatusChart } from "@/features/dashboard/task-status-chart"
 import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
+import { getEventEmoji } from "@/lib/event"
 import { formatDateRange, formatDateTime, formatNumber } from "@/lib/format"
 import { getFullName } from "@/lib/user"
 import { useAppState } from "@/store"
@@ -115,12 +115,12 @@ export function EventDetailView({ eventId }: { eventId: string }) {
   if (pageState === "loading") {
     return (
       <PageContainer>
-        <Skeleton className="h-40 w-full rounded-lg sm:h-52" />
         <Skeleton className="h-9 w-2/3" />
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Skeleton key={index} className="h-16" />
-          ))}
+        <div className="grid grid-cols-12 gap-x-4">
+          <Skeleton className="col-span-2 h-5" />
+          <Skeleton className="col-span-2 h-5" />
+          <Skeleton className="col-span-2 h-5" />
+          <Skeleton className="col-span-6 h-5" />
         </div>
         <div className="grid gap-4 lg:grid-cols-3">
           <Skeleton className="h-64 lg:col-span-2" />
@@ -147,23 +147,16 @@ export function EventDetailView({ eventId }: { eventId: string }) {
         </Link>
       </Button>
 
-      {event.coverImage ? (
-        <div className="relative h-40 w-full overflow-hidden rounded-lg sm:h-52">
-          <Image
-            src={event.coverImage}
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover"
-            unoptimized
-            priority
-          />
-        </div>
-      ) : null}
-
       <PageHeader
+        className="border-b-0 pb-0"
         title={
           <span className="flex flex-wrap items-center gap-2">
+            <span
+              className="flex size-10 shrink-0 items-center justify-center text-[2.2rem] leading-none"
+              aria-hidden="true"
+            >
+              {getEventEmoji(event)}
+            </span>
             {tl(event.title)}
             <StatusBadge style={EVENT_STATUS_STYLE[event.status]} />
             <span className="bg-muted rounded-full px-2.5 py-1 text-xs font-semibold">
@@ -194,31 +187,35 @@ export function EventDetailView({ eventId }: { eventId: string }) {
         eventId={event.id}
       />
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-12 gap-x-4">
         <InfoTile
+          className="col-span-2"
           icon={CalendarIcon}
           label={t("event.startDate")}
           value={formatDateRange(event.startDate, event.endDate, locale)}
         />
         <InfoTile
+          className="col-span-2"
           icon={ClockIcon}
           label={t("event.startTime")}
-          value={`${event.startTime} – ${event.endTime}`}
+          value={`${event.startTime} – ${event.endTime}${locale === "th" ? " น." : ""}`}
         />
         <InfoTile
-          icon={MapPinIcon}
-          label={t("event.location")}
-          value={tl(event.location)}
-        />
-        <InfoTile
+          className="col-span-2"
           icon={UsersIcon}
           label={t("event.expectedAttendees")}
           value={`${formatNumber(event.expectedAttendees, locale)} ${t("dashboard.unitPerson")}`}
         />
+        <InfoTile
+          className="col-span-6"
+          icon={MapPinIcon}
+          label={t("event.location")}
+          value={tl(event.location)}
+        />
       </div>
 
       <Tabs defaultValue="overview">
-        <TabsList className="w-full justify-start overflow-x-auto">
+        <TabsList className="w-full justify-start">
           <TabsTrigger value="overview">{t("event.overview")}</TabsTrigger>
           <TabsTrigger value="tasks">{t("nav.myTasks")}</TabsTrigger>
           <TabsTrigger value="timeline">{t("nav.timeline")}</TabsTrigger>
@@ -333,36 +330,31 @@ export function EventDetailView({ eventId }: { eventId: string }) {
 }
 
 function InfoTile({
+  className,
   icon: Icon,
   label,
   value,
 }: {
+  className?: string
   icon: LucideIcon
   label: string
   value: string
 }) {
   return (
-    <Card>
-      <CardContent className="flex items-start gap-3 p-4">
-        <span
-          className="bg-muted text-muted-foreground flex size-9 shrink-0 items-center justify-center rounded-lg"
-          aria-hidden="true"
-        >
-          <Icon className="size-4" />
-        </span>
-        <span className="min-w-0">
-          <span className="text-muted-foreground block text-xs">{label}</span>
-          <span className="block text-sm font-medium text-pretty">{value}</span>
-        </span>
-      </CardContent>
-    </Card>
+    <div
+      className={`text-muted-foreground flex min-w-0 items-center gap-3 ${className ?? ""}`}
+    >
+      <Icon className="size-5 shrink-0" aria-hidden="true" />
+      <span className="sr-only">{label}: </span>
+      <span className="truncate text-base">{value}</span>
+    </div>
   )
 }
 
 function Metric({ label, value }: { label: string; value: number }) {
   const { locale } = useLocale()
   return (
-    <div>
+    <div className="text-center">
       <p className="text-xl font-bold tabular-nums">
         {formatNumber(value, locale)}
       </p>

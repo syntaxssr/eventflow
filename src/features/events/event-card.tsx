@@ -63,14 +63,14 @@ export function EventCard({
               </span>
             </li>
             <li className="flex items-center gap-1.5">
-              <MapPinIcon className="size-3.5 shrink-0" aria-hidden="true" />
-              <span className="truncate">{tl(event.location)}</span>
-            </li>
-            <li className="flex items-center gap-1.5">
               <UsersIcon className="size-3.5 shrink-0" aria-hidden="true" />
               <span>
                 {formatNumber(participantCount, locale)} {t("dashboard.unitPerson")}
               </span>
+            </li>
+            <li className="flex items-center gap-1.5">
+              <MapPinIcon className="size-3.5 shrink-0" aria-hidden="true" />
+              <span className="truncate">{tl(event.location)}</span>
             </li>
           </ul>
 

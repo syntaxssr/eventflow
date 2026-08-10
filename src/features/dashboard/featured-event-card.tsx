@@ -80,14 +80,14 @@ export function FeaturedEventCard({
               </span>
             </li>
             <li className="flex min-w-0 items-center gap-2">
-              <MapPinIcon className="size-4 shrink-0" aria-hidden="true" />
-              <span className="truncate">{tl(event.location)}</span>
-            </li>
-            <li className="flex min-w-0 items-center gap-2">
               <UsersIcon className="size-4 shrink-0" aria-hidden="true" />
               <span className="truncate">
                 {formatNumber(participantCount, locale)} {t("dashboard.unitPerson")}
               </span>
+            </li>
+            <li className="flex min-w-0 items-center gap-2">
+              <MapPinIcon className="size-4 shrink-0" aria-hidden="true" />
+              <span className="truncate">{tl(event.location)}</span>
             </li>
           </ul>
         </div>
