@@ -199,7 +199,7 @@
   height: auto;
   width: 100%;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  background-color: #efefed;
+  background-color: #dfdfdc;
   box-shadow: inset 0 0 0 1px rgb(28 28 28 / 18%);
 }
 
@@ -217,7 +217,7 @@
 }
 
 .dashboard-featured-tabs-list > [data-slot="tabs-trigger"][data-state="active"] {
-  background-color: #ffffff;
+  background-color: #f2f2f0;
   color: #1c1c1c;
 }
 
@@ -291,7 +291,7 @@
   --brand-text: #1c1c1c;
 
   /* ---- ธีมหลัก: ขาว/ดำ ---- */
-  --background: #e5e5e3;
+  --background: var(--status-gray);
   --foreground: #1c1c1c;
   --card: var(--sidebar);
   --card-foreground: #1c1c1c;
@@ -374,7 +374,7 @@
   --radius: 0.625rem;
 
   /* ---- Sidebar ---- */
-  --sidebar: #f2f2f0;
+  --sidebar: var(--status-default);
   --sidebar-foreground: #1c1c1c;
   --sidebar-primary: var(--foreground);
   --sidebar-primary-foreground: var(--background);
