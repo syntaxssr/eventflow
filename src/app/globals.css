@@ -217,8 +217,8 @@
 }
 
 .dashboard-featured-tabs-list > [data-slot="tabs-trigger"][data-state="active"] {
-  background-color: #1c1c1c;
-  color: #f2f2f0;
+  background-color: #ffffff;
+  color: #1c1c1c;
 }
 
 /* แท็บรายละเอียดเป็นส่วนหนึ่งของการ์ดกิจกรรมหลัก จึงใช้พื้นที่ที่เหลือของการ์ด
@@ -293,7 +293,7 @@
   /* ---- ธีมหลัก: ขาว/ดำ ---- */
   --background: #e5e5e3;
   --foreground: #1c1c1c;
-  --card: #efefed;
+  --card: var(--sidebar);
   --card-foreground: #1c1c1c;
   --popover: #efefed;
   --popover-foreground: #1c1c1c;
@@ -401,7 +401,7 @@
 
   --background: #1c1c1c;
   --foreground: #f2f2f0;
-  --card: #202020;
+  --card: var(--sidebar);
   --card-foreground: #f2f2f0;
   --popover: #202020;
   --popover-foreground: #f2f2f0;

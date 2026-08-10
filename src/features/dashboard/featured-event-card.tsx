@@ -68,7 +68,7 @@ export function FeaturedEventCard({
             </div>
           </div>
 
-          <ul className="text-muted-foreground grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+          <ul className="text-muted-foreground grid grid-cols-3 gap-x-3 gap-y-3 text-sm">
             <li className="flex min-w-0 items-center gap-2">
               <CalendarIcon className="size-4 shrink-0" aria-hidden="true" />
               <span className="truncate">{formatDateRange(event.startDate, event.endDate, locale)}</span>
@@ -85,7 +85,7 @@ export function FeaturedEventCard({
                 {formatNumber(participantCount, locale)} {t("dashboard.unitPerson")}
               </span>
             </li>
-            <li className="flex min-w-0 items-center gap-2">
+            <li className="col-span-3 flex min-w-0 items-center gap-2">
               <MapPinIcon className="size-4 shrink-0" aria-hidden="true" />
               <span className="truncate">{tl(event.location)}</span>
             </li>
