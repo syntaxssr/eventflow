@@ -1,4 +1,14 @@
 import { daysBetween, fromDateKey, toDateKey } from "@/constants/mock-date"
+import {
+  CalendarDaysIcon,
+  ChartNoAxesColumnIncreasingIcon,
+  HandIcon,
+  PartyPopperIcon,
+  RocketIcon,
+  ShieldCheckIcon,
+  SproutIcon,
+  type LucideIcon,
+} from "lucide-react"
 import type { DateKey } from "@/types/common"
 import type { DuplicateEventOptions, EventItem } from "@/types/event"
 import type { FileCategory } from "@/types/file"
@@ -25,6 +35,20 @@ export function getEventEmoji(event: Pick<EventItem, "title">): string {
   if (/งานเลี้ยง|party|celebration/.test(title)) return "🎉"
 
   return "📅"
+}
+
+/** ไอคอนกิจกรรมสำหรับพื้นหลังสีประจำกิจกรรม โดยอิงจากชื่อทั้งไทยและอังกฤษ */
+export function getEventIcon(event: Pick<EventItem, "title">): LucideIcon {
+  const title = `${event.title.th} ${event.title.en}`.toLowerCase()
+
+  if (/ปฐมนิเทศ|orientation|onboarding/.test(title)) return HandIcon
+  if (/ความปลอดภัย|security|อบรม|training/.test(title)) return ShieldCheckIcon
+  if (/ปลูกป่า|ป่าชายเลน|mangrove|csr/.test(title)) return SproutIcon
+  if (/ประชุม|meeting|town hall/.test(title)) return ChartNoAxesColumnIncreasingIcon
+  if (/เปิดตัว|launch/.test(title)) return RocketIcon
+  if (/งานเลี้ยง|party|celebration/.test(title)) return PartyPopperIcon
+
+  return CalendarDaysIcon
 }
 
 export interface DuplicateEventInput {

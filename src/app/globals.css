@@ -221,6 +221,34 @@
   color: #1c1c1c;
 }
 
+/* แท็บในหน้ารายละเอียดกิจกรรมใช้พื้นผิวเดียวกับแท็บใน Dashboard */
+.event-detail-tabs-list {
+  display: grid;
+  height: auto;
+  width: 100%;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  background-color: #dfdfdc;
+  box-shadow: inset 0 0 0 1px rgb(28 28 28 / 18%);
+}
+
+.dark .event-detail-tabs-list {
+  background-color: #202020;
+  box-shadow: inset 0 0 0 1px rgb(242 242 240 / 18%);
+}
+
+.event-detail-tabs-list > [data-slot="tabs-trigger"] {
+  min-width: 0;
+  height: auto;
+  padding: 0.5rem;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.event-detail-tabs-list > [data-slot="tabs-trigger"][data-state="active"] {
+  background-color: #f2f2f0;
+  color: #1c1c1c;
+}
+
 /* แท็บรายละเอียดเป็นส่วนหนึ่งของการ์ดกิจกรรมหลัก จึงใช้พื้นที่ที่เหลือของการ์ด
    และให้เฉพาะเนื้อหาเลื่อนภายใน โดยไม่ทำให้ความสูง Dashboard เปลี่ยน */
 .dashboard-featured-event-tabs {

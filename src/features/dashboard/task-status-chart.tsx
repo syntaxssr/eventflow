@@ -70,7 +70,7 @@ export function TaskStatusChart({
 
       <CardContent className="grid min-w-0 flex-1 content-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:items-center">
         {/* วงแหวนแยกตามสถานะ อ่านสัดส่วนเทียบงานทั้งหมดได้โดยไม่ต้องเดาชิ้นโดนัท */}
-        <div className="relative mx-auto aspect-square w-64 sm:w-72 lg:w-80">
+        <div className="relative mx-auto aspect-square w-56 sm:w-60 lg:w-64">
           <ChartContainer config={config} className="size-full">
             <RadialBarChart
               data={data}

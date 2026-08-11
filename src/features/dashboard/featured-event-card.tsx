@@ -1,5 +1,6 @@
 "use client"
 
+import { createElement } from "react"
 import Link from "next/link"
 import { CalendarIcon, ClockIcon, MapPinIcon, UsersIcon } from "lucide-react"
 
@@ -11,6 +12,8 @@ import { getToday } from "@/constants/mock-date"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
 import { daysBetween, fromDateKey } from "@/constants/mock-date"
+import { getReadableTextColor } from "@/lib/color"
+import { getEventColor, getEventIcon } from "@/lib/event"
 import { formatDateRange, formatNumber } from "@/lib/format"
 import type { EventItem, EventProgress } from "@/types/event"
 
@@ -27,6 +30,8 @@ export function FeaturedEventCard({
 }) {
   const { t, tl, locale } = useLocale()
   const daysLeft = daysBetween(getToday(), fromDateKey(event.startDate))
+  const eventColor = getEventColor(event)
+  const eventIcon = getEventIcon(event)
 
   const countdown =
     daysLeft > 0
@@ -52,10 +57,17 @@ export function FeaturedEventCard({
             </div>
             <div className="flex items-center gap-3">
               <span
-                className="flex size-11 shrink-0 items-center justify-center text-[2.2rem] leading-none"
+                className="flex size-11 shrink-0 items-center justify-center rounded-xl"
+                style={{
+                  backgroundColor: eventColor,
+                  color: getReadableTextColor(eventColor),
+                }}
                 aria-hidden="true"
               >
-                🎉
+                {createElement(eventIcon, {
+                  className: "size-5.5",
+                  strokeWidth: 2.25,
+                })}
               </span>
               <div className="min-w-0 space-y-1">
                 <p className="text-brand-text text-xs font-semibold">
@@ -99,6 +111,7 @@ export function FeaturedEventCard({
           </div>
           <Progress
             value={progress.percent}
+            className="h-2"
             aria-label={t("dashboard.progress")}
           />
           <p className="text-muted-foreground text-xs">

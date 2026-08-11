@@ -34,7 +34,8 @@ import { RecentActivityCard } from "@/features/dashboard/recent-activity-card"
 import { TaskStatusChart } from "@/features/dashboard/task-status-chart"
 import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
-import { getEventEmoji } from "@/lib/event"
+import { getReadableTextColor } from "@/lib/color"
+import { getEventColor, getEventIcon } from "@/lib/event"
 import { formatDateRange, formatDateTime, formatNumber } from "@/lib/format"
 import { getFullName } from "@/lib/user"
 import { useAppState } from "@/store"
@@ -137,9 +138,11 @@ export function EventDetailView({ eventId }: { eventId: string }) {
       : daysLeft === 0
         ? t("dashboard.eventToday")
         : t("dashboard.eventPassed", { days: Math.abs(daysLeft) })
+  const eventColor = getEventColor(event)
+  const eventIcon = getEventIcon(event)
 
   return (
-    <PageContainer>
+    <PageContainer className="space-y-2 pt-2">
       <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit">
         <Link href={ROUTES.events}>
           <ChevronLeftIcon className="size-4" aria-hidden="true" />
@@ -147,86 +150,89 @@ export function EventDetailView({ eventId }: { eventId: string }) {
         </Link>
       </Button>
 
-      <PageHeader
-        className="border-b-0 pb-0"
-        title={
-          <span className="flex flex-wrap items-center gap-2">
-            <span
-              className="flex size-10 shrink-0 items-center justify-center text-[2.2rem] leading-none"
-              aria-hidden="true"
-            >
-              {getEventEmoji(event)}
-            </span>
-            {tl(event.title)}
-            <StatusBadge style={EVENT_STATUS_STYLE[event.status]} />
-            <span className="bg-muted rounded-full px-2.5 py-1 text-xs font-semibold">
-              {countdown}
-            </span>
-          </span>
-        }
-        description={tl(event.description)}
-        actions={
-          <span className="flex items-center gap-1.5">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setExportOpen(true)}
-              data-testid="open-event-export"
-            >
-              <DownloadIcon className="size-4" aria-hidden="true" />
-              {t("export.action")}
-            </Button>
-            <EventActionsMenu event={event} />
-          </span>
-        }
-      />
+      <Card>
+        <CardContent className="space-y-6">
+          <PageHeader
+            className="border-b-0 pb-0"
+            title={
+              <span className="flex flex-wrap items-center gap-2">
+                <span
+                  className="flex size-10 shrink-0 items-center justify-center rounded-xl"
+                  style={{
+                    backgroundColor: eventColor,
+                    color: getReadableTextColor(eventColor),
+                  }}
+                  aria-hidden="true"
+                >
+                  {React.createElement(eventIcon, {
+                    className: "size-5",
+                    strokeWidth: 2.25,
+                  })}
+                </span>
+                {tl(event.title)}
+                <StatusBadge style={EVENT_STATUS_STYLE[event.status]} />
+                <span className="bg-muted rounded-full px-2.5 py-1 text-xs font-semibold">
+                  {countdown}
+                </span>
+              </span>
+            }
+            description={tl(event.description)}
+            actions={
+              <span className="flex items-center gap-1.5">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setExportOpen(true)}
+                  data-testid="open-event-export"
+                >
+                  <DownloadIcon className="size-4" aria-hidden="true" />
+                  {t("export.action")}
+                </Button>
+                <EventActionsMenu event={event} />
+              </span>
+            }
+          />
 
-      <ExportEventDialog
-        open={exportOpen}
-        onOpenChange={setExportOpen}
-        eventId={event.id}
-      />
+          <div className="grid grid-cols-12 gap-x-4">
+            <InfoTile
+              className="col-span-2"
+              icon={CalendarIcon}
+              label={t("event.startDate")}
+              value={formatDateRange(event.startDate, event.endDate, locale)}
+            />
+            <InfoTile
+              className="col-span-2"
+              icon={ClockIcon}
+              label={t("event.startTime")}
+              value={`${event.startTime} – ${event.endTime}${locale === "th" ? " น." : ""}`}
+            />
+            <InfoTile
+              className="col-span-2"
+              icon={UsersIcon}
+              label={t("event.expectedAttendees")}
+              value={`${formatNumber(event.expectedAttendees, locale)} ${t("dashboard.unitPerson")}`}
+            />
+            <InfoTile
+              className="col-span-6"
+              icon={MapPinIcon}
+              label={t("event.location")}
+              value={tl(event.location)}
+            />
+          </div>
 
-      <div className="grid grid-cols-12 gap-x-4">
-        <InfoTile
-          className="col-span-2"
-          icon={CalendarIcon}
-          label={t("event.startDate")}
-          value={formatDateRange(event.startDate, event.endDate, locale)}
-        />
-        <InfoTile
-          className="col-span-2"
-          icon={ClockIcon}
-          label={t("event.startTime")}
-          value={`${event.startTime} – ${event.endTime}${locale === "th" ? " น." : ""}`}
-        />
-        <InfoTile
-          className="col-span-2"
-          icon={UsersIcon}
-          label={t("event.expectedAttendees")}
-          value={`${formatNumber(event.expectedAttendees, locale)} ${t("dashboard.unitPerson")}`}
-        />
-        <InfoTile
-          className="col-span-6"
-          icon={MapPinIcon}
-          label={t("event.location")}
-          value={tl(event.location)}
-        />
-      </div>
-
-      <Tabs defaultValue="overview">
-        <TabsList className="w-full justify-start">
+          <Tabs className="event-detail-tabs" defaultValue="overview">
+            <TabsList className="event-detail-tabs-list">
           <TabsTrigger value="overview">{t("event.overview")}</TabsTrigger>
           <TabsTrigger value="tasks">{t("nav.myTasks")}</TabsTrigger>
           <TabsTrigger value="timeline">{t("nav.timeline")}</TabsTrigger>
           <TabsTrigger value="files">{t("nav.files")}</TabsTrigger>
           <TabsTrigger value="participants">{t("nav.participants")}</TabsTrigger>
           <TabsTrigger value="activity">{t("nav.activity")}</TabsTrigger>
-        </TabsList>
+            </TabsList>
 
-        <TabsContent value="overview" className="space-y-4 pt-4">
-          <div className="grid gap-4 lg:grid-cols-3">
-            <Card className="lg:col-span-2">
+            <TabsContent value="overview" className="space-y-4 pt-4">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Card>
               <CardHeader>
                 <CardTitle>{t("dashboard.progress")}</CardTitle>
               </CardHeader>
@@ -240,6 +246,7 @@ export function EventDetailView({ eventId }: { eventId: string }) {
                   </div>
                   <Progress
                     value={data.progress.percent}
+                    className="h-2"
                     aria-label={t("dashboard.progress")}
                   />
                   <p className="text-muted-foreground text-sm">
@@ -298,33 +305,41 @@ export function EventDetailView({ eventId }: { eventId: string }) {
               total={data.tasks.length}
             />
           </div>
-        </TabsContent>
+            </TabsContent>
 
-        <TabsContent value="tasks" className="pt-4">
+            <TabsContent value="tasks" className="pt-4">
           <React.Suspense fallback={<Skeleton className="h-64 w-full" />}>
             <TasksView eventId={event.id} />
           </React.Suspense>
-        </TabsContent>
+            </TabsContent>
 
-        <TabsContent value="timeline" className="pt-4">
+            <TabsContent value="timeline" className="pt-4">
           <TimelineView eventId={event.id} />
-        </TabsContent>
+            </TabsContent>
 
-        <TabsContent value="files" className="pt-4">
+            <TabsContent value="files" className="pt-4">
           <FilesView eventId={event.id} />
-        </TabsContent>
+            </TabsContent>
 
-        <TabsContent value="participants" className="pt-4">
+            <TabsContent value="participants" className="pt-4">
           <ParticipantsView eventId={event.id} />
-        </TabsContent>
+            </TabsContent>
 
-        <TabsContent value="activity" className="pt-4">
+            <TabsContent value="activity" className="pt-4">
           <RecentActivityCard
             activities={data.activities}
             usersById={data.usersById}
           />
-        </TabsContent>
-      </Tabs>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+
+      <ExportEventDialog
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        eventId={event.id}
+      />
     </PageContainer>
   )
 }

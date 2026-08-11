@@ -232,7 +232,7 @@ export function EventsView() {
   if (pageState === "loading") {
     return (
       <PageContainer>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {Array.from({ length: EVENTS_PER_PAGE }).map((_, index) => (
             <Card key={index} className="overflow-hidden">
               <CardContent className="space-y-3">
@@ -438,7 +438,7 @@ export function EventsView() {
         />
       ) : view === "grid" ? (
         <div
-          className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-4")}
+          className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-3")}
           data-testid="event-grid"
         >
           {visibleRows.map((row) => (

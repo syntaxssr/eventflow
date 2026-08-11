@@ -4,6 +4,7 @@ import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import {
   CalendarDaysIcon,
+  ChevronDownIcon,
   FilterIcon,
   LayoutGridIcon,
   ListChecksIcon,
@@ -16,12 +17,16 @@ import { EmptyState } from "@/components/common/empty-state"
 import { ErrorState } from "@/components/common/error-state"
 import { FilterChips, type FilterChip } from "@/components/common/filter-chips"
 import { SaveIndicator, useAutoSaveState } from "@/components/common/save-indicator"
+import { StatusBadge } from "@/components/common/status-badge"
+import { UserAvatar } from "@/components/common/user-avatar"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -33,7 +38,12 @@ import {
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getToday } from "@/constants/mock-date"
-import { PRIORITY_STYLE, TASK_STATUS_STYLE } from "@/constants/status"
+import {
+  DUE_SOON_STYLE,
+  OVERDUE_STYLE,
+  PRIORITY_STYLE,
+  TASK_STATUS_STYLE,
+} from "@/constants/status"
 import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
@@ -155,6 +165,12 @@ export function TasksView({
     () => new Map(state.users.map((user) => [user.id, user])),
     [state.users]
   )
+  const selectedAssigneeLabel =
+    assigneeId === "all"
+      ? t("common.all")
+      : usersById.has(assigneeId)
+        ? getFullName(usersById.get(assigneeId)!, locale)
+        : assigneeId
 
   const clearAll = () => {
     setStatuses([])
@@ -164,27 +180,35 @@ export function TasksView({
   }
 
   const chips: FilterChip[] = [
-    ...statuses.map((status) => ({
-      key: `status-${status}`,
-      label: t(TASK_STATUS_STYLE[status].labelKey as TranslationKey),
-      onRemove: () =>
-        setStatuses((current) => current.filter((item) => item !== status)),
-    })),
-    ...priorities.map((priority) => ({
-      key: `priority-${priority}`,
-      label: t(PRIORITY_STYLE[priority].labelKey as TranslationKey),
-      onRemove: () =>
-        setPriorities((current) => current.filter((item) => item !== priority)),
-    })),
+    ...statuses.map((status) => {
+      const style = TASK_STATUS_STYLE[status]
+      const Icon = style.icon
+      return {
+        key: `status-${status}`,
+        label: t(style.labelKey as TranslationKey),
+        icon: <Icon className="size-3 shrink-0" aria-hidden="true" />,
+        className: style.badge,
+        onRemove: () =>
+          setStatuses((current) => current.filter((item) => item !== status)),
+      }
+    }),
+    ...priorities.map((priority) => {
+      const style = PRIORITY_STYLE[priority]
+      const Icon = style.icon
+      return {
+        key: `priority-${priority}`,
+        label: t(style.labelKey as TranslationKey),
+        icon: <Icon className="size-3 shrink-0" aria-hidden="true" />,
+        className: style.badge,
+        onRemove: () =>
+          setPriorities((current) => current.filter((item) => item !== priority)),
+      }
+    }),
     ...(assigneeId !== "all"
       ? [
           {
             key: "assignee",
-            label: `${t("task.assignees")}: ${
-              usersById.get(assigneeId)
-                ? getFullName(usersById.get(assigneeId)!, locale)
-                : assigneeId
-            }`,
+            label: `${t("task.assignees")}: ${selectedAssigneeLabel}`,
             onRemove: () => setAssigneeId("all"),
           },
         ]
@@ -269,99 +293,169 @@ export function TasksView({
       ) : null}
 
       <div className="flex flex-wrap items-center gap-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" data-testid="task-status-filter">
-              <FilterIcon className="size-4" aria-hidden="true" />
+        <div className={eventId ? "flex flex-col gap-1" : undefined}>
+          {eventId ? (
+            <span className="text-muted-foreground pl-1 text-xs font-medium">
               {t("designSystem.taskStatuses")}
-              {statuses.length > 0 ? (
-                <span className="bg-brand-500 text-brand-950 ml-1 rounded-full px-1.5 text-[0.6875rem] font-bold">
-                  {statuses.length}
-                </span>
-              ) : null}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-52">
-            <DropdownMenuLabel>{t("designSystem.taskStatuses")}</DropdownMenuLabel>
-            {TASK_STATUSES.map((status) => (
-              <DropdownMenuCheckboxItem
-                key={status}
-                checked={statuses.includes(status)}
-                onCheckedChange={(checked) =>
-                  setStatuses((current) =>
-                    checked
-                      ? [...current, status]
-                      : current.filter((item) => item !== status)
-                  )
-                }
-                onSelect={(selectEvent) => selectEvent.preventDefault()}
-              >
-                {t(TASK_STATUS_STYLE[status].labelKey as TranslationKey)}
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </span>
+          ) : null}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" data-testid="task-status-filter">
+                <FilterIcon className="size-4" aria-hidden="true" />
+                {!eventId ? t("designSystem.taskStatuses") : null}
+                {statuses.length > 0 ? (
+                  <span className="bg-brand-500 text-brand-950 ml-1 rounded-full px-1.5 text-[0.6875rem] font-bold">
+                    {statuses.length}
+                  </span>
+                ) : null}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-52">
+              <DropdownMenuLabel>{t("designSystem.taskStatuses")}</DropdownMenuLabel>
+              {TASK_STATUSES.map((status) => (
+                <DropdownMenuCheckboxItem
+                  key={status}
+                  checked={statuses.includes(status)}
+                  onCheckedChange={(checked) =>
+                    setStatuses((current) =>
+                      checked
+                        ? [...current, status]
+                        : current.filter((item) => item !== status)
+                    )
+                  }
+                  onSelect={(selectEvent) => selectEvent.preventDefault()}
+                >
+                  <StatusBadge
+                    size="sm"
+                    style={TASK_STATUS_STYLE[status]}
+                    className="pointer-events-none"
+                  />
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
+        <div className={eventId ? "flex flex-col gap-1" : undefined}>
+          {eventId ? (
+            <span className="text-muted-foreground pl-1 text-xs font-medium">
               {t("priority.label")}
-              {priorities.length > 0 ? (
-                <span className="bg-brand-500 text-brand-950 ml-1 rounded-full px-1.5 text-[0.6875rem] font-bold">
-                  {priorities.length}
-                </span>
-              ) : null}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-44">
-            <DropdownMenuLabel>{t("priority.label")}</DropdownMenuLabel>
-            {PRIORITIES.map((priority) => (
-              <DropdownMenuCheckboxItem
-                key={priority}
-                checked={priorities.includes(priority)}
-                onCheckedChange={(checked) =>
-                  setPriorities((current) =>
-                    checked
-                      ? [...current, priority]
-                      : current.filter((item) => item !== priority)
-                  )
-                }
-                onSelect={(selectEvent) => selectEvent.preventDefault()}
+            </span>
+          ) : null}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                {eventId ? <FilterIcon className="size-4" aria-hidden="true" /> : t("priority.label")}
+                {priorities.length > 0 ? (
+                  <span className="bg-brand-500 text-brand-950 ml-1 rounded-full px-1.5 text-[0.6875rem] font-bold">
+                    {priorities.length}
+                  </span>
+                ) : null}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-44">
+              <DropdownMenuLabel>{t("priority.label")}</DropdownMenuLabel>
+              {PRIORITIES.map((priority) => (
+                <DropdownMenuCheckboxItem
+                  key={priority}
+                  checked={priorities.includes(priority)}
+                  onCheckedChange={(checked) =>
+                    setPriorities((current) =>
+                      checked
+                        ? [...current, priority]
+                        : current.filter((item) => item !== priority)
+                    )
+                  }
+                  onSelect={(selectEvent) => selectEvent.preventDefault()}
+                >
+                  <StatusBadge
+                    size="sm"
+                    style={PRIORITY_STYLE[priority]}
+                    className="pointer-events-none"
+                  />
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        <div className={eventId ? "flex flex-col gap-1" : undefined}>
+          {eventId ? (
+            <span className="text-muted-foreground pl-1 text-xs font-medium">
+              {t("task.assignees")}
+            </span>
+          ) : null}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-72 justify-between"
+                aria-label={t("task.assignees")}
               >
-                {t(PRIORITY_STYLE[priority].labelKey as TranslationKey)}
-              </DropdownMenuCheckboxItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                <span className="truncate">
+                  {eventId ? selectedAssigneeLabel : `${t("task.assignees")}: ${selectedAssigneeLabel}`}
+                </span>
+                <ChevronDownIcon className="size-4 text-muted-foreground" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-72">
+              <DropdownMenuRadioGroup value={assigneeId} onValueChange={setAssigneeId}>
+                <DropdownMenuRadioItem value="all">
+                  {t("common.all")}
+                </DropdownMenuRadioItem>
+                {state.users.map((user) => (
+                  <DropdownMenuRadioItem key={user.id} value={user.id} className="py-1.5">
+                    <span className="flex items-center gap-2">
+                      <UserAvatar user={user} size="sm" />
+                      <span className="truncate">{getFullName(user, locale)}</span>
+                    </span>
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-        <Select value={assigneeId} onValueChange={setAssigneeId}>
-          <SelectTrigger size="sm" className="w-44" aria-label={t("task.assignees")}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">
-              {t("task.assignees")}: {t("common.all")}
-            </SelectItem>
-            {state.users.map((user) => (
-              <SelectItem key={user.id} value={user.id}>
-                {getFullName(user, locale)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={due} onValueChange={(value) => setDue(value as DueFilter)}>
-          <SelectTrigger size="sm" className="w-40" aria-label={t("task.filterDue")}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {(Object.keys(DUE_LABEL) as DueFilter[]).map((key) => (
-              <SelectItem key={key} value={key}>
-                {t(DUE_LABEL[key])}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className={eventId ? "flex flex-col gap-1" : undefined}>
+          {eventId ? (
+            <span className="text-muted-foreground pl-1 text-xs font-medium">
+              {t("task.filterDue")}
+            </span>
+          ) : null}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-40 justify-between"
+                aria-label={t("task.filterDue")}
+              >
+                <span className="truncate">{t(DUE_LABEL[due])}</span>
+                <ChevronDownIcon className="size-4 text-muted-foreground" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-40">
+              <DropdownMenuRadioGroup
+                value={due}
+                onValueChange={(value) => setDue(value as DueFilter)}
+              >
+                {(Object.keys(DUE_LABEL) as DueFilter[]).map((key) => (
+                  <DropdownMenuRadioItem key={key} value={key}>
+                    {key === "overdue" ? (
+                      <StatusBadge size="sm" style={OVERDUE_STYLE} />
+                    ) : key === "soon" ? (
+                      <StatusBadge size="sm" style={DUE_SOON_STYLE} />
+                    ) : (
+                      t(DUE_LABEL[key])
+                    )}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         <div className="ml-auto flex items-center gap-1">
           {(
