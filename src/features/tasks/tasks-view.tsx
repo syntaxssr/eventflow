@@ -9,6 +9,7 @@ import {
   LayoutGridIcon,
   ListChecksIcon,
   PlusIcon,
+  SearchIcon,
   TableIcon,
 } from "lucide-react"
 import { toast } from "sonner"
@@ -29,6 +30,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -49,6 +51,7 @@ import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
 import { isDueSoon, isIncomplete, isOverdue } from "@/lib/due-date"
 import { getFullName } from "@/lib/user"
+import { cn } from "@/lib/utils"
 import { useAppState, useCurrentUser } from "@/store"
 import { sortTasksByUrgency } from "@/store/selectors"
 import {
@@ -99,6 +102,7 @@ export function TasksView({
   const today = React.useMemo(() => getToday(), [])
 
   const [view, setView] = React.useState<ViewMode>("table")
+  const [taskNameQuery, setTaskNameQuery] = React.useState("")
   const [scope, setScope] = React.useState<Scope>(() =>
     searchParams.get("scope") === "all" || eventId ? "all" : "mine"
   )
@@ -143,7 +147,14 @@ export function TasksView({
   }, [state.tasks, state.events, eventId, scope, currentUser])
 
   const tasks = React.useMemo(() => {
+    const normalizedQuery = taskNameQuery.trim().toLocaleLowerCase(locale)
     const filtered = scopedTasks.filter((task) => {
+      if (
+        eventId &&
+        normalizedQuery &&
+        !tl(task.title).toLocaleLowerCase(locale).includes(normalizedQuery)
+      )
+        return false
       if (statuses.length > 0 && !statuses.includes(task.status)) return false
       if (priorities.length > 0 && !priorities.includes(task.priority)) return false
       if (assigneeId !== "all" && !task.assigneeIds.includes(assigneeId))
@@ -154,7 +165,18 @@ export function TasksView({
       return true
     })
     return sortTasksByUrgency(filtered, today)
-  }, [scopedTasks, statuses, priorities, assigneeId, due, today])
+  }, [
+    scopedTasks,
+    taskNameQuery,
+    eventId,
+    locale,
+    tl,
+    statuses,
+    priorities,
+    assigneeId,
+    due,
+    today,
+  ])
 
   // เก็บงานที่เปิดรายละเอียดอยู่ให้สดเสมอ แม้ข้อมูลใน store เปลี่ยน
   const openTask = detailTask
@@ -171,8 +193,15 @@ export function TasksView({
       : usersById.has(assigneeId)
         ? getFullName(usersById.get(assigneeId)!, locale)
         : assigneeId
+  const selectedDueStyle =
+    due === "overdue"
+      ? OVERDUE_STYLE
+      : due === "soon"
+        ? DUE_SOON_STYLE
+        : null
 
   const clearAll = () => {
+    setTaskNameQuery("")
     setStatuses([])
     setPriorities([])
     setAssigneeId("all")
@@ -218,6 +247,13 @@ export function TasksView({
           {
             key: "due",
             label: t(DUE_LABEL[due]),
+            icon: selectedDueStyle
+              ? React.createElement(selectedDueStyle.icon, {
+                  className: "size-3 shrink-0",
+                  "aria-hidden": true,
+                })
+              : undefined,
+            className: selectedDueStyle?.badge,
             onRemove: () => setDue("all"),
           },
         ]
@@ -285,15 +321,46 @@ export function TasksView({
             <SaveIndicator state={saveState} />
           </div>
 
-          <Button size="sm" onClick={openCreateForm} data-testid="create-task">
-            <PlusIcon className="size-4" aria-hidden="true" />
-            {t("task.create")}
-          </Button>
+          {!eventId ? (
+            <Button size="sm" onClick={openCreateForm} data-testid="create-task">
+              <PlusIcon className="size-4" aria-hidden="true" />
+              {t("task.create")}
+            </Button>
+          ) : null}
         </div>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-2">
-        <div className={eventId ? "flex flex-col gap-1" : undefined}>
+      <div className="flex flex-wrap items-end gap-2">
+        {eventId ? (
+          <div className="order-0 flex w-64 flex-col gap-1">
+            <label
+              htmlFor="event-task-name-search"
+              className="text-muted-foreground pl-1 text-xs font-medium"
+            >
+              {t("task.searchName")}
+            </label>
+            <div className="relative">
+              <SearchIcon
+                className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
+                aria-hidden="true"
+              />
+              <Input
+                id="event-task-name-search"
+                type="search"
+                value={taskNameQuery}
+                onChange={(event) => setTaskNameQuery(event.target.value)}
+                placeholder={t("task.searchNamePlaceholder")}
+                className="pl-9"
+              />
+            </div>
+          </div>
+        ) : null}
+
+        <div
+          className={cn(
+            eventId ? "order-2 flex flex-col gap-1" : undefined
+          )}
+        >
           {eventId ? (
             <span className="text-muted-foreground pl-1 text-xs font-medium">
               {t("designSystem.taskStatuses")}
@@ -301,12 +368,44 @@ export function TasksView({
           ) : null}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" data-testid="task-status-filter">
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="task-status-filter"
+                aria-label={
+                  statuses.length > 0
+                    ? `${t("designSystem.taskStatuses")}: ${statuses
+                        .map((status) =>
+                          t(TASK_STATUS_STYLE[status].labelKey as TranslationKey)
+                        )
+                        .join(", ")}`
+                    : t("designSystem.taskStatuses")
+                }
+              >
                 <FilterIcon className="size-4" aria-hidden="true" />
                 {!eventId ? t("designSystem.taskStatuses") : null}
                 {statuses.length > 0 ? (
-                  <span className="bg-brand-500 text-brand-950 ml-1 rounded-full px-1.5 text-[0.6875rem] font-bold">
-                    {statuses.length}
+                  <span
+                    className="-space-x-1.5 flex items-center"
+                    aria-hidden="true"
+                  >
+                    {statuses.map((status, index) => {
+                      const style = TASK_STATUS_STYLE[status]
+                      const StatusIcon = style.icon
+
+                      return (
+                        <span
+                          key={status}
+                          className={cn(
+                            "relative flex size-5 items-center justify-center rounded-full border",
+                            style.badge
+                          )}
+                          style={{ zIndex: statuses.length - index }}
+                        >
+                          <StatusIcon className="size-2.5" />
+                        </span>
+                      )
+                    })}
                   </span>
                 ) : null}
               </Button>
@@ -337,7 +436,11 @@ export function TasksView({
           </DropdownMenu>
         </div>
 
-        <div className={eventId ? "flex flex-col gap-1" : undefined}>
+        <div
+          className={cn(
+            eventId ? "order-3 flex flex-col gap-1" : undefined
+          )}
+        >
           {eventId ? (
             <span className="text-muted-foreground pl-1 text-xs font-medium">
               {t("priority.label")}
@@ -345,11 +448,39 @@ export function TasksView({
           ) : null}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                aria-label={
+                  priorities.length > 0
+                    ? `${t("priority.label")}: ${priorities
+                        .map((priority) =>
+                          t(PRIORITY_STYLE[priority].labelKey as TranslationKey)
+                        )
+                        .join(", ")}`
+                    : t("priority.label")
+                }
+              >
                 {eventId ? <FilterIcon className="size-4" aria-hidden="true" /> : t("priority.label")}
                 {priorities.length > 0 ? (
-                  <span className="bg-brand-500 text-brand-950 ml-1 rounded-full px-1.5 text-[0.6875rem] font-bold">
-                    {priorities.length}
+                  <span className="-space-x-1.5 flex items-center" aria-hidden="true">
+                    {priorities.map((priority, index) => {
+                      const style = PRIORITY_STYLE[priority]
+                      const PriorityIcon = style.icon
+
+                      return (
+                        <span
+                          key={priority}
+                          className={cn(
+                            "relative flex size-5 items-center justify-center rounded-full border",
+                            style.badge
+                          )}
+                          style={{ zIndex: priorities.length - index }}
+                        >
+                          <PriorityIcon className="size-2.5" />
+                        </span>
+                      )
+                    })}
                   </span>
                 ) : null}
               </Button>
@@ -380,7 +511,11 @@ export function TasksView({
           </DropdownMenu>
         </div>
 
-        <div className={eventId ? "flex flex-col gap-1" : undefined}>
+        <div
+          className={cn(
+            eventId ? "order-1 flex flex-col gap-1" : undefined
+          )}
+        >
           {eventId ? (
             <span className="text-muted-foreground pl-1 text-xs font-medium">
               {t("task.assignees")}
@@ -418,7 +553,11 @@ export function TasksView({
           </DropdownMenu>
         </div>
 
-        <div className={eventId ? "flex flex-col gap-1" : undefined}>
+        <div
+          className={cn(
+            eventId ? "order-4 flex flex-col gap-1" : undefined
+          )}
+        >
           {eventId ? (
             <span className="text-muted-foreground pl-1 text-xs font-medium">
               {t("task.filterDue")}
@@ -457,7 +596,19 @@ export function TasksView({
           </DropdownMenu>
         </div>
 
-        <div className="ml-auto flex items-center gap-1">
+        {eventId ? (
+          <Button
+            size="sm"
+            onClick={openCreateForm}
+            data-testid="create-task"
+            className="order-5 ml-auto"
+          >
+            <PlusIcon className="size-4" aria-hidden="true" />
+            {t("task.create")}
+          </Button>
+        ) : null}
+
+        <div className={cn("flex items-center gap-1", eventId ? "order-6" : "order-5 ml-auto")}>
           {(
             [
               ["table", TableIcon, "task.tableView"],

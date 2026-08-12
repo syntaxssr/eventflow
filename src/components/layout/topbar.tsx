@@ -9,7 +9,7 @@ import { UserMenu } from "./user-menu"
 
 export function Topbar() {
   return (
-    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-30 flex h-14 items-center gap-2 px-3 backdrop-blur sm:px-4">
+    <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-30 flex h-14 items-center gap-2 border-b px-3 backdrop-blur sm:px-4">
       <SidebarTrigger className="hidden md:inline-flex" />
 
       <GlobalSearch />

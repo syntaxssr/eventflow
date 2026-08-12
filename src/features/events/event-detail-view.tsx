@@ -8,7 +8,10 @@ import {
   ChevronLeftIcon,
   ClockIcon,
   DownloadIcon,
+  FileTextIcon,
   MapPinIcon,
+  TriangleAlertIcon,
+  UserCheckIcon,
   UsersIcon,
   type LucideIcon,
 } from "lucide-react"
@@ -142,7 +145,7 @@ export function EventDetailView({ eventId }: { eventId: string }) {
   const eventIcon = getEventIcon(event)
 
   return (
-    <PageContainer className="space-y-2 pt-2">
+    <PageContainer className="space-y-2">
       <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit">
         <Link href={ROUTES.events}>
           <ChevronLeftIcon className="size-4" aria-hidden="true" />
@@ -151,24 +154,26 @@ export function EventDetailView({ eventId }: { eventId: string }) {
       </Button>
 
       <Card>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4">
           <PageHeader
             className="border-b-0 pb-0"
+            visual={
+              <span
+                className="flex size-full items-center justify-center rounded-xl"
+                style={{
+                  backgroundColor: eventColor,
+                  color: getReadableTextColor(eventColor),
+                }}
+                aria-hidden="true"
+              >
+                {React.createElement(eventIcon, {
+                  className: "size-7",
+                  strokeWidth: 2.25,
+                })}
+              </span>
+            }
             title={
               <span className="flex flex-wrap items-center gap-2">
-                <span
-                  className="flex size-10 shrink-0 items-center justify-center rounded-xl"
-                  style={{
-                    backgroundColor: eventColor,
-                    color: getReadableTextColor(eventColor),
-                  }}
-                  aria-hidden="true"
-                >
-                  {React.createElement(eventIcon, {
-                    className: "size-5",
-                    strokeWidth: 2.25,
-                  })}
-                </span>
                 {tl(event.title)}
                 <StatusBadge style={EVENT_STATUS_STYLE[event.status]} />
                 <span className="bg-muted rounded-full px-2.5 py-1 text-xs font-semibold">
@@ -259,15 +264,29 @@ export function EventDetailView({ eventId }: { eventId: string }) {
 
                 <div className="grid grid-cols-2 gap-3 border-t pt-4 sm:grid-cols-4">
                   <Metric
+                    icon={TriangleAlertIcon}
+                    iconClassName="bg-danger text-danger-foreground"
                     label={t("dashboard.overdueTasks")}
                     value={data.progress.overdueTasks}
                   />
                   <Metric
+                    icon={UsersIcon}
+                    iconClassName="bg-info text-info-foreground"
                     label={t("dashboard.participantSummary")}
                     value={data.rsvp.total}
                   />
-                  <Metric label={t("nav.files")} value={data.files.length} />
-                  <Metric label={t("rsvp.attending")} value={data.rsvp.attending} />
+                  <Metric
+                    icon={FileTextIcon}
+                    iconClassName="bg-event-status-purple text-event-status-purple-foreground"
+                    label={t("nav.files")}
+                    value={data.files.length}
+                  />
+                  <Metric
+                    icon={UserCheckIcon}
+                    iconClassName="bg-success text-success-foreground"
+                    label={t("rsvp.attending")}
+                    value={data.rsvp.attending}
+                  />
                 </div>
 
                 <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-2 border-t pt-4 text-xs">
@@ -309,7 +328,7 @@ export function EventDetailView({ eventId }: { eventId: string }) {
 
             <TabsContent value="tasks" className="pt-4">
           <React.Suspense fallback={<Skeleton className="h-64 w-full" />}>
-            <TasksView eventId={event.id} />
+            <TasksView eventId={event.id} showHeader={false} />
           </React.Suspense>
             </TabsContent>
 
@@ -366,14 +385,32 @@ function InfoTile({
   )
 }
 
-function Metric({ label, value }: { label: string; value: number }) {
+function Metric({
+  icon: Icon,
+  iconClassName,
+  label,
+  value,
+}: {
+  icon: LucideIcon
+  iconClassName: string
+  label: string
+  value: number
+}) {
   const { locale } = useLocale()
   return (
-    <div className="text-center">
-      <p className="text-xl font-bold tabular-nums">
-        {formatNumber(value, locale)}
-      </p>
-      <p className="text-muted-foreground text-xs">{label}</p>
+    <div className="flex items-center justify-center gap-2 text-left">
+      <span
+        className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${iconClassName}`}
+        aria-hidden="true"
+      >
+        <Icon className="size-5" />
+      </span>
+      <div className="min-w-0">
+        <p className="text-xl leading-none font-bold tabular-nums">
+          {formatNumber(value, locale)}
+        </p>
+        <p className="text-muted-foreground mt-1 text-xs">{label}</p>
+      </div>
     </div>
   )
 }

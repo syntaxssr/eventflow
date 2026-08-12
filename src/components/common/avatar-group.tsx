@@ -40,10 +40,13 @@ export function AvatarGroup({
 
   return (
     <span className={cn("flex items-center -space-x-1.5", className)}>
-      {visible.map((user) => (
+      {visible.map((user, index) => (
         <Tooltip key={user.id}>
           <TooltipTrigger asChild>
-            <span className="ring-background inline-flex rounded-full ring-2">
+            <span
+              className="relative inline-flex rounded-full"
+              style={{ zIndex: visible.length - index }}
+            >
               <UserAvatar user={user} size={size} />
             </span>
           </TooltipTrigger>
@@ -55,10 +58,10 @@ export function AvatarGroup({
           <TooltipTrigger asChild>
             <span
               className={cn(
-                "bg-muted text-muted-foreground ring-background inline-flex items-center justify-center rounded-full font-semibold ring-2",
+                "bg-muted text-muted-foreground relative inline-flex items-center justify-center rounded-full font-semibold",
                 size === "xs" ? "size-6 text-[0.625rem]" : "size-8 text-xs"
               )}
-              style={overflowStyle}
+              style={{ ...overflowStyle, zIndex: 0 }}
             >
               +{overflow}
             </span>

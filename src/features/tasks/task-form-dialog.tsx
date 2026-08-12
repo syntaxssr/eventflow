@@ -3,10 +3,12 @@
 import * as React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2Icon } from "lucide-react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
+import { DatePickerField } from "@/components/common/date-picker-field"
+import { StatusBadge } from "@/components/common/status-badge"
 import { UserAvatar } from "@/components/common/user-avatar"
 import { useDemo } from "@/components/dev/demo-provider"
 import { Button } from "@/components/ui/button"
@@ -42,7 +44,6 @@ import { PRIORITY_STYLE, TASK_STATUS_STYLE } from "@/constants/status"
 import { useActivityLog } from "@/hooks/use-activity-log"
 import { useNotify } from "@/hooks/use-notify"
 import { useLocale } from "@/i18n"
-import type { TranslationKey } from "@/i18n/types"
 import { nowIso } from "@/lib/clock"
 import { newId } from "@/lib/id"
 import { getFullName } from "@/lib/user"
@@ -119,6 +120,8 @@ export function TaskFormDialog({
       currentUser?.id ?? ""
     ),
   })
+  const startDate = useWatch({ control: form.control, name: "startDate" })
+  const dueDate = useWatch({ control: form.control, name: "dueDate" })
 
   React.useEffect(() => {
     if (open) {
@@ -380,9 +383,13 @@ export function TaskFormDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("task.startDate")}</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="date" disabled={isSubmitting} />
-                      </FormControl>
+                      <DatePickerField
+                        label={t("task.startDate")}
+                        value={field.value}
+                        onChange={field.onChange}
+                        max={dueDate || undefined}
+                        disabled={isSubmitting}
+                      />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -393,9 +400,13 @@ export function TaskFormDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("task.dueDate")}</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="date" disabled={isSubmitting} />
-                      </FormControl>
+                      <DatePickerField
+                        label={t("task.dueDate")}
+                        value={field.value}
+                        onChange={field.onChange}
+                        min={startDate || undefined}
+                        disabled={isSubmitting}
+                      />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -416,15 +427,23 @@ export function TaskFormDialog({
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
-                            <SelectValue />
+                            <SelectValue>
+                              <StatusBadge
+                                size="sm"
+                                style={PRIORITY_STYLE[field.value]}
+                                className="pointer-events-none"
+                              />
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {PRIORITIES.map((priority) => (
                             <SelectItem key={priority} value={priority}>
-                              {t(
-                                PRIORITY_STYLE[priority].labelKey as TranslationKey
-                              )}
+                              <StatusBadge
+                                size="sm"
+                                style={PRIORITY_STYLE[priority]}
+                                className="pointer-events-none"
+                              />
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -446,15 +465,23 @@ export function TaskFormDialog({
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
-                            <SelectValue />
+                            <SelectValue>
+                              <StatusBadge
+                                size="sm"
+                                style={TASK_STATUS_STYLE[field.value]}
+                                className="pointer-events-none"
+                              />
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           {TASK_STATUSES.map((status) => (
                             <SelectItem key={status} value={status}>
-                              {t(
-                                TASK_STATUS_STYLE[status].labelKey as TranslationKey
-                              )}
+                              <StatusBadge
+                                size="sm"
+                                style={TASK_STATUS_STYLE[status]}
+                                className="pointer-events-none"
+                              />
                             </SelectItem>
                           ))}
                         </SelectContent>

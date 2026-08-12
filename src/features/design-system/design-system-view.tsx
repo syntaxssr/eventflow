@@ -1,12 +1,20 @@
 "use client"
 
 import * as React from "react"
-import { CalendarDaysIcon } from "lucide-react"
+import {
+  CalendarDaysIcon,
+  ChevronDownIcon,
+  FilterIcon,
+  XIcon,
+} from "lucide-react"
 import { toast } from "sonner"
 
+import { AvatarGroup } from "@/components/common/avatar-group"
+import { DatePickerField } from "@/components/common/date-picker-field"
 import { LanguageToggle } from "@/components/common/language-toggle"
 import { StatusBadge } from "@/components/common/status-badge"
 import { ThemeToggle } from "@/components/common/theme-toggle"
+import { UserAvatar } from "@/components/common/user-avatar"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -26,6 +34,7 @@ import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { APP_NAME } from "@/constants/app"
+import { MOCK_USERS } from "@/mock"
 import {
   DUE_SOON_STYLE,
   EVENT_STATUS_STYLE,
@@ -37,7 +46,9 @@ import {
   TASK_STATUS_STYLE,
   type StatusStyle,
 } from "@/constants/status"
-import { useT } from "@/i18n"
+import { useLocale } from "@/i18n"
+import type { TranslationKey } from "@/i18n/types"
+import { getFullName } from "@/lib/user"
 
 const BRAND_STEPS = [
   "50",
@@ -52,6 +63,8 @@ const BRAND_STEPS = [
   "900",
   "950",
 ] as const
+
+type DisplayStatusStyle = Pick<StatusStyle, "labelKey" | "icon" | "badge">
 
 const SEMANTIC_TOKENS = [
   {
@@ -241,6 +254,26 @@ function Section({
   )
 }
 
+function LayoutRule({
+  label,
+  value,
+  description,
+}: {
+  label: string
+  value: string
+  description: string
+}) {
+  return (
+    <Card size="sm">
+      <CardContent className="space-y-1">
+        <p className="text-muted-foreground text-xs font-medium">{label}</p>
+        <p className="text-2xl font-bold tabular-nums">{value}</p>
+        <p className="text-muted-foreground text-xs">{description}</p>
+      </CardContent>
+    </Card>
+  )
+}
+
 function BadgeRow({
   label,
   styles,
@@ -328,8 +361,10 @@ function StatusColorRow({
 }
 
 export function DesignSystemView() {
-  const t = useT()
+  const { t, locale } = useLocale()
   const [progress, setProgress] = React.useState(42)
+  const [sampleStartDate, setSampleStartDate] = React.useState("")
+  const [sampleEndDate, setSampleEndDate] = React.useState("2026-12-31")
   const [selectedStatusVersion, setSelectedStatusVersion] =
     React.useState<StatusVersion>(3)
 
@@ -589,6 +624,193 @@ export function DesignSystemView() {
           </Card>
         </Section>
 
+        <Section title={t("designSystem.layout")}>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <LayoutRule
+              label={t("designSystem.topbarContentSpacing")}
+              value="20px"
+              description={t("designSystem.topbarContentSpacingDescription")}
+            />
+            <LayoutRule
+              label={t("designSystem.pagePadding")}
+              value="16 / 24 / 32px"
+              description={t("designSystem.pagePaddingDescription")}
+            />
+            <LayoutRule
+              label={t("designSystem.contentSpacing")}
+              value="24px"
+              description={t("designSystem.contentSpacingDescription")}
+            />
+            <LayoutRule
+              label={t("designSystem.progressHeight")}
+              value="8px"
+              description={t("designSystem.progressHeightDescription")}
+            />
+          </div>
+        </Section>
+
+        <Section title={t("designSystem.selectDropdown")}>
+          <div className="grid gap-4 lg:grid-cols-3">
+            <Card>
+              <CardContent className="space-y-3">
+                <div className="space-y-1">
+                  <p className="font-medium">{t("designSystem.selectStatusColor")}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {t("designSystem.selectStatusColorDescription")}
+                  </p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <p className="text-muted-foreground text-xs font-medium">
+                      Dropdown
+                    </p>
+                    <div className="border-border space-y-1 rounded-lg border p-1">
+                      <StatusBadge size="sm" style={TASK_STATUS_STYLE.in_progress} />
+                      <StatusBadge size="sm" style={PRIORITY_STYLE.high} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-muted-foreground text-xs font-medium">
+                      {t("designSystem.selectFilterInput")}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <div className="border-input flex h-8 items-center gap-2 rounded-md border px-2.5">
+                        <FilterIcon className="size-4" aria-hidden="true" />
+                        <SelectionIconStack
+                          styles={[
+                            TASK_STATUS_STYLE.in_progress,
+                            TASK_STATUS_STYLE.blocked,
+                          ]}
+                        />
+                      </div>
+                      <div className="border-input flex h-8 items-center gap-2 rounded-md border px-2.5">
+                        <FilterIcon className="size-4" aria-hidden="true" />
+                        <SelectionIconStack
+                          styles={[PRIORITY_STYLE.high, PRIORITY_STYLE.urgent]}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-muted-foreground text-xs font-medium">
+                    {t("designSystem.activeFilterChips")}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <FilterChipSample style={TASK_STATUS_STYLE.in_progress} />
+                    <FilterChipSample style={PRIORITY_STYLE.high} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="space-y-3">
+                <div className="space-y-1">
+                  <p className="font-medium">{t("designSystem.selectDueDate")}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {t("designSystem.selectDueDateDescription")}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-muted-foreground text-xs font-medium">
+                    Dropdown
+                  </p>
+                  <div className="border-border space-y-1 rounded-lg border p-1">
+                    <StatusBadge size="sm" style={OVERDUE_STYLE} />
+                    <StatusBadge size="sm" style={DUE_SOON_STYLE} />
+                  </div>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                  <div className="space-y-2">
+                    <p className="text-muted-foreground text-xs font-medium">
+                      {t("designSystem.selectFilterInput")}
+                    </p>
+                    <div className="border-input flex h-8 items-center justify-between rounded-md border px-2.5 text-sm">
+                      <span>{t("task.dueSoonFilter")}</span>
+                      <ChevronDownIcon
+                        className="text-muted-foreground size-4"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-muted-foreground text-xs font-medium">
+                      {t("designSystem.activeFilterChips")}
+                    </p>
+                    <FilterChipSample style={DUE_SOON_STYLE} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="space-y-3">
+                <div className="space-y-1">
+                  <p className="font-medium">{t("designSystem.selectPeople")}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {t("designSystem.selectPeopleDescription")}
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <div className="border-input flex h-7 w-72 items-center justify-between rounded-[min(var(--radius-md),10px)] border px-2.5 text-sm">
+                    <span>{getFullName(MOCK_USERS[0], locale)}</span>
+                    <span className="text-muted-foreground">⌄</span>
+                  </div>
+                  <div className="border-border w-72 rounded-lg border p-1">
+                    <div className="flex items-center gap-2 rounded-md px-1.5 py-1">
+                      <UserAvatar user={MOCK_USERS[0]} size="sm" />
+                      <span className="text-sm">{getFullName(MOCK_USERS[0], locale)}</span>
+                    </div>
+                  </div>
+                  <p className="text-muted-foreground text-xs">
+                    {t("designSystem.selectPeopleWidth")}
+                  </p>
+                  <div className="flex items-center justify-between gap-3 pt-1">
+                    <span className="text-muted-foreground text-xs">
+                      {t("designSystem.avatarStackRule")}
+                    </span>
+                    <AvatarGroup users={MOCK_USERS.slice(0, 3)} max={3} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </Section>
+
+        <Section title={t("designSystem.datePicker")}>
+          <Card>
+            <CardContent className="space-y-4">
+              <div className="space-y-1">
+                <p className="font-medium">{t("designSystem.datePickerFields")}</p>
+                <p className="text-muted-foreground text-sm">
+                  {t("designSystem.datePickerDescription")}
+                </p>
+              </div>
+              <div className="grid max-w-xl gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>{t("task.startDate")}</Label>
+                  <DatePickerField
+                    label={t("task.startDate")}
+                    value={sampleStartDate}
+                    onChange={setSampleStartDate}
+                    max={sampleEndDate}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t("task.dueDate")}</Label>
+                  <DatePickerField
+                    label={t("task.dueDate")}
+                    value={sampleEndDate}
+                    onChange={setSampleEndDate}
+                    min={sampleStartDate}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Section>
+
         <Section title={t("designSystem.components")}>
           <div className="grid gap-4 lg:grid-cols-2">
             <Card>
@@ -769,5 +991,42 @@ export function DesignSystemView() {
         </Section>
       </div>
     </div>
+  )
+}
+
+function SelectionIconStack({ styles }: { styles: DisplayStatusStyle[] }) {
+  return (
+    <span className="-space-x-1.5 flex items-center" aria-hidden="true">
+      {styles.map((style, index) => {
+        const Icon = style.icon
+
+        return (
+          <span
+            key={style.labelKey}
+            className={`relative flex size-5 items-center justify-center rounded-full border ${style.badge}`}
+            style={{ zIndex: styles.length - index }}
+          >
+            <Icon className="size-2.5" />
+          </span>
+        )
+      })}
+    </span>
+  )
+}
+
+function FilterChipSample({ style }: { style: DisplayStatusStyle }) {
+  const { t } = useLocale()
+  const Icon = style.icon
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full border py-1 pr-1 pl-2.5 text-xs font-medium ${style.badge}`}
+    >
+      <Icon className="size-3 shrink-0" aria-hidden="true" />
+      {t(style.labelKey as TranslationKey)}
+      <span className="flex size-5 items-center justify-center rounded-full" aria-hidden="true">
+        <XIcon className="size-3" />
+      </span>
+    </span>
   )
 }

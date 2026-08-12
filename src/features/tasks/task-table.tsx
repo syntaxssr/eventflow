@@ -87,7 +87,7 @@ export function TaskTable({
 
       <div className="hidden overflow-x-auto rounded-lg border sm:block">
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-status-gray [&_th]:text-status-gray-foreground">
           <TableRow>
             <TableHead className="min-w-64">{t("task.name")}</TableHead>
             <TableHead className="min-w-32">{t("task.assignees")}</TableHead>
@@ -96,7 +96,7 @@ export function TaskTable({
             </TableHead>
             <TableHead className="min-w-24">{t("priority.label")}</TableHead>
             <TableHead className="min-w-40">{t("task.dueDate")}</TableHead>
-            <TableHead className="min-w-24">{t("task.checklist")}</TableHead>
+            <TableHead className="min-w-24">{t("task.subtasks")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

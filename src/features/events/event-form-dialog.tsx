@@ -3,10 +3,11 @@
 import * as React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { CheckIcon, ImageOffIcon, Loader2Icon } from "lucide-react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
+import { DatePickerField } from "@/components/common/date-picker-field"
 import { useDemo } from "@/components/dev/demo-provider"
 import { Button } from "@/components/ui/button"
 import {
@@ -110,6 +111,8 @@ export function EventFormDialog({
     resolver: zodResolver(eventSchema),
     defaultValues: toFormValues(event ?? null, locale, currentUser?.id ?? "u-1"),
   })
+  const startDate = useWatch({ control: form.control, name: "startDate" })
+  const endDate = useWatch({ control: form.control, name: "endDate" })
 
   // โหลดค่าเริ่มต้นใหม่ทุกครั้งที่เปิดกล่อง เพื่อไม่ให้ค่าจากครั้งก่อนค้าง
   React.useEffect(() => {
@@ -288,9 +291,13 @@ export function EventFormDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("event.startDate")}</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="date" disabled={isSubmitting} />
-                      </FormControl>
+                      <DatePickerField
+                        label={t("event.startDate")}
+                        value={field.value}
+                        onChange={field.onChange}
+                        max={endDate || undefined}
+                        disabled={isSubmitting}
+                      />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -301,9 +308,13 @@ export function EventFormDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("event.endDate")}</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="date" disabled={isSubmitting} />
-                      </FormControl>
+                      <DatePickerField
+                        label={t("event.endDate")}
+                        value={field.value}
+                        onChange={field.onChange}
+                        min={startDate || undefined}
+                        disabled={isSubmitting}
+                      />
                       <FormMessage />
                     </FormItem>
                   )}
