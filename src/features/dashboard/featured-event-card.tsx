@@ -14,7 +14,11 @@ import { useLocale } from "@/i18n"
 import { daysBetween, fromDateKey } from "@/constants/mock-date"
 import { getReadableTextColor } from "@/lib/color"
 import { getEventColor, getEventIcon } from "@/lib/event"
-import { formatDateRange, formatNumber } from "@/lib/format"
+import {
+  formatDateRange,
+  formatNumber,
+  formatTimeRange,
+} from "@/lib/format"
 import type { EventItem, EventProgress } from "@/types/event"
 
 export function FeaturedEventCard({
@@ -80,24 +84,27 @@ export function FeaturedEventCard({
             </div>
           </div>
 
-          <ul className="text-muted-foreground grid grid-cols-3 gap-x-3 gap-y-3 text-sm">
-            <li className="flex min-w-0 items-center gap-2">
+          {/* วัน/เวลา/จำนวนคน กว้างตามเนื้อหา ไม่ใช่คอลัมน์ตายตัว
+              ไม่งั้นช่วงเวลาจะโดนตัดเหลือ "17:00 – 2…" ส่วนสถานที่ยาวไม่จำกัด
+              จึงกินบรรทัดของตัวเองและเป็นตัวเดียวที่ยอมให้ตัดท้าย */}
+          <ul className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-3 text-sm">
+            <li className="flex items-center gap-2 whitespace-nowrap">
               <CalendarIcon className="size-4 shrink-0" aria-hidden="true" />
-              <span className="truncate">{formatDateRange(event.startDate, event.endDate, locale)}</span>
+              <span>{formatDateRange(event.startDate, event.endDate, locale)}</span>
             </li>
-            <li className="flex min-w-0 items-center gap-2">
+            <li className="flex items-center gap-2 whitespace-nowrap">
               <ClockIcon className="size-4 shrink-0" aria-hidden="true" />
-              <span className="truncate">
-                {event.startTime} – {event.endTime}
+              <span>
+                {formatTimeRange(event.startTime, event.endTime, locale)}
               </span>
             </li>
-            <li className="flex min-w-0 items-center gap-2">
+            <li className="flex items-center gap-2 whitespace-nowrap">
               <UsersIcon className="size-4 shrink-0" aria-hidden="true" />
-              <span className="truncate">
+              <span>
                 {formatNumber(participantCount, locale)} {t("dashboard.unitPerson")}
               </span>
             </li>
-            <li className="col-span-3 flex min-w-0 items-center gap-2">
+            <li className="flex min-w-0 basis-full items-center gap-2">
               <MapPinIcon className="size-4 shrink-0" aria-hidden="true" />
               <span className="truncate">{tl(event.location)}</span>
             </li>
@@ -111,6 +118,7 @@ export function FeaturedEventCard({
           </div>
           <Progress
             value={progress.percent}
+            tone="completion"
             className="h-2"
             aria-label={t("dashboard.progress")}
           />

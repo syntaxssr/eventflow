@@ -35,6 +35,15 @@ export function formatDateRange(
   return `${formatDate(startDateKey, locale)} – ${formatDate(endDateKey, locale)}`
 }
 
+/** ช่วงเวลา — ภาษาไทยต่อท้ายด้วย "น." ตามรูปแบบบอกเวลาของไทย */
+export function formatTimeRange(
+  startTime: string,
+  endTime: string,
+  locale: Locale
+): string {
+  return `${startTime} – ${endTime}${locale === "th" ? " น." : ""}`
+}
+
 export function formatDateTime(iso: string, locale: Locale): string {
   return new Intl.DateTimeFormat(INTL_LOCALE[locale], {
     day: "numeric",

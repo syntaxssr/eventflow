@@ -37,15 +37,18 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select"
+import { getAvatarForegroundColor } from "@/constants/avatar-colors"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { getToday } from "@/constants/mock-date"
 import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
+import { getReadableTextColor } from "@/lib/color"
 import { getFullName } from "@/lib/user"
 import { cn } from "@/lib/utils"
 import { useAppState } from "@/store"
 import {
+  compareEventsByRelevance,
   selectActiveEvents,
   selectEventProgress,
   selectParticipantsByEvent,
@@ -137,10 +140,10 @@ export function EventsView() {
         case "updated":
           return b.event.updatedAt.localeCompare(a.event.updatedAt)
         default:
-          return a.event.startDate.localeCompare(b.event.startDate)
+          return compareEventsByRelevance(a.event, b.event, today)
       }
     })
-  }, [allRows, statuses, ownerId, dateFrom, dateTo, sort, tl, locale])
+  }, [allRows, statuses, ownerId, dateFrom, dateTo, sort, tl, locale, today])
 
   const totalPages = Math.ceil(rows.length / EVENTS_PER_PAGE)
   const currentPage = Math.min(page, Math.max(totalPages - 1, 0))
@@ -148,14 +151,15 @@ export function EventsView() {
     currentPage * EVENTS_PER_PAGE,
     (currentPage + 1) * EVENTS_PER_PAGE
   )
+  const selectedOwner =
+    ownerId === "all"
+      ? undefined
+      : state.users.find((user) => user.id === ownerId)
   const selectedOwnerLabel =
     ownerId === "all"
       ? t("common.all")
-      : state.users.find((user) => user.id === ownerId)
-        ? getFullName(
-            state.users.find((user) => user.id === ownerId)!,
-            locale
-          )
+      : selectedOwner
+        ? getFullName(selectedOwner, locale)
         : ownerId
 
   const clearAll = () => {
@@ -183,23 +187,35 @@ export function EventsView() {
       }
     }),
     ...(ownerId !== "all"
-      ? [
-          {
-            key: "owner",
-            label: `${t("event.assignees")}: ${
-              state.users.find((user) => user.id === ownerId)
-                ? getFullName(
-                    state.users.find((user) => user.id === ownerId)!,
-                    locale
-                  )
-                : ownerId
-            }`,
-            onRemove: () => {
-              setOwnerId("all")
-              setPage(0)
+      ? (() => {
+          const owner = selectedOwner
+          // ชิปใช้สีประจำตัวของคนนั้น จับคู่กับสีตัวอักษรของสีนั้นตามกติกา avatar
+          const ownerStyle = owner
+            ? {
+                backgroundColor: owner.avatarColor,
+                color:
+                  getAvatarForegroundColor(owner.avatarColor) ??
+                  getReadableTextColor(owner.avatarColor),
+              }
+            : undefined
+
+          return [
+            {
+              key: "owner",
+              label: `${t("event.assignees")}: ${
+                owner ? getFullName(owner, locale) : ownerId
+              }`,
+              icon: owner ? (
+                <UserAvatar user={owner} size="xs" className="-ml-1.5" />
+              ) : undefined,
+              style: ownerStyle,
+              onRemove: () => {
+                setOwnerId("all")
+                setPage(0)
+              },
             },
-          },
-        ]
+          ]
+        })()
       : []),
     ...(dateFrom && !isDefaultDateRange
       ? [
@@ -318,7 +334,12 @@ export function EventsView() {
                 className="w-72 max-w-none"
                 aria-label={t("event.assignees")}
               >
-                <span>{selectedOwnerLabel}</span>
+                <span className="flex min-w-0 items-center gap-2">
+                  {selectedOwner ? (
+                    <UserAvatar user={selectedOwner} size="xs" />
+                  ) : null}
+                  <span className="truncate">{selectedOwnerLabel}</span>
+                </span>
               </SelectTrigger>
               <SelectContent position="popper" align="start" className="w-72">
                 <SelectItem value="all">

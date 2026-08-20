@@ -1,7 +1,7 @@
 "use client"
 
 import { XIcon } from "lucide-react"
-import type { ReactNode } from "react"
+import type { CSSProperties, ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
 import { useT } from "@/i18n"
@@ -12,6 +12,8 @@ export interface FilterChip {
   label: string
   icon?: ReactNode
   className?: string
+  /** ใช้กับสีที่มาจากข้อมูล (เช่น สี avatar ของผู้ใช้) ซึ่งเป็น class ตายตัวไม่ได้ */
+  style?: CSSProperties
   onRemove: () => void
 }
 
@@ -47,8 +49,9 @@ function FilterChipList({
           key={chip.key}
           className={cn(
             "inline-flex items-center gap-1 rounded-full border py-1 pr-1 pl-2.5 text-xs font-medium",
-            chip.className ?? "border-transparent bg-muted"
+            chip.className ?? (chip.style ? "border-transparent" : "border-transparent bg-muted")
           )}
+          style={chip.style}
         >
           {chip.icon}
           {chip.label}

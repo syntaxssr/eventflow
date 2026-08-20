@@ -61,6 +61,38 @@ function toKey(date: Date): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
 }
 
+/**
+ * ลำดับความสำคัญของกิจกรรมสำหรับหน้ารายการ
+ *
+ * เรียงเป็นกลุ่มก่อน แล้วค่อยเรียงภายในกลุ่ม เพราะถ้าเรียงด้วยวันจัดงานล้วน ๆ
+ * กิจกรรมที่จบไปแล้วจะยึดหัวตารางและกองสะสมขึ้นเรื่อย ๆ ตามเวลา
+ * ส่วนกิจกรรมที่ยกเลิกจะแทรกกลางแถวทั้งที่ไม่มีอะไรต้องทำต่อ
+ *
+ * 1. กำลังจะถึง — ใกล้ที่สุดก่อน (สิ่งที่ต้องเตรียมเร่งที่สุด)
+ * 2. ผ่านมาแล้ว — ล่าสุดก่อน (ประวัติที่เพิ่งจบถูกเปิดดูบ่อยกว่าของเก่า)
+ * 3. ยกเลิก — ท้ายสุด แต่ยังแสดงอยู่ เพราะเป็นบันทึกว่าเคยมีแผนนี้
+ */
+export function compareEventsByRelevance(
+  a: EventItem,
+  b: EventItem,
+  today: Date = getToday()
+): number {
+  const todayKey = toKey(today)
+  const rank = (event: EventItem) => {
+    if (event.status === "cancelled") return 2
+    return event.endDate < todayKey ? 1 : 0
+  }
+
+  const rankA = rank(a)
+  const rankB = rank(b)
+  if (rankA !== rankB) return rankA - rankB
+
+  // กลุ่มที่ผ่านมาแล้วเรียงย้อนหลัง กลุ่มอื่นเรียงจากใกล้ที่สุด
+  return rankA === 1
+    ? b.startDate.localeCompare(a.startDate)
+    : a.startDate.localeCompare(b.startDate)
+}
+
 /* -------------------------------------------------------------------------
    งานย่อย
    ------------------------------------------------------------------------- */
@@ -106,17 +138,46 @@ export function selectIncompleteTasks(tasks: Task[]): Task[] {
 export { countTasksByStatus }
 
 /** เรียงงานตามความเร่งด่วน: เกินกำหนดก่อน แล้วจึงเรียงตามวันครบกำหนด */
+/** เร่งด่วนที่สุดมาก่อน — ใช้ตัดสินเมื่อวันครบกำหนดเท่ากัน */
+const PRIORITY_ORDER: Record<Task["priority"], number> = {
+  urgent: 0,
+  high: 1,
+  normal: 2,
+  low: 3,
+}
+
+/**
+ * ลำดับงานสำหรับหน้ารายการงาน
+ *
+ * งานที่เสร็จแล้วถูกดันลงท้ายเสมอ ไม่ปนกับงานที่ยังต้องทำ —
+ * ถ้าเรียงด้วยวันครบกำหนดล้วน ๆ งานที่เสร็จไปแล้ว (ซึ่งมักมีกำหนดส่งเก่า)
+ * จะลอยขึ้นไปกองอยู่บนสุด บังงานที่ครบกำหนดวันนี้
+ *
+ * 1. ยังไม่เสร็จก่อน งานที่เสร็จแล้วไปท้ายสุด
+ * 2. เกินกำหนดขึ้นก่อนภายในกลุ่ม
+ * 3. เรียงตามวันครบกำหนด (ไม่ได้กำหนดวันส่งไปท้ายกลุ่ม)
+ * 4. ความสำคัญเป็นตัวตัดสินเมื่อวันเท่ากัน ไม่ปล่อยให้ขึ้นกับลำดับใน array
+ */
 export function sortTasksByUrgency(
   tasks: Task[],
   today: Date = getToday()
 ): Task[] {
   return [...tasks].sort((a, b) => {
+    const aDone = a.status === "completed" ? 1 : 0
+    const bDone = b.status === "completed" ? 1 : 0
+    if (aDone !== bDone) return aDone - bDone
+
     const aOverdue = isOverdue(a, today) ? 0 : 1
     const bOverdue = isOverdue(b, today) ? 0 : 1
     if (aOverdue !== bOverdue) return aOverdue - bOverdue
-    if (!a.dueDate) return 1
-    if (!b.dueDate) return -1
-    return a.dueDate.localeCompare(b.dueDate)
+
+    if (a.dueDate !== b.dueDate) {
+      if (!a.dueDate) return 1
+      if (!b.dueDate) return -1
+      return a.dueDate.localeCompare(b.dueDate)
+    }
+
+    return PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]
   })
 }
 

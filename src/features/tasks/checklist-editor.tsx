@@ -114,7 +114,11 @@ export function ChecklistEditor({ task }: { task: Task }) {
       </div>
 
       {items.length > 0 ? (
-        <Progress value={progress.percent} aria-label={t("task.checklist")} />
+        <Progress
+          value={progress.percent}
+          tone="completion"
+          aria-label={t("task.checklist")}
+        />
       ) : null}
 
       {items.length === 0 ? (

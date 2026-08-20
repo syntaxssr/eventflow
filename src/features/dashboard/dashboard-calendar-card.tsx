@@ -2,7 +2,12 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
+import {
+  CalendarIcon,
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -12,6 +17,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { ROUTES } from "@/constants/app"
 import { EVENT_COLOR_OPTIONS } from "@/constants/event-colors"
 import { fromDateKey, getToday, toDateKey } from "@/constants/mock-date"
@@ -34,6 +44,33 @@ const LEGEND_EVENT_COLORS = EVENT_COLOR_OPTIONS.slice(0, 3).map(
 
 /** เดือนที่กินพื้นที่มากสุดใช้ 6 แถว (เช่น พฤษภาคม/สิงหาคม 2569) */
 const MAX_CALENDAR_WEEKS = 6
+
+const MONTHS_IN_YEAR = 12
+/** ช่วงปีที่เลือกได้จากปุ่มปี — กว้างพอสำหรับงานย้อนหลังและงานที่วางแผนล่วงหน้า */
+const YEAR_RANGE = 10
+
+function intlLocale(locale: "th" | "en"): string {
+  return locale === "th" ? "th-TH" : "en-GB"
+}
+
+/**
+ * ปีในรูปแบบของภาษานั้น (ไทยเป็น พ.ศ. อังกฤษเป็น ค.ศ.)
+ *
+ * ดึงเฉพาะส่วนปีออกจาก formatToParts แทนการ format ตรง ๆ
+ * เพราะ th-TH จะเติม "พ.ศ." นำหน้าเมื่อขอปีอย่างเดียว
+ */
+function formatYear(year: number, locale: "th" | "en"): string {
+  const parts = new Intl.DateTimeFormat(intlLocale(locale), {
+    year: "numeric",
+  }).formatToParts(new Date(year, 0, 1))
+  return parts.find((part) => part.type === "year")?.value ?? `${year}`
+}
+
+function formatMonthShort(month: number, locale: "th" | "en"): string {
+  return new Intl.DateTimeFormat(intlLocale(locale), {
+    month: "short",
+  }).format(new Date(2000, month, 1))
+}
 const ENTRIES_PER_PAGE = 3
 
 function weeksInMonth(year: number, month: number): number {
@@ -124,15 +161,34 @@ export function DashboardCalendarCard({
     return map
   }, [events, tasks, tl])
 
-  const monthLabel = new Intl.DateTimeFormat(
-    locale === "th" ? "th-TH" : "en-GB",
-    { month: "long", year: "numeric" }
-  ).format(cursor)
+  const monthLabel = new Intl.DateTimeFormat(intlLocale(locale), {
+    month: "long",
+    year: "numeric",
+  }).format(cursor)
 
   const shiftMonth = (delta: number) =>
     setCursor(
       (current) => new Date(current.getFullYear(), current.getMonth() + delta, 1)
     )
+
+  // ปีที่แผงกำลังโชว์ แยกจาก cursor เพื่อให้พลิกดูปีอื่นได้ก่อนตัดสินใจเลือกเดือน
+  const [pickerOpen, setPickerOpen] = React.useState(false)
+  const [pickerYear, setPickerYear] = React.useState(() => cursor.getFullYear())
+
+  const openPicker = (open: boolean) => {
+    // เปิดใหม่ทุกครั้งให้เริ่มที่ปีของเดือนที่ดูอยู่ ไม่ค้างปีที่เผลอเลื่อนไว้รอบก่อน
+    if (open) setPickerYear(cursor.getFullYear())
+    setPickerOpen(open)
+  }
+
+  const pickMonth = (month: number) => {
+    setCursor(new Date(pickerYear, month, 1))
+    setPickerOpen(false)
+  }
+
+  const todayYear = today.getFullYear()
+  const minYear = todayYear - YEAR_RANGE
+  const maxYear = todayYear + YEAR_RANGE
 
   const selectedEntries = byDate.get(selectedKey) ?? []
   const totalPages = Math.max(
@@ -155,7 +211,96 @@ export function DashboardCalendarCard({
       data-testid="dashboard-calendar"
     >
       <CardHeader>
-        <CardTitle aria-live="polite">{monthLabel}</CardTitle>
+        <Popover open={pickerOpen} onOpenChange={openPicker}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              aria-label={t("dashboard.calendarPickPeriod")}
+              className="focus-visible:outline-ring -mx-1 flex items-center gap-1 rounded-md px-1 transition-colors hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-1"
+            >
+              <CardTitle aria-live="polite">{monthLabel}</CardTitle>
+              <ChevronDownIcon
+                className="size-4 shrink-0"
+                aria-hidden="true"
+              />
+            </button>
+          </PopoverTrigger>
+
+          <PopoverContent align="start" className="w-60 p-3">
+            <div className="flex items-center justify-between gap-2">
+              <Button
+                variant="outline"
+                size="icon-sm"
+                className="rounded-full"
+                onClick={() => setPickerYear((year) => year - 1)}
+                disabled={pickerYear <= minYear}
+                aria-label={t("dashboard.calendarPreviousYear")}
+              >
+                <ChevronLeftIcon className="size-4" aria-hidden="true" />
+              </Button>
+              <span
+                aria-live="polite"
+                className="text-sm font-bold tabular-nums"
+              >
+                {formatYear(pickerYear, locale)}
+              </span>
+              <Button
+                variant="outline"
+                size="icon-sm"
+                className="rounded-full"
+                onClick={() => setPickerYear((year) => year + 1)}
+                disabled={pickerYear >= maxYear}
+                aria-label={t("dashboard.calendarNextYear")}
+              >
+                <ChevronRightIcon className="size-4" aria-hidden="true" />
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-3 gap-1 pt-3">
+              {Array.from({ length: MONTHS_IN_YEAR }, (_, month) => {
+                const isViewing =
+                  pickerYear === cursor.getFullYear() &&
+                  month === cursor.getMonth()
+                const isCurrentMonth =
+                  pickerYear === todayYear && month === today.getMonth()
+
+                return (
+                  <button
+                    key={month}
+                    type="button"
+                    onClick={() => pickMonth(month)}
+                    aria-current={isViewing ? "true" : undefined}
+                    className={cn(
+                      "focus-visible:outline-ring rounded-md px-2 py-1.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-1",
+                      // เดือนที่ดูอยู่ใช้สลับขาว-ดำตามกติกา active state ของระบบ
+                      isViewing && "bg-primary text-primary-foreground font-bold",
+                      // เดือนปัจจุบันใช้แดงชุดเดียวกับ "วันนี้" ในตารางวัน
+                      !isViewing &&
+                        isCurrentMonth &&
+                        "bg-status-red text-status-red-foreground font-bold",
+                      !isViewing && !isCurrentMonth && "hover:bg-muted"
+                    )}
+                  >
+                    {formatMonthShort(month, locale)}
+                  </button>
+                )
+              })}
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-3 w-full"
+              onClick={() => {
+                setCursor(new Date(todayYear, today.getMonth(), 1))
+                setPickerOpen(false)
+              }}
+            >
+              {t("dashboard.calendarBackToToday")}
+            </Button>
+          </PopoverContent>
+        </Popover>
+
         <CardAction className="flex items-center gap-1">
           <Button
             variant="outline"

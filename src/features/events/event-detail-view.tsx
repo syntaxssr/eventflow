@@ -39,7 +39,12 @@ import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
 import { getReadableTextColor } from "@/lib/color"
 import { getEventColor, getEventIcon } from "@/lib/event"
-import { formatDateRange, formatDateTime, formatNumber } from "@/lib/format"
+import {
+  formatDateRange,
+  formatDateTime,
+  formatNumber,
+  formatTimeRange,
+} from "@/lib/format"
 import { getFullName } from "@/lib/user"
 import { useAppState } from "@/store"
 import {
@@ -209,7 +214,7 @@ export function EventDetailView({ eventId }: { eventId: string }) {
               className="col-span-2"
               icon={ClockIcon}
               label={t("event.startTime")}
-              value={`${event.startTime} – ${event.endTime}${locale === "th" ? " น." : ""}`}
+              value={formatTimeRange(event.startTime, event.endTime, locale)}
             />
             <InfoTile
               className="col-span-2"
@@ -251,6 +256,7 @@ export function EventDetailView({ eventId }: { eventId: string }) {
                   </div>
                   <Progress
                     value={data.progress.percent}
+                    tone="completion"
                     className="h-2"
                     aria-label={t("dashboard.progress")}
                   />

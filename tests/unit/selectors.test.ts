@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest"
 
-import { fromDateKey } from "@/constants/mock-date"
+import { fromDateKey, getToday, toDateKey } from "@/constants/mock-date"
 import { MAIN_EVENT_ID, createInitialState } from "@/mock"
 import {
+  compareEventsByRelevance,
   selectActiveTasks,
   selectEventProgress,
   selectNotificationsForUser,
@@ -99,20 +100,87 @@ describe("selectTasksForUser", () => {
 })
 
 describe("sortTasksByUrgency", () => {
+  // Mock Data เลื่อนตามวันจริง จึงต้องใช้ "วันนี้" จริง ไม่ใช่วันที่ตายตัว
+  const today = getToday()
+  const todayKey = toDateKey(today)
+
   it("ยกงานเกินกำหนดขึ้นมาก่อน แล้วเรียงตามวันครบกำหนด", () => {
     const tasks = sortTasksByUrgency(
       state.tasks.filter((task) => task.status !== "completed"),
-      TODAY
+      today
     )
 
-    const firstOnTimeIndex = tasks.findIndex(
-      (task) => task.dueDate! >= "2026-07-31"
-    )
+    const firstOnTimeIndex = tasks.findIndex((task) => task.dueDate! >= todayKey)
     const lastOverdueIndex = tasks.findLastIndex(
-      (task) => task.dueDate! < "2026-07-31"
+      (task) => task.dueDate! < todayKey
     )
 
     expect(lastOverdueIndex).toBeLessThan(firstOnTimeIndex)
+  })
+
+  it("ดันงานที่เสร็จแล้วลงไปท้ายสุด ไม่ปนกับงานที่ยังต้องทำ", () => {
+    const tasks = sortTasksByUrgency(
+      selectTasksByEvent(state, MAIN_EVENT_ID),
+      today
+    )
+
+    const firstDone = tasks.findIndex((task) => task.status === "completed")
+    const lastOpen = tasks.findLastIndex((task) => task.status !== "completed")
+
+    expect(firstDone).toBeGreaterThan(-1)
+    expect(lastOpen).toBeLessThan(firstDone)
+  })
+
+  it("ใช้ความสำคัญตัดสินเมื่อวันครบกำหนดเท่ากัน", () => {
+    const tasks = sortTasksByUrgency(
+      selectTasksByEvent(state, MAIN_EVENT_ID),
+      today
+    )
+    const rank = { urgent: 0, high: 1, normal: 2, low: 3 } as const
+
+    for (let i = 1; i < tasks.length; i += 1) {
+      const prev = tasks[i - 1]
+      const curr = tasks[i]
+      const sameGroup =
+        (prev.status === "completed") === (curr.status === "completed")
+      if (!sameGroup || prev.dueDate !== curr.dueDate) continue
+      expect(rank[prev.priority]).toBeLessThanOrEqual(rank[curr.priority])
+    }
+  })
+})
+
+describe("compareEventsByRelevance", () => {
+  const today = getToday()
+  const todayKey = toDateKey(today)
+  const sorted = [...state.events]
+    .filter((event) => event.deletedAt === null)
+    .sort((a, b) => compareEventsByRelevance(a, b, today))
+
+  it("กิจกรรมที่ยังไม่ถึงขึ้นก่อนกิจกรรมที่ผ่านมาแล้ว", () => {
+    const groupOf = (index: number) => {
+      const event = sorted[index]
+      if (event.status === "cancelled") return 2
+      return event.endDate < todayKey ? 1 : 0
+    }
+    for (let i = 1; i < sorted.length; i += 1) {
+      expect(groupOf(i - 1)).toBeLessThanOrEqual(groupOf(i))
+    }
+  })
+
+  it("กิจกรรมที่ยกเลิกอยู่ท้ายสุดแต่ยังแสดงอยู่", () => {
+    const cancelled = sorted.filter((event) => event.status === "cancelled")
+    expect(cancelled.length).toBeGreaterThan(0)
+    expect(sorted.slice(-cancelled.length).every((e) => e.status === "cancelled")).toBe(
+      true
+    )
+  })
+
+  it("กลุ่มที่ยังไม่ถึงเรียงจากวันที่ใกล้ที่สุด", () => {
+    const upcoming = sorted.filter(
+      (event) => event.status !== "cancelled" && event.endDate >= todayKey
+    )
+    const dates = upcoming.map((event) => event.startDate)
+    expect(dates).toEqual([...dates].sort())
   })
 })
 

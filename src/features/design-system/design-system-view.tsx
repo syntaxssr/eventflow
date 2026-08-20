@@ -103,6 +103,8 @@ const STATUS_COLOR_TOKENS = [
     version2Foreground: undefined,
     version3Background: undefined,
     version3Foreground: undefined,
+    version4Background: undefined,
+    version4Foreground: undefined,
   },
   {
     name: "gray",
@@ -113,6 +115,8 @@ const STATUS_COLOR_TOKENS = [
     version2Foreground: undefined,
     version3Background: undefined,
     version3Foreground: undefined,
+    version4Background: undefined,
+    version4Foreground: undefined,
   },
   {
     name: "brown",
@@ -125,6 +129,8 @@ const STATUS_COLOR_TOKENS = [
     version2Foreground: "#332714",
     version3Background: "#b68a49",
     version3Foreground: "#332714",
+    version4Background: undefined,
+    version4Foreground: undefined,
   },
   {
     name: "orange",
@@ -135,6 +141,8 @@ const STATUS_COLOR_TOKENS = [
     version2Foreground: "#702d00",
     version3Background: "#ffb78f",
     version3Foreground: "#702d00",
+    version4Background: "#fd9851",
+    version4Foreground: "#662b01",
   },
   {
     name: "yellow",
@@ -145,6 +153,8 @@ const STATUS_COLOR_TOKENS = [
     version2Foreground: "#6b4900",
     version3Background: "#ffd67b",
     version3Foreground: "#6b4900",
+    version4Background: "#fed93b",
+    version4Foreground: "#6a5601",
   },
   {
     name: "green",
@@ -155,6 +165,8 @@ const STATUS_COLOR_TOKENS = [
     version2Foreground: "#205520",
     version3Background: "#67c567",
     version3Foreground: "#143414",
+    version4Background: "#58d66b",
+    version4Foreground: "#14501d",
   },
   {
     name: "blue",
@@ -165,6 +177,8 @@ const STATUS_COLOR_TOKENS = [
     version2Foreground: "#00337c",
     version3Background: "#95c1ff",
     version3Foreground: "#00337c",
+    version4Background: "#3e95ff",
+    version4Foreground: "#00244f",
   },
   {
     name: "purple",
@@ -175,6 +189,8 @@ const STATUS_COLOR_TOKENS = [
     version2Foreground: "#470b75",
     version3Background: "#cb9eff",
     version3Foreground: "#490080",
+    version4Background: "#d933f1",
+    version4Foreground: "#27032c",
   },
   {
     name: "pink",
@@ -185,6 +201,8 @@ const STATUS_COLOR_TOKENS = [
     version2Foreground: "#71093d",
     version3Background: "#ff9cc0",
     version3Foreground: "#7a003d",
+    version4Background: "#fd53a8",
+    version4Foreground: "#500128",
   },
   {
     name: "red",
@@ -195,10 +213,12 @@ const STATUS_COLOR_TOKENS = [
     version2Foreground: "#770b07",
     version3Background: "#ff9da1",
     version3Foreground: "#7e0500",
+    version4Background: "#fd535e",
+    version4Foreground: "#490106",
   },
 ] as const
 
-type StatusVersion = 1 | 2 | 3
+type StatusVersion = 1 | 2 | 3 | 4
 type StatusColorToken = (typeof STATUS_COLOR_TOKENS)[number]
 
 function getStatusVersionColor(
@@ -208,7 +228,13 @@ function getStatusVersionColor(
 ) {
   if (version === 1) return token[`version1${channel}`]
   if (version === 2) return token[`version2${channel}`] ?? token[`version1${channel}`]
-  return token[`version3${channel}`] ?? token[`version1${channel}`]
+  if (version === 3) return token[`version3${channel}`] ?? token[`version1${channel}`]
+  // V4 สีไหนไม่ได้กำหนดใหม่ ให้ตกกลับไปใช้ V3 (Default/Gray/Brown ใช้ค่าเดิม)
+  return (
+    token[`version4${channel}`] ??
+    token[`version3${channel}`] ??
+    token[`version1${channel}`]
+  )
 }
 
 function StatusVersionHeading({
@@ -308,6 +334,8 @@ function StatusColorRow({
   version2Foreground,
   version3Background,
   version3Foreground,
+  version4Background,
+  version4Foreground,
 }: {
   label: string
   colorName: (typeof STATUS_COLOR_TOKENS)[number]["name"]
@@ -319,24 +347,36 @@ function StatusColorRow({
   version2Foreground?: string
   version3Background?: string
   version3Foreground?: string
+  version4Background?: string
+  version4Foreground?: string
 }) {
   const isDefault = colorName === "default"
+  // V4 สีไหนไม่ได้กำหนดใหม่ ให้ตกกลับไปใช้ V3 ตามลำดับ
+  const byVersion = (
+    v1?: string,
+    v2?: string,
+    v3?: string,
+    v4?: string
+  ): string | undefined => {
+    if (version === 4) return v4 ?? v3 ?? v2 ?? v1
+    if (version === 3) return v3 ?? v1
+    if (version === 2) return v2 ?? v1
+    return v1
+  }
   const backgroundColor =
-    version === 3 && version3Background
-      ? version3Background
-      : version === 2 && version2Background
-        ? version2Background
-        : version === 1 && version1Background
-          ? version1Background
-      : `var(--status-${colorName})`
+    byVersion(
+      version1Background,
+      version2Background,
+      version3Background,
+      version4Background
+    ) ?? `var(--status-${colorName})`
   const color =
-    version === 3 && version3Foreground
-      ? version3Foreground
-      : version === 2 && version2Foreground
-        ? version2Foreground
-        : version === 1 && version1Foreground
-          ? version1Foreground
-      : `var(--status-${colorName}-foreground)`
+    byVersion(
+      version1Foreground,
+      version2Foreground,
+      version3Foreground,
+      version4Foreground
+    ) ?? `var(--status-${colorName}-foreground)`
 
   return (
     <div className="flex items-center gap-2">
@@ -494,7 +534,7 @@ export function DesignSystemView() {
                 <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
                   {t("designSystem.statusColors")}
                 </p>
-                <div className="grid gap-6 lg:grid-cols-3">
+                <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                   <div className="space-y-2">
                     <StatusVersionHeading
                       version={1}
@@ -550,6 +590,28 @@ export function DesignSystemView() {
                           version={3}
                           version3Background={token.version3Background}
                           version3Foreground={token.version3Foreground}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border-border space-y-2 md:border-l md:pl-6">
+                    <StatusVersionHeading
+                      version={4}
+                      selectedVersion={selectedStatusVersion}
+                      onSelect={setSelectedStatusVersion}
+                    />
+                    <div className="space-y-2">
+                      {STATUS_COLOR_TOKENS.map((token) => (
+                        <StatusColorRow
+                          key={token.name}
+                          colorName={token.name}
+                          label={token.label}
+                          sampleText={t("designSystem.statusColorSample")}
+                          version={4}
+                          version3Background={token.version3Background}
+                          version3Foreground={token.version3Foreground}
+                          version4Background={token.version4Background}
+                          version4Foreground={token.version4Foreground}
                         />
                       ))}
                     </div>

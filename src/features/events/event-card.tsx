@@ -13,7 +13,11 @@ import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
 import { getReadableTextColor } from "@/lib/color"
 import { getEventColor, getEventIcon } from "@/lib/event"
-import { formatDateRange, formatNumber } from "@/lib/format"
+import {
+  formatDateRange,
+  formatNumber,
+  formatTimeRange,
+} from "@/lib/format"
 import type { EventItem, EventProgress } from "@/types/event"
 import type { User } from "@/types/user"
 
@@ -69,8 +73,7 @@ export function EventCard({
             <li className="flex min-w-0 items-center justify-center gap-1.5">
               <Clock3Icon className="size-3.5 shrink-0" aria-hidden="true" />
                 <span>
-                  {event.startTime} – {event.endTime}
-                  {locale === "th" ? " น." : ""}
+                  {formatTimeRange(event.startTime, event.endTime, locale)}
                 </span>
             </li>
             <li className="flex min-w-0 items-center justify-center gap-1.5">
@@ -96,6 +99,7 @@ export function EventCard({
             </div>
             <Progress
               value={progress.percent}
+              tone="completion"
               className="h-2"
               aria-label={t("dashboard.progress")}
             />

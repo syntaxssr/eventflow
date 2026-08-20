@@ -88,6 +88,7 @@ export function EventTable({ rows }: { rows: EventRow[] }) {
                 <span className="flex items-center gap-2">
                   <Progress
                     value={progress.percent}
+                    tone="completion"
                     className="w-24"
                     aria-label={t("dashboard.progress")}
                   />

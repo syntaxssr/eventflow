@@ -135,6 +135,12 @@
   --color-status-red: var(--status-red);
   --color-status-red-foreground: var(--status-red-foreground);
 
+  /* แถบความคืบหน้า — เฉด Version 3 ใช้เฉพาะจุดนี้ */
+  --color-progress-red: var(--progress-red);
+  --color-progress-yellow: var(--progress-yellow);
+  --color-progress-blue: var(--progress-blue);
+  --color-progress-green: var(--progress-green);
+
   /* สถานะกิจกรรม — เฉด Version 4 ที่ไม่ซ้ำกับ semantic palette */
   --color-event-status-purple: var(--event-status-purple);
   --color-event-status-purple-foreground: var(--event-status-purple-foreground);
@@ -392,6 +398,15 @@
   --event-status-purple-foreground: var(--status-purple-foreground);
   --task-status-orange: var(--status-orange);
   --task-status-orange-foreground: #702d00;
+
+  /* ---- แถบความคืบหน้า — ใช้เฉด Version 3 เฉพาะจุดนี้ ----
+     ทั้งระบบใช้ Version 2 แต่แถบ progress สูงแค่ 2px และวางบน track ที่สว่าง
+     ใกล้กัน เฉด Version 2 จึงจมหาย ที่นี่เลยเข้มขึ้นหนึ่งระดับให้เห็นความคืบหน้าชัด
+     ห้ามนำไปใช้แทนสีสถานะที่อื่น (ดู colors.md) */
+  --progress-red: #ff9da1;
+  --progress-yellow: #ffd67b;
+  --progress-blue: #95c1ff;
+  --progress-green: #67c567;
 
   /* ---- Chart ----
      1 สีเน้น (--chart-1 = info/ฟ้า) + ไล่น้ำหนักดำสำหรับหมวดที่เหลือ */
