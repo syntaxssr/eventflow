@@ -111,10 +111,12 @@ export function EventCard({
             </p>
           </div>
 
-          <div className="flex min-h-6 items-center justify-between gap-2 border-t pt-3">
-            <span className="text-muted-foreground text-xs">
-              {t("event.assignees")}
-            </span>
+          {/* กลุ่ม avatar สื่อความหมายในตัวอยู่แล้ว ไม่ต้องมีป้ายกำกับหรือเส้นคั่น
+              aria-label คงไว้ให้ screen reader ยังรู้ว่ากลุ่มนี้คือผู้รับผิดชอบ */}
+          <div
+            className="flex min-h-6 items-center justify-end gap-2"
+            aria-label={t("event.assignees")}
+          >
             <AvatarGroup
               users={members}
               max={10}

@@ -135,6 +135,10 @@
   --color-status-red: var(--status-red);
   --color-status-red-foreground: var(--status-red-foreground);
 
+  /* ป้ายแจ้งเตือน — เฉด Version 3 ใช้เฉพาะจุดนี้ */
+  --color-notification-badge: var(--notification-badge);
+  --color-notification-badge-foreground: var(--notification-badge-foreground);
+
   /* แถบความคืบหน้า — เฉด Version 3 ใช้เฉพาะจุดนี้ */
   --color-progress-red: var(--progress-red);
   --color-progress-yellow: var(--progress-yellow);
@@ -407,6 +411,12 @@
   --progress-yellow: #ffd67b;
   --progress-blue: #95c1ff;
   --progress-green: #67c567;
+
+  /* ---- ป้ายแจ้งเตือน — ใช้เฉด Version 3 เฉพาะจุดนี้ ----
+     ป้ายเลขบนปุ่มระฆังเล็กแค่ 16px เฉด Version 2 จึงจางเกินจนแทบไม่สะดุดตา
+     เข้มขึ้นหนึ่งระดับให้เห็นทันทีว่ามีของค้างอยู่ ตัวเลขยังผ่าน AA (5.55:1) */
+  --notification-badge: #ff9da1;
+  --notification-badge-foreground: #7e0500;
 
   /* ---- Chart ----
      1 สีเน้น (--chart-1 = info/ฟ้า) + ไล่น้ำหนักดำสำหรับหมวดที่เหลือ */

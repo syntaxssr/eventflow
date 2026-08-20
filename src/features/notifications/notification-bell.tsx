@@ -72,7 +72,7 @@ export function NotificationBell() {
       <BellIcon className="size-4" aria-hidden="true" />
       {unreadCount > 0 ? (
         <span
-          className="bg-destructive text-destructive-foreground absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-[0.625rem] font-bold"
+          className="bg-notification-badge text-notification-badge-foreground absolute -top-0.5 -right-0.5 flex size-4 items-center justify-center rounded-full text-[0.625rem] font-bold"
           aria-hidden="true"
         >
           {unreadCount > 9 ? "9+" : unreadCount}

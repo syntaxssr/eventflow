@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import {
+  BellIcon,
   CalendarDaysIcon,
   ChevronDownIcon,
   FilterIcon,
@@ -49,6 +50,7 @@ import {
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
 import { getFullName } from "@/lib/user"
+import { cn } from "@/lib/utils"
 
 const BRAND_STEPS = [
   "50",
@@ -91,6 +93,53 @@ const SEMANTIC_TOKENS = [
     solid: "bg-danger",
     foreground: "text-danger-foreground",
   },
+] as const
+
+/** ลำดับชั้นพื้นผิว — เรียงจากชั้นล่างสุดขึ้นไปหาชั้นที่ลอยสูงสุด */
+const SURFACE_TOKENS = [
+  {
+    token: "--background",
+    swatch: "bg-background",
+    labelKey: "designSystem.surfacePage",
+    noteKey: "designSystem.surfacePageNote",
+  },
+  {
+    token: "--card",
+    swatch: "bg-card",
+    labelKey: "designSystem.surfaceCard",
+    noteKey: "designSystem.surfaceCardNote",
+  },
+  {
+    token: "--sidebar",
+    swatch: "bg-sidebar",
+    labelKey: "designSystem.surfaceSidebar",
+    noteKey: "designSystem.surfaceSidebarNote",
+  },
+  {
+    token: "--popover",
+    swatch: "bg-popover",
+    labelKey: "designSystem.surfacePopover",
+    noteKey: "designSystem.surfacePopoverNote",
+  },
+  {
+    token: "--muted",
+    swatch: "bg-muted",
+    labelKey: "designSystem.surfaceMuted",
+    noteKey: "designSystem.surfaceMutedNote",
+  },
+] as const
+
+/**
+ * ช่วงสีของแถบความคืบหน้า — ค่า sample เลือกให้ตกกลางช่วงของแต่ละสี
+ *
+ * ไม่เก็บค่า hex ไว้ที่นี่ เพราะแถบตัวอย่างเรนเดอร์ด้วย <Progress tone="completion">
+ * ตัวจริง สีจึงมาจาก progress.tsx เสมอ ไม่มีทางที่หน้านี้กับของจริงจะไม่ตรงกัน
+ */
+const PROGRESS_BANDS = [
+  { label: "0–19%", sample: 10 },
+  { label: "20–49%", sample: 35 },
+  { label: "50–99%", sample: 75 },
+  { label: "100%", sample: 100 },
 ] as const
 
 const STATUS_COLOR_TOKENS = [
@@ -502,6 +551,39 @@ export function DesignSystemView() {
         </Section>
 
         <Section
+          title={t("designSystem.surfaces")}
+          description={t("designSystem.surfacesNote")}
+        >
+          <Card>
+            <CardContent className="grid gap-x-6 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+              {SURFACE_TOKENS.map((surface) => (
+                <div key={surface.token} className="flex items-center gap-3">
+                  {/* ตัวอย่างใช้คลาสจริงของแต่ละชั้น ไม่ได้ hardcode สี */}
+                  <span
+                    className={cn(
+                      "ring-foreground/15 size-10 shrink-0 rounded-lg ring-1",
+                      surface.swatch
+                    )}
+                    aria-hidden="true"
+                  />
+                  <div className="min-w-0 space-y-0.5">
+                    <p className="text-sm font-medium">
+                      {t(surface.labelKey as TranslationKey)}
+                    </p>
+                    <p className="text-muted-foreground font-mono text-[0.6875rem]">
+                      {surface.token}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {t(surface.noteKey as TranslationKey)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </Section>
+
+        <Section
           title={t("designSystem.typography")}
           description="LINE Seed Sans TH"
         >
@@ -665,8 +747,10 @@ export function DesignSystemView() {
                 <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
                   {t("designSystem.iconColors")}
                 </p>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="border-border flex items-center gap-3 rounded-lg border p-3">
+                {/* ไม่ใส่กรอบและไม่แบ่งคอลัมน์ตายตัว ให้เข้าชุดกับหัวข้ออื่นในการ์ดนี้
+                    ทั้งสองตัวอย่างจึงกว้างตามเนื้อหาและอยู่ชิดกัน */}
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                  <div className="flex items-center gap-2">
                     <span
                       className="bg-info text-info-foreground flex size-9 shrink-0 items-center justify-center rounded-lg"
                       aria-hidden="true"
@@ -675,7 +759,7 @@ export function DesignSystemView() {
                     </span>
                     <p className="text-sm">{t("designSystem.iconWithBackground")}</p>
                   </div>
-                  <div className="border-border flex items-center gap-3 rounded-lg border p-3">
+                  <div className="flex items-center gap-2">
                     <CalendarDaysIcon
                       className="text-info size-5 shrink-0"
                       aria-hidden="true"
@@ -683,6 +767,57 @@ export function DesignSystemView() {
                     <p className="text-sm">{t("designSystem.iconWithoutBackground")}</p>
                   </div>
                 </div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                  {t("designSystem.notificationColors")}
+                </p>
+                <div className="flex items-center gap-3">
+                  {/* ป้ายตัวอย่างใช้คลาสชุดเดียวกับปุ่มระฆังจริง สีจึงเปลี่ยนตามกันเสมอ */}
+                  <span className="relative inline-flex size-9 items-center justify-center">
+                    <BellIcon
+                      className="size-4 shrink-0"
+                      aria-hidden="true"
+                    />
+                    <span
+                      className="bg-notification-badge text-notification-badge-foreground absolute top-1 right-1 flex size-4 items-center justify-center rounded-full text-[0.625rem] font-bold"
+                      aria-hidden="true"
+                    >
+                      3
+                    </span>
+                  </span>
+                  <p className="text-sm">
+                    {t("designSystem.notificationBadgeSample")}
+                  </p>
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  {t("designSystem.notificationColorsNote")}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                  {t("designSystem.progressColors")}
+                </p>
+                {/* แบ่งความกว้างการ์ดเท่า ๆ กัน แถบยืดเต็มช่องที่เหลือของแต่ละช่อง
+                    จอแคบลดเหลือ 2 ช่องต่อแถว ไม่งั้นแถบจะสั้นจนดูสีไม่ออก */}
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-4">
+                  {PROGRESS_BANDS.map((band) => (
+                    <div key={band.label} className="flex items-center gap-2">
+                      <span className="shrink-0 text-xs font-medium tabular-nums">
+                        {band.label}
+                      </span>
+                      <Progress
+                        value={band.sample}
+                        tone="completion"
+                        className="h-2 flex-1"
+                        aria-label={`${band.label} ${band.sample}%`}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  {t("designSystem.progressColorsNote")}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -713,169 +848,175 @@ export function DesignSystemView() {
           </div>
         </Section>
 
-        <Section title={t("designSystem.selectDropdown")}>
-          <div className="grid gap-4 lg:grid-cols-3">
-            <Card>
-              <CardContent className="space-y-3">
-                <div className="space-y-1">
-                  <p className="font-medium">{t("designSystem.selectStatusColor")}</p>
-                  <p className="text-muted-foreground text-sm">
-                    {t("designSystem.selectStatusColorDescription")}
-                  </p>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <p className="text-muted-foreground text-xs font-medium">
-                      Dropdown
+        <Section title={t("designSystem.components")}>
+          <div className="space-y-3">
+            <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+              {t("designSystem.selectDropdown")}
+            </p>
+            <div className="grid gap-4 lg:grid-cols-3">
+              <Card>
+                <CardContent className="space-y-3">
+                  <div className="space-y-1">
+                    <p className="font-medium">{t("designSystem.selectStatusColor")}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {t("designSystem.selectStatusColorDescription")}
                     </p>
-                    <div className="border-border space-y-1 rounded-lg border p-1">
-                      <StatusBadge size="sm" style={TASK_STATUS_STYLE.in_progress} />
-                      <StatusBadge size="sm" style={PRIORITY_STYLE.high} />
-                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-muted-foreground text-xs font-medium">
-                      {t("designSystem.selectFilterInput")}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      <div className="border-input flex h-8 items-center gap-2 rounded-md border px-2.5">
-                        <FilterIcon className="size-4" aria-hidden="true" />
-                        <SelectionIconStack
-                          styles={[
-                            TASK_STATUS_STYLE.in_progress,
-                            TASK_STATUS_STYLE.blocked,
-                          ]}
-                        />
-                      </div>
-                      <div className="border-input flex h-8 items-center gap-2 rounded-md border px-2.5">
-                        <FilterIcon className="size-4" aria-hidden="true" />
-                        <SelectionIconStack
-                          styles={[PRIORITY_STYLE.high, PRIORITY_STYLE.urgent]}
-                        />
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <p className="text-muted-foreground text-xs font-medium">
+                        Dropdown
+                      </p>
+                      <div className="border-border space-y-1 rounded-lg border p-1">
+                        <StatusBadge size="sm" style={TASK_STATUS_STYLE.in_progress} />
+                        <StatusBadge size="sm" style={PRIORITY_STYLE.high} />
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-muted-foreground text-xs font-medium">
-                    {t("designSystem.activeFilterChips")}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    <FilterChipSample style={TASK_STATUS_STYLE.in_progress} />
-                    <FilterChipSample style={PRIORITY_STYLE.high} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="space-y-3">
-                <div className="space-y-1">
-                  <p className="font-medium">{t("designSystem.selectDueDate")}</p>
-                  <p className="text-muted-foreground text-sm">
-                    {t("designSystem.selectDueDateDescription")}
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-muted-foreground text-xs font-medium">
-                    Dropdown
-                  </p>
-                  <div className="border-border space-y-1 rounded-lg border p-1">
-                    <StatusBadge size="sm" style={OVERDUE_STYLE} />
-                    <StatusBadge size="sm" style={DUE_SOON_STYLE} />
-                  </div>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                  <div className="space-y-2">
-                    <p className="text-muted-foreground text-xs font-medium">
-                      {t("designSystem.selectFilterInput")}
-                    </p>
-                    <div className="border-input flex h-8 items-center justify-between rounded-md border px-2.5 text-sm">
-                      <span>{t("task.dueSoonFilter")}</span>
-                      <ChevronDownIcon
-                        className="text-muted-foreground size-4"
-                        aria-hidden="true"
-                      />
+                    <div className="space-y-2">
+                      <p className="text-muted-foreground text-xs font-medium">
+                        {t("designSystem.selectFilterInput")}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        <div className="border-input flex h-8 items-center gap-2 rounded-md border px-2.5">
+                          <FilterIcon className="size-4" aria-hidden="true" />
+                          <SelectionIconStack
+                            styles={[
+                              TASK_STATUS_STYLE.in_progress,
+                              TASK_STATUS_STYLE.blocked,
+                            ]}
+                          />
+                        </div>
+                        <div className="border-input flex h-8 items-center gap-2 rounded-md border px-2.5">
+                          <FilterIcon className="size-4" aria-hidden="true" />
+                          <SelectionIconStack
+                            styles={[PRIORITY_STYLE.high, PRIORITY_STYLE.urgent]}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <p className="text-muted-foreground text-xs font-medium">
                       {t("designSystem.activeFilterChips")}
                     </p>
-                    <FilterChipSample style={DUE_SOON_STYLE} />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="space-y-3">
-                <div className="space-y-1">
-                  <p className="font-medium">{t("designSystem.selectPeople")}</p>
-                  <p className="text-muted-foreground text-sm">
-                    {t("designSystem.selectPeopleDescription")}
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <div className="border-input flex h-7 w-72 items-center justify-between rounded-[min(var(--radius-md),10px)] border px-2.5 text-sm">
-                    <span>{getFullName(MOCK_USERS[0], locale)}</span>
-                    <span className="text-muted-foreground">⌄</span>
-                  </div>
-                  <div className="border-border w-72 rounded-lg border p-1">
-                    <div className="flex items-center gap-2 rounded-md px-1.5 py-1">
-                      <UserAvatar user={MOCK_USERS[0]} size="sm" />
-                      <span className="text-sm">{getFullName(MOCK_USERS[0], locale)}</span>
+                    <div className="flex flex-wrap gap-2">
+                      <FilterChipSample style={TASK_STATUS_STYLE.in_progress} />
+                      <FilterChipSample style={PRIORITY_STYLE.high} />
                     </div>
                   </div>
-                  <p className="text-muted-foreground text-xs">
-                    {t("designSystem.selectPeopleWidth")}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="space-y-3">
+                  <div className="space-y-1">
+                    <p className="font-medium">{t("designSystem.selectDueDate")}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {t("designSystem.selectDueDateDescription")}
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-muted-foreground text-xs font-medium">
+                      Dropdown
+                    </p>
+                    <div className="border-border space-y-1 rounded-lg border p-1">
+                      <StatusBadge size="sm" style={OVERDUE_STYLE} />
+                      <StatusBadge size="sm" style={DUE_SOON_STYLE} />
+                    </div>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                    <div className="space-y-2">
+                      <p className="text-muted-foreground text-xs font-medium">
+                        {t("designSystem.selectFilterInput")}
+                      </p>
+                      <div className="border-input flex h-8 items-center justify-between rounded-md border px-2.5 text-sm">
+                        <span>{t("task.dueSoonFilter")}</span>
+                        <ChevronDownIcon
+                          className="text-muted-foreground size-4"
+                          aria-hidden="true"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-muted-foreground text-xs font-medium">
+                        {t("designSystem.activeFilterChips")}
+                      </p>
+                      <FilterChipSample style={DUE_SOON_STYLE} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="space-y-3">
+                  <div className="space-y-1">
+                    <p className="font-medium">{t("designSystem.selectPeople")}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {t("designSystem.selectPeopleDescription")}
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="border-input flex h-7 w-72 items-center justify-between rounded-[min(var(--radius-md),10px)] border px-2.5 text-sm">
+                      <span>{getFullName(MOCK_USERS[0], locale)}</span>
+                      <span className="text-muted-foreground">⌄</span>
+                    </div>
+                    <div className="border-border w-72 rounded-lg border p-1">
+                      <div className="flex items-center gap-2 rounded-md px-1.5 py-1">
+                        <UserAvatar user={MOCK_USERS[0]} size="sm" />
+                        <span className="text-sm">{getFullName(MOCK_USERS[0], locale)}</span>
+                      </div>
+                    </div>
+                    <p className="text-muted-foreground text-xs">
+                      {t("designSystem.selectPeopleWidth")}
+                    </p>
+                    <div className="flex items-center justify-between gap-3 pt-1">
+                      <span className="text-muted-foreground text-xs">
+                        {t("designSystem.avatarStackRule")}
+                      </span>
+                      <AvatarGroup users={MOCK_USERS.slice(0, 3)} max={3} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+              {t("designSystem.datePicker")}
+            </p>
+            <Card>
+              <CardContent className="space-y-4">
+                <div className="space-y-1">
+                  <p className="font-medium">{t("designSystem.datePickerFields")}</p>
+                  <p className="text-muted-foreground text-sm">
+                    {t("designSystem.datePickerDescription")}
                   </p>
-                  <div className="flex items-center justify-between gap-3 pt-1">
-                    <span className="text-muted-foreground text-xs">
-                      {t("designSystem.avatarStackRule")}
-                    </span>
-                    <AvatarGroup users={MOCK_USERS.slice(0, 3)} max={3} />
+                </div>
+                <div className="grid max-w-xl gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label>{t("task.startDate")}</Label>
+                    <DatePickerField
+                      label={t("task.startDate")}
+                      value={sampleStartDate}
+                      onChange={setSampleStartDate}
+                      max={sampleEndDate}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{t("task.dueDate")}</Label>
+                    <DatePickerField
+                      label={t("task.dueDate")}
+                      value={sampleEndDate}
+                      onChange={setSampleEndDate}
+                      min={sampleStartDate}
+                    />
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
-        </Section>
 
-        <Section title={t("designSystem.datePicker")}>
-          <Card>
-            <CardContent className="space-y-4">
-              <div className="space-y-1">
-                <p className="font-medium">{t("designSystem.datePickerFields")}</p>
-                <p className="text-muted-foreground text-sm">
-                  {t("designSystem.datePickerDescription")}
-                </p>
-              </div>
-              <div className="grid max-w-xl gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label>{t("task.startDate")}</Label>
-                  <DatePickerField
-                    label={t("task.startDate")}
-                    value={sampleStartDate}
-                    onChange={setSampleStartDate}
-                    max={sampleEndDate}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>{t("task.dueDate")}</Label>
-                  <DatePickerField
-                    label={t("task.dueDate")}
-                    value={sampleEndDate}
-                    onChange={setSampleEndDate}
-                    min={sampleStartDate}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </Section>
-
-        <Section title={t("designSystem.components")}>
           <div className="grid gap-4 lg:grid-cols-2">
             <Card>
               <CardHeader>

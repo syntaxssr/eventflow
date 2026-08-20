@@ -65,6 +65,18 @@ type ViewMode = "grid" | "table"
 
 const EVENTS_PER_PAGE = 8
 
+/** ความกว้างของตัวกรองแต่ละช่องตอนโหลด ให้ใกล้เคียงแถบจริง */
+const SKELETON_FILTER_WIDTHS = [
+  "w-11",
+  "w-72",
+  "w-44",
+  "w-44",
+  "w-32",
+] as const
+
+/** กริด 3 คอลัมน์ 2 แถวเต็ม — เติมพื้นที่พอดีโดยไม่ล้นจอ */
+const SKELETON_CARD_COUNT = 6
+
 function getCurrentYearDateRange() {
   const currentYear = getToday().getFullYear()
   return {
@@ -248,14 +260,53 @@ export function EventsView() {
   if (pageState === "loading") {
     return (
       <PageContainer>
+        {/* โครงร่างต้องเท่ากับหน้าจริง ไม่งั้นพอโหลดเสร็จเนื้อหาจะกระโดด
+            แถบตัวกรองสูง ~130px ถ้าไม่ใส่ กริดจะเด้งลงมาทั้งแผง */}
+        <div className="space-y-3" aria-hidden="true">
+          <div className="flex flex-wrap items-end gap-2">
+            {SKELETON_FILTER_WIDTHS.map((width, index) => (
+              <div key={index} className="flex flex-col gap-1">
+                <Skeleton className="ml-1 h-3 w-16" />
+                <Skeleton className={cn("h-8", width)} />
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {Array.from({ length: EVENTS_PER_PAGE }).map((_, index) => (
-            <Card key={index} className="overflow-hidden">
+          {Array.from({ length: SKELETON_CARD_COUNT }).map((_, index) => (
+            <Card key={index} className="overflow-hidden" aria-hidden="true">
+              {/* ไล่ตามโครงของ EventCard ทีละส่วน ความสูงจึงใกล้เคียงของจริง */}
               <CardContent className="space-y-3">
-                <Skeleton className="h-5 w-1/3" />
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="h-3 w-1/2" />
-                <Skeleton className="h-2 w-full" />
+                <Skeleton className="h-6 w-24 rounded-full" />
+                <div className="flex items-center gap-3">
+                  <Skeleton className="size-10 shrink-0 rounded-xl" />
+                  <Skeleton className="h-5 w-2/3" />
+                </div>
+                <div className="grid grid-cols-3 gap-x-2 gap-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="col-span-3 h-4 w-3/4" />
+                </div>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-10" />
+                  </div>
+                  <Skeleton className="h-2 w-full rounded-full" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+                <div className="flex min-h-6 items-center justify-end gap-2">
+                  <div className="flex items-center">
+                    {Array.from({ length: 4 }).map((_, avatarIndex) => (
+                      <Skeleton
+                        key={avatarIndex}
+                        className="ring-card size-8 shrink-0 rounded-full not-first:-ml-2 ring-2"
+                      />
+                    ))}
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))}
