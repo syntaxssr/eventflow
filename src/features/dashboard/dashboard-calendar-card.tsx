@@ -203,9 +203,13 @@ export function DashboardCalendarCard({
               const hasEvent = eventColors.length > 0
               const hasTask = entries.some((entry) => entry.kind === "task")
               const selected = key === selectedKey
+              const isToday = key === todayKey
+              // วันนี้ย้อมแดงทับสีโปรเจกต์ จึงไม่ต้องคำนวณสีตัวอักษรของกิจกรรม
               // ทุกสีในพาเลตผ่าน AA กับสีที่ getReadableTextColor เลือกให้
               const eventTextColor =
-                hasEvent && !selected ? getReadableTextColor(eventColor) : null
+                hasEvent && !selected && !isToday
+                  ? getReadableTextColor(eventColor)
+                  : null
 
               return (
                 <button
@@ -224,13 +228,25 @@ export function DashboardCalendarCard({
                     .filter(Boolean)
                     .join(" ")}
                   className={cn(
-                    "focus-visible:outline-ring flex aspect-square flex-col items-center justify-center gap-1 rounded-full text-xs tabular-nums transition-colors focus-visible:outline-2 focus-visible:outline-offset-1",
+                    // เส้นขอบโปร่งใสติดไว้ทุกวัน วันที่มีเส้นประจึงไม่ดันขนาดวง
+                    "focus-visible:outline-ring flex aspect-square flex-col items-center justify-center gap-1 rounded-full border-2 border-transparent text-xs tabular-nums transition-colors focus-visible:outline-2 focus-visible:outline-offset-1",
                     !inMonth && !hasEvent && "text-muted-foreground/50",
-                    !selected && !hasEvent && "hover:bg-muted",
-                    // วันที่เลือกใช้สลับขาว-ดำตามกติกา active state ของระบบ
-                    selected && "bg-primary text-primary-foreground font-bold",
-                    hasEvent && !selected && "font-bold",
-                    !selected && key === todayKey && "ring-foreground/40 ring-1"
+                    !selected && !hasEvent && !isToday && "hover:bg-muted",
+                    // วันที่เลือกใช้วงแดงเส้นประ ตัวหนังสือแดง ไม่ถมพื้น
+                    // สลับเฉดตามธีม เพราะแดงพาสเทลบนพื้นสว่างได้แค่ 1.28:1 มองไม่เห็น
+                    selected &&
+                      !isToday &&
+                      "border-status-red-foreground text-status-red-foreground dark:border-status-red dark:text-status-red border-dashed font-bold",
+                    hasEvent && !selected && !isToday && "font-bold",
+                    // วันนี้ใช้แดงเสมอ (คู่สี status red ผ่าน AA ทั้งสองธีม)
+                    // ย้อมทับทั้งสีโปรเจกต์และวันที่เลือก เพื่อให้หาวันนี้เจอทันที
+                    isToday &&
+                      "bg-status-red text-status-red-foreground font-bold",
+                    // วันนี้ที่ถูกเลือกอยู่ เติมเส้นประทับบนวงแดง
+                    // พื้นเป็นแดงพาสเทลทั้งสองธีม เส้นจึงใช้แดงเข้มค่าเดียวได้เลย
+                    isToday &&
+                      selected &&
+                      "border-status-red-foreground border-dashed"
                   )}
                   style={
                     eventTextColor
@@ -245,9 +261,13 @@ export function DashboardCalendarCard({
                       <span
                         className={cn(
                           "size-1 rounded-full",
-                          selected && "bg-primary-foreground",
-                          !selected && !hasEvent && "bg-foreground/70",
-                          !selected && hasEvent && "bg-current"
+                          // วันนี้/วันที่เลือก ตัวเลขเป็นแดงอยู่แล้ว จุดจึงตามสีตัวเลข
+                          (isToday || selected) && "bg-current",
+                          !isToday &&
+                            !selected &&
+                            !hasEvent &&
+                            "bg-foreground/70",
+                          !isToday && !selected && hasEvent && "bg-current"
                         )}
                         aria-hidden="true"
                       />

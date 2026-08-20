@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest"
 
 import {
+  AVATAR_PALETTE,
+  AVATAR_PALETTE_ITEMS,
+  getAvatarForegroundColor,
+} from "@/constants/avatar-colors"
+import {
   READABLE_DARK,
   READABLE_LIGHT,
   contrastRatio,
@@ -43,11 +48,23 @@ describe("color utilities", () => {
     expect(getReadableTextColor(BRAND)).toBe(READABLE_DARK)
   })
 
-  it("สี Avatar ของ Mock User ทุกคนได้ข้อความที่ผ่าน AA", () => {
-    for (const user of MOCK_USERS) {
-      const textColor = getReadableTextColor(user.avatarColor)
+  it("ทุกคู่สีในพาเลต Avatar ผ่าน AA", () => {
+    for (const item of AVATAR_PALETTE_ITEMS) {
       expect(
-        contrastRatio(textColor, user.avatarColor),
+        contrastRatio(item.foreground, item.hex),
+        `${item.name} (${item.hex}/${item.foreground})`
+      ).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  it("สี Avatar ของ Mock User ทุกคนอยู่ในพาเลตและได้ข้อความที่ผ่าน AA", () => {
+    for (const user of MOCK_USERS) {
+      expect(AVATAR_PALETTE, `${user.id}`).toContain(user.avatarColor)
+
+      const textColor = getAvatarForegroundColor(user.avatarColor)
+      expect(textColor, `${user.id} (${user.avatarColor})`).not.toBeNull()
+      expect(
+        contrastRatio(textColor as string, user.avatarColor),
         `${user.id} (${user.avatarColor})`
       ).toBeGreaterThanOrEqual(4.5)
     }

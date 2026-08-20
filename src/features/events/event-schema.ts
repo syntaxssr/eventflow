@@ -1,6 +1,5 @@
 import { z } from "zod"
 
-import { AVATAR_PALETTE_ITEMS } from "@/constants/avatar-colors"
 import { EVENT_COLORS } from "@/constants/event-colors"
 import { EVENT_STATUSES } from "@/types/event"
 
@@ -47,9 +46,24 @@ export type EventFormValues = z.infer<typeof eventSchema>
 
 /**
  * ภาพปกให้เลือกใน Prototype (การอัปโหลดจริงอยู่ใน Phase 6)
- * แต่ละไฟล์คือสีพื้นไล่ระดับบนลงล่าง + เกรน หนึ่งใบต่อหนึ่งเฉดในพาเลต avatar
- * สร้างจากสคริปต์ ไม่ได้วาดมือ — ชื่อไฟล์ตรงกับชื่อสีใน avatar-colors.ts
+ * แต่ละไฟล์คือสีพื้นไล่ระดับบนลงล่าง + เกรน สร้างจากสคริปต์ ไม่ได้วาดมือ
+ *
+ * เป็นชุดของตัวเอง ไม่ผูกกับพาเลต avatar แล้ว — ภาพปกเป็นของตกแต่งที่ไม่สื่อสถานะ
+ * จึงใช้โทนนุ่มชุดนี้ต่อได้ ขณะที่ avatar ย้ายไปใช้ 8 สีสถานะ
  */
-export const COVER_OPTIONS = AVATAR_PALETTE_ITEMS.map(
-  (item) => `/covers/${item.name.toLowerCase().replace(/\s+/g, "-")}.svg`
-)
+export const COVER_OPTIONS = [
+  "butter",
+  "olive-gold",
+  "moss",
+  "peach",
+  "apricot",
+  "coral-red",
+  "mist",
+  "sage-teal",
+  "deep-ocean",
+  "orchid",
+  "taupe",
+  "sky",
+  "periwinkle",
+  "linen",
+].map((name) => `/covers/${name}.svg`)

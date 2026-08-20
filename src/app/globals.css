@@ -161,21 +161,21 @@
 }
 
 /* การ์ดสรุปบน Dashboard: hover ใช้เฉดเดียวกับไอคอนที่อ่อนลงหนึ่งระดับ
-   (Version 3 -> Version 2) เพื่อให้ feedback ชัดแต่ยังอ่านเนื้อหาได้ง่าย */
+   (Version 2 -> Version 1) เพื่อให้ feedback ชัดแต่ยังอ่านเนื้อหาได้ง่าย */
 .dashboard-stat-card--blue:hover {
-  background-color: #c3dcff;
+  background-color: #cddef5;
 }
 
 .dashboard-stat-card--yellow:hover {
-  background-color: #ffe4a9;
+  background-color: #efdeb9;
 }
 
 .dashboard-stat-card--orange:hover {
-  background-color: #fed5be;
+  background-color: #f0d9cc;
 }
 
 .dashboard-stat-card--red:hover {
-  background-color: #ffcbcd;
+  background-color: #f5d5d6;
 }
 
 /* ทุกการ์ดใต้แท็บ Dashboard สูงเท่ากัน เพื่อไม่ให้หน้าเลื่อนเมื่อสลับแท็บ */
@@ -349,7 +349,7 @@
   --auth-hero-deep: #131796;
   --auth-hero-foreground: #f2f2f0;
 
-  /* ---- สีเชิงความหมาย — ใช้น้ำหนัก Version 3 ---- */
+  /* ---- สีเชิงความหมาย — ใช้น้ำหนัก Version 2 ---- */
   --success: var(--status-green);
   --success-foreground: var(--status-green-foreground);
   --success-surface: var(--status-green);
@@ -369,22 +369,24 @@
   --status-default-foreground: #212120;
   --status-gray: #e5e5e3;
   --status-gray-foreground: #393836;
-  --status-brown: #b68a49;
+  --status-brown: #d0b48a;
+  /* foreground ใช้ค่า V3 (#332714) แทน V2 (#75592f) เพราะคู่ V2 ได้ contrast
+     แค่ 3.28:1 ไม่ผ่าน WCAG AA — คู่นี้ได้ 7.34:1 โดยพื้นยังเป็น V2 */
   --status-brown-foreground: #332714;
-  --status-orange: #ffb78f;
+  --status-orange: #fed5be;
   --status-orange-foreground: #702d00;
-  --status-yellow: #ffd67b;
+  --status-yellow: #ffe4a9;
   --status-yellow-foreground: #6b4900;
-  --status-green: #67c567;
-  --status-green-foreground: #143414;
-  --status-blue: #95c1ff;
+  --status-green: #afe1af;
+  --status-green-foreground: #205520;
+  --status-blue: #c3dcff;
   --status-blue-foreground: #00337c;
-  --status-purple: #cb9eff;
-  --status-purple-foreground: #490080;
-  --status-pink: #ff9cc0;
-  --status-pink-foreground: #7a003d;
-  --status-red: #ff9da1;
-  --status-red-foreground: #7e0500;
+  --status-purple: #e4d0fb;
+  --status-purple-foreground: #470b75;
+  --status-pink: #fccdde;
+  --status-pink-foreground: #71093d;
+  --status-red: #ffcbcd;
+  --status-red-foreground: #770b07;
 
   --event-status-purple: var(--status-purple);
   --event-status-purple-foreground: var(--status-purple-foreground);
@@ -458,7 +460,7 @@
   --auth-hero-deep: #1c1c1c;
   --auth-hero-foreground: #f2f2f0;
 
-  /* ---- สีเชิงความหมาย Version 3 (เหมือน Light) ---- */
+  /* ---- สีเชิงความหมาย Version 2 (เหมือน Light) ---- */
   --success: var(--status-green);
   --success-foreground: var(--status-green-foreground);
   --success-surface: var(--status-green);

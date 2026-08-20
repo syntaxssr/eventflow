@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest"
 
+import { shiftDateKey } from "@/constants/mock-date"
 import { defaultDuplicateOptions, duplicateEvent } from "@/lib/event"
 import { resetIdCounters } from "@/lib/id"
 import { MAIN_EVENT_ID, createInitialState } from "@/mock"
@@ -95,9 +96,12 @@ describe("duplicateEvent — งานย่อย", () => {
   })
 
   it("เลื่อนวันครบกำหนดตามระยะห่างของวันจัดงานใหม่", () => {
+    // อ้างอิงจากวันจัดงานจริงของ Mock Data (ซึ่งเลื่อนตามวันปัจจุบัน) ไม่ใช่ค่าตายตัว
+    const sourceStart = setup().source.startDate
+    const movedStart = shiftDateKey(sourceStart, 7)
     const { tasks, result } = setup({
-      startDate: "2026-09-25",
-      endDate: "2026-09-25",
+      startDate: movedStart,
+      endDate: movedStart,
     })
 
     // วันจัดงานเลื่อนไป 7 วัน งานทุกงานต้องเลื่อนตามเท่ากัน

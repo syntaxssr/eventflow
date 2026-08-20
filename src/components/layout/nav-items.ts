@@ -1,15 +1,10 @@
 import {
   BellIcon,
   CalendarDaysIcon,
-  ChartGanttIcon,
-  FolderIcon,
-  HistoryIcon,
   LayoutDashboardIcon,
-  ListChecksIcon,
   SettingsIcon,
   Trash2Icon,
   UserIcon,
-  UsersIcon,
   type LucideIcon,
 } from "lucide-react"
 
@@ -26,12 +21,6 @@ export interface NavItem {
 export const MAIN_NAV: NavItem[] = [
   { href: ROUTES.dashboard, labelKey: "nav.dashboard", icon: LayoutDashboardIcon },
   { href: ROUTES.events, labelKey: "nav.events", icon: CalendarDaysIcon },
-  { href: ROUTES.myTasks, labelKey: "nav.myTasks", icon: ListChecksIcon },
-  { href: ROUTES.files, labelKey: "nav.files", icon: FolderIcon },
-  { href: ROUTES.timeline, labelKey: "nav.timeline", icon: ChartGanttIcon },
-  { href: ROUTES.participants, labelKey: "nav.participants", icon: UsersIcon },
-  { href: ROUTES.notifications, labelKey: "nav.notifications", icon: BellIcon },
-  { href: ROUTES.activity, labelKey: "nav.activity", icon: HistoryIcon },
   { href: ROUTES.trash, labelKey: "nav.trash", icon: Trash2Icon },
 ]
 
@@ -49,16 +38,11 @@ export const ACCOUNT_NAV: NavItem[] = [
 export const MOBILE_NAV: NavItem[] = [
   { href: ROUTES.dashboard, labelKey: "nav.home", icon: LayoutDashboardIcon },
   { href: ROUTES.events, labelKey: "nav.events", icon: CalendarDaysIcon },
-  { href: ROUTES.myTasks, labelKey: "nav.myTasks", icon: ListChecksIcon },
   { href: ROUTES.notifications, labelKey: "nav.notifications", icon: BellIcon },
 ]
 
 /** เมนูที่เหลือ แสดงในหน้า More/Drawer ของ Mobile */
 export const MOBILE_MORE_NAV: NavItem[] = [
-  { href: ROUTES.files, labelKey: "nav.files", icon: FolderIcon },
-  { href: ROUTES.timeline, labelKey: "nav.timeline", icon: ChartGanttIcon },
-  { href: ROUTES.participants, labelKey: "nav.participants", icon: UsersIcon },
-  { href: ROUTES.activity, labelKey: "nav.activity", icon: HistoryIcon },
   { href: ROUTES.trash, labelKey: "nav.trash", icon: Trash2Icon },
   ...ACCOUNT_NAV,
 ]

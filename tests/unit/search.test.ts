@@ -33,8 +33,11 @@ describe("globalSearch", () => {
   })
 
   it("ค้นวันที่กิจกรรมจาก date key ได้", () => {
-    const results = globalSearch(makeSource(), "2026-09-18")
-    expect(results.events.some((event) => event.startDate === "2026-09-18")).toBe(
+    const source = makeSource()
+    // ใช้วันจริงของกิจกรรมใน state เพราะ Mock Data เลื่อนตามวันปัจจุบัน
+    const startDate = source.events[0].startDate
+    const results = globalSearch(source, startDate)
+    expect(results.events.some((event) => event.startDate === startDate)).toBe(
       true
     )
   })

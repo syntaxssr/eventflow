@@ -1,6 +1,7 @@
 "use client"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { getAvatarForegroundColor } from "@/constants/avatar-colors"
 import { useLocale } from "@/i18n"
 import { getReadableTextColor } from "@/lib/color"
 import { getFullName, getInitials } from "@/lib/user"
@@ -36,7 +37,11 @@ export function UserAvatar({
         className="font-semibold"
         style={{
           backgroundColor: user.avatarColor,
-          color: getReadableTextColor(user.avatarColor),
+          // ตัวอักษรย่อใช้สีคู่ประจำของสีนั้นในระบบสถานะ
+          // สีนอกพาเลต (ข้อมูลเก่า/กำหนดเอง) ถึงจะ fallback เป็นดำ/ขาว
+          color:
+            getAvatarForegroundColor(user.avatarColor) ??
+            getReadableTextColor(user.avatarColor),
         }}
       >
         {getInitials(user, locale)}

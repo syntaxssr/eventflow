@@ -120,7 +120,9 @@ const STATUS_COLOR_TOKENS = [
     version1Background: "#eaddca",
     version1Foreground: "#48372c",
     version2Background: "#d0b48a",
-    version2Foreground: "#75592f",
+    // V2 เดิมคู่กับ #75592f แต่ได้ contrast แค่ 3.28:1 ไม่ผ่าน WCAG AA
+    // จึงใช้ #332714 (ค่าเดียวกับ V3) ให้ตรงกับ --status-brown-foreground ที่ใช้จริง
+    version2Foreground: "#332714",
     version3Background: "#b68a49",
     version3Foreground: "#332714",
   },
@@ -366,7 +368,7 @@ export function DesignSystemView() {
   const [sampleStartDate, setSampleStartDate] = React.useState("")
   const [sampleEndDate, setSampleEndDate] = React.useState("2026-12-31")
   const [selectedStatusVersion, setSelectedStatusVersion] =
-    React.useState<StatusVersion>(3)
+    React.useState<StatusVersion>(2)
 
   const selectedStatusPalette = React.useMemo(() => {
     const getColor = (

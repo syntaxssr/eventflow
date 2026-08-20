@@ -20,7 +20,7 @@ const NEW_EVENT: EventItem = {
   location: { th: "ห้องประชุม A", en: "Meeting room A" },
   ownerId: "u-1",
   expectedAttendees: 30,
-  color: "#95C1FF",
+  color: "#C3DCFF",
   status: "draft",
   coverImage: "",
   createdAt: AT,

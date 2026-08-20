@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { fromDateKey, getToday } from "@/constants/mock-date"
+import {
+  MOCK_TODAY_ISO,
+  fromDateKey,
+  getToday,
+  shiftDateKey,
+} from "@/constants/mock-date"
 import {
   daysUntilDue,
   getDueStatus,
@@ -91,7 +96,9 @@ describe("isIncomplete", () => {
 
 describe("ค่าเริ่มต้นของวันนี้", () => {
   it("ใช้ MOCK_TODAY เมื่อไม่ได้ส่งวันเข้ามา", () => {
-    expect(getToday().getTime()).toBe(TODAY.getTime())
-    expect(isOverdue(task("in_progress", "2026-07-24"))).toBe(true)
+    expect(getToday().getTime()).toBe(fromDateKey(MOCK_TODAY_ISO).getTime())
+    expect(
+      isOverdue(task("in_progress", shiftDateKey(MOCK_TODAY_ISO, -7)))
+    ).toBe(true)
   })
 })
