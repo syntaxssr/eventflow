@@ -1,12 +1,20 @@
 "use client"
 
-import { PageContainer, PageHeader } from "@/components/common/page-header"
+import * as React from "react"
+
 import {
   SaveIndicator,
   useAutoSaveState,
 } from "@/components/common/save-indicator"
 import { useDemo } from "@/components/dev/demo-provider"
-import { Card, CardContent } from "@/components/ui/card"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { useLocale } from "@/i18n"
@@ -46,8 +54,20 @@ const SETTING_LABELS: Record<
 /**
  * ตั้งค่าการแจ้งเตือน — Auto Save ตามข้อกำหนด
  * ประเภทที่ปิดจะถูก useNotify ข้ามตอนสร้างการแจ้งเตือนใหม่
+ *
+ * เป็น dialog ไม่ใช่หน้าเต็ม เพราะมีแค่ 5 สวิตช์ที่บันทึกเอง ไม่มีสถานะที่ต้อง deep-link
+ * ปิดได้ทุกเมื่อโดยไม่ต้องยืนยัน
  */
-export function NotificationSettingsView() {
+export function NotificationSettingsDialog({
+  children,
+  open,
+  onOpenChange,
+}: {
+  /** ปุ่มเปิด — ละไว้ได้ถ้าคุมสถานะเปิด/ปิดจากภายนอก */
+  children?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}) {
   const { t } = useLocale()
   const state = useAppState()
   const dispatch = useAppDispatch()
@@ -70,26 +90,35 @@ export function NotificationSettingsView() {
   }
 
   return (
-    <PageContainer>
-      <PageHeader
-        title={t("shell.notificationSettings")}
-        description={t("notification.settingsSubtitle")}
-        actions={<SaveIndicator state={saveState} />}
-      />
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      {children ? <DialogTrigger asChild>{children}</DialogTrigger> : null}
+      <DialogContent
+        className="sm:max-w-lg"
+        data-testid="notification-settings-dialog"
+      >
+        <DialogHeader>
+          <DialogTitle>{t("shell.notificationSettings")}</DialogTitle>
+          <DialogDescription>
+            {t("notification.settingsSubtitle")}
+          </DialogDescription>
+        </DialogHeader>
 
-      <p className="text-muted-foreground -mt-2 text-sm">
-        {t("notification.settingsHint")}
-      </p>
+        {/* คำอธิบาย + สถานะบันทึกอัตโนมัติอยู่แถวเดียวกัน ไม่ชนปุ่มปิดมุมขวาบน */}
+        <div className="-mt-2 flex min-h-5 items-center justify-between gap-4">
+          <p className="text-muted-foreground min-w-0 flex-1 text-xs">
+            {t("notification.settingsHint")}
+          </p>
+          <SaveIndicator state={saveState} className="shrink-0" />
+        </div>
 
-      <Card className="max-w-2xl">
-        <CardContent className="divide-y p-0">
+        <div className="divide-y">
           {NOTIFICATION_SETTING_KEYS.map((key) => {
             const meta = SETTING_LABELS[key]
             const id = `setting-${key}`
             return (
               <div
                 key={key}
-                className="flex items-center justify-between gap-4 px-4 py-3.5"
+                className="flex items-center justify-between gap-4 py-3"
               >
                 <div className="min-w-0">
                   <Label htmlFor={id} className="text-sm font-medium">
@@ -108,8 +137,8 @@ export function NotificationSettingsView() {
               </div>
             )
           })}
-        </CardContent>
-      </Card>
-    </PageContainer>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }

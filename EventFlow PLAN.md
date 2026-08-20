@@ -135,8 +135,7 @@ src/
 │       ├── notifications/
 │       ├── activity/
 │       ├── trash/
-│       ├── profile/
-│       └── settings/notifications/
+│       └── profile/                # ตั้งค่าการแจ้งเตือนเป็น dialog ไม่ใช่ route
 │   └── design-system/             # หน้า QA ภายใน (ไม่อยู่ใน navigation หลัก)
 ├── components/
 │   ├── ui/                        # shadcn/ui primitives

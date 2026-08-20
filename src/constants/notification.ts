@@ -22,12 +22,14 @@ interface NotificationMeta {
   tile: string
 }
 
-/** ใช้ได้เฉพาะ --info / --warning / --success / --danger กับดำ/ขาวไล่ความทึบ */
+/** เฉด Version 3 เต็มค่า (คงที่ทุกธีม) — ดูเหตุผลใน colors.md */
 const NEUTRAL_TILE = "bg-muted text-muted-foreground"
-const INFO_TILE = "bg-info/15 text-info-foreground dark:bg-info/25"
-const WARNING_TILE = "bg-warning/25 text-warning-foreground dark:bg-warning/30"
-const SUCCESS_TILE = "bg-success/20 text-success-foreground dark:bg-success/25"
-const DANGER_TILE = "bg-danger/15 text-danger-foreground dark:bg-danger/25"
+const INFO_TILE = "bg-notification-icon-blue text-notification-icon-blue-foreground"
+const WARNING_TILE =
+  "bg-notification-icon-yellow text-notification-icon-yellow-foreground"
+const SUCCESS_TILE =
+  "bg-notification-icon-green text-notification-icon-green-foreground"
+const DANGER_TILE = "bg-notification-icon-red text-notification-icon-red-foreground"
 
 export const NOTIFICATION_META: Record<NotificationType, NotificationMeta> = {
   task_assigned: {

@@ -49,6 +49,17 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         ? { ...state, session: { ...state.session, userId: action.userId } }
         : state
 
+    /* ---- User ---- */
+    case "user/setAvatarColor":
+      return {
+        ...state,
+        users: state.users.map((user) =>
+          user.id === action.userId
+            ? { ...user, avatarColor: action.color }
+            : user
+        ),
+      }
+
     /* ---- Event ---- */
     case "event/create":
       return { ...state, events: [action.event, ...state.events] }

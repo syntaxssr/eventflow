@@ -44,6 +44,26 @@ describe("appReducer — auth & system", () => {
     expect(next.session).toBeNull()
   })
 
+  it("user/setAvatarColor เปลี่ยนสีของผู้ใช้คนนั้นคนเดียว", () => {
+    const initial = createInitialState()
+    const others = initial.users
+      .filter((user) => user.id !== "u-1")
+      .map((user) => user.avatarColor)
+
+    const next = appReducer(initial, {
+      type: "user/setAvatarColor",
+      userId: "u-1",
+      color: "#AFE1AF",
+    })
+
+    expect(next.users.find((user) => user.id === "u-1")?.avatarColor).toBe(
+      "#AFE1AF"
+    )
+    expect(
+      next.users.filter((user) => user.id !== "u-1").map((u) => u.avatarColor)
+    ).toEqual(others)
+  })
+
   it("auth/signOut ล้าง session", () => {
     const signedIn = appReducer(createInitialState(), {
       type: "auth/signIn",

@@ -139,6 +139,16 @@
   --color-notification-badge: var(--notification-badge);
   --color-notification-badge-foreground: var(--notification-badge-foreground);
 
+  /* ไอคอนรายการแจ้งเตือน — เฉด Version 3 ใช้เฉพาะจุดนี้ */
+  --color-notification-icon-red: var(--notification-icon-red);
+  --color-notification-icon-red-foreground: var(--notification-icon-red-foreground);
+  --color-notification-icon-yellow: var(--notification-icon-yellow);
+  --color-notification-icon-yellow-foreground: var(--notification-icon-yellow-foreground);
+  --color-notification-icon-blue: var(--notification-icon-blue);
+  --color-notification-icon-blue-foreground: var(--notification-icon-blue-foreground);
+  --color-notification-icon-green: var(--notification-icon-green);
+  --color-notification-icon-green-foreground: var(--notification-icon-green-foreground);
+
   /* แถบความคืบหน้า — เฉด Version 3 ใช้เฉพาะจุดนี้ */
   --color-progress-red: var(--progress-red);
   --color-progress-yellow: var(--progress-yellow);
@@ -417,6 +427,19 @@
      เข้มขึ้นหนึ่งระดับให้เห็นทันทีว่ามีของค้างอยู่ ตัวเลขยังผ่าน AA (5.55:1) */
   --notification-badge: #ff9da1;
   --notification-badge-foreground: #7e0500;
+
+  /* ---- ไอคอนในรายการแจ้งเตือน — ใช้เฉด Version 3 เฉพาะจุดนี้ ----
+     ช่องไอคอนเป็นสี่เหลี่ยมเล็ก 36px ที่ต้องอ่านออกทั้งสองธีม เฉด Version 3
+     เต็มค่าให้พื้นคงที่ทุกธีมและคู่สีตัวอักษรผ่าน AA โดยไม่ต้องลดความทึบ
+     ห้ามนำไปใช้แทนสีสถานะที่อื่น (ดู colors.md) */
+  --notification-icon-red: #ff9da1;
+  --notification-icon-red-foreground: #7e0500;
+  --notification-icon-yellow: #ffd67b;
+  --notification-icon-yellow-foreground: #6b4900;
+  --notification-icon-blue: #95c1ff;
+  --notification-icon-blue-foreground: #00337c;
+  --notification-icon-green: #67c567;
+  --notification-icon-green-foreground: #143414;
 
   /* ---- Chart ----
      1 สีเน้น (--chart-1 = info/ฟ้า) + ไล่น้ำหนักดำสำหรับหมวดที่เหลือ */

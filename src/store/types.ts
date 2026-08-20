@@ -45,6 +45,13 @@ export type AuthAction =
   | { type: "auth/signOut" }
   | { type: "auth/switchUser"; userId: Id }
 
+export type UserAction = {
+  /** เปลี่ยนสี avatar ของผู้ใช้เอง — เลือกได้เฉพาะสีในพาเลต avatar */
+  type: "user/setAvatarColor"
+  userId: Id
+  color: string
+}
+
 export type EventAction =
   | { type: "event/create"; event: EventItem }
   | { type: "event/update"; id: Id; changes: Partial<EventItem>; by: Id; at: string }
@@ -133,6 +140,7 @@ export type SystemAction = { type: "system/reset"; state: AppState }
 
 export type AppAction =
   | AuthAction
+  | UserAction
   | EventAction
   | TaskAction
   | TimelineAction

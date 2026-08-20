@@ -35,6 +35,7 @@ import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { APP_NAME } from "@/constants/app"
+import { NOTIFICATION_META } from "@/constants/notification"
 import { MOCK_USERS } from "@/mock"
 import {
   DUE_SOON_STYLE,
@@ -140,6 +141,15 @@ const PROGRESS_BANDS = [
   { label: "20–49%", sample: 35 },
   { label: "50–99%", sample: 75 },
   { label: "100%", sample: 100 },
+] as const
+
+/** ตัวแทนสีไอคอนแจ้งเตือนอย่างละ 1 ชนิด (ฟ้า/เหลือง/เขียว/แดง + กลาง) */
+const NOTIFICATION_ICON_SAMPLES = [
+  "task_assigned",
+  "task_due_soon",
+  "checklist_completed",
+  "task_overdue",
+  "file_updated",
 ] as const
 
 const STATUS_COLOR_TOKENS = [
@@ -790,8 +800,32 @@ export function DesignSystemView() {
                     {t("designSystem.notificationBadgeSample")}
                   </p>
                 </div>
+                {/* ดึงไอคอน/สีจาก NOTIFICATION_META ตรง ๆ ตัวอย่างจึงตรงกับรายการจริงเสมอ */}
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                  {NOTIFICATION_ICON_SAMPLES.map((type) => {
+                    const meta = NOTIFICATION_META[type]
+                    const Icon = meta.icon
+                    return (
+                      <div key={type} className="flex items-center gap-2">
+                        <span
+                          className={cn(
+                            "flex size-9 shrink-0 items-center justify-center rounded-lg",
+                            meta.tile
+                          )}
+                          aria-hidden="true"
+                        >
+                          <Icon className="size-4" />
+                        </span>
+                        <p className="text-sm">{t(meta.labelKey)}</p>
+                      </div>
+                    )
+                  })}
+                </div>
                 <p className="text-muted-foreground text-xs">
                   {t("designSystem.notificationColorsNote")}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {t("designSystem.notificationIconColorsNote")}
                 </p>
               </div>
               <div className="space-y-2">

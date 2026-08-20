@@ -9,11 +9,27 @@ import { cn } from "@/lib/utils"
 import type { User } from "@/types/user"
 
 const SIZE_CLASS = {
-  xs: "size-6 text-[0.625rem]",
-  sm: "size-8 text-xs",
-  default: "size-9 text-sm",
-  lg: "size-12 text-base",
-  xl: "size-20 text-2xl",
+  xs: "size-6",
+  sm: "size-8",
+  default: "size-9",
+  lg: "size-12",
+  xl: "size-20",
+} as const
+
+/**
+ * ขนาดตัวอักษรย่อ ต้องใส่ที่ `AvatarFallback` โดยตรง — ตัว fallback มี `text-sm`
+ * ของมันเอง คลาสที่ใส่ไว้ที่วง avatar จึงไม่มีผล (ทุกขนาดเลยได้ 14px เท่ากันหมด)
+ *
+ * ค่าที่ไม่ระบุ = คงพฤติกรรมเดิม (14px) ส่วน `lg`/`xl` คุมสัดส่วนตัวอักษรต่อ
+ * เส้นผ่านศูนย์กลางไว้ที่ ~0.58 เท่ากับ `xs` บน Topbar (14/24) ไม่งั้นวงใหญ่
+ * จะดูตัวอักษรลีบกว่าวงเล็กทั้งที่เป็นคนเดียวกัน
+ */
+const FALLBACK_TEXT_CLASS = {
+  xs: "",
+  sm: "",
+  default: "",
+  lg: "text-[1.75rem]",
+  xl: "text-[2.875rem]",
 } as const
 
 export function UserAvatar({
@@ -34,7 +50,7 @@ export function UserAvatar({
         <AvatarImage src={user.avatarUrl} alt={fullName} />
       ) : null}
       <AvatarFallback
-        className="font-semibold"
+        className={cn("font-semibold", FALLBACK_TEXT_CLASS[size])}
         style={{
           backgroundColor: user.avatarColor,
           // ตัวอักษรย่อใช้สีคู่ประจำของสีนั้นในระบบสถานะ

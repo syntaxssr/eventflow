@@ -19,7 +19,6 @@ export const ROUTES = {
   activity: "/activity",
   trash: "/trash",
   profile: "/profile",
-  notificationSettings: "/settings/notifications",
   designSystem: "/design-system",
 } as const
 

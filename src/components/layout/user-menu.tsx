@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowLeftRightIcon, LogOutIcon, SettingsIcon, UserIcon } from "lucide-react"
+import { ArrowLeftRightIcon, LogOutIcon, UserIcon } from "lucide-react"
 import { toast } from "sonner"
 
 import { UserAvatar } from "@/components/common/user-avatar"
@@ -128,12 +128,6 @@ export function UserMenu({ showName = true }: { showName?: boolean }) {
           <Link href={ROUTES.profile}>
             <UserIcon className="size-4" aria-hidden="true" />
             {t("shell.myProfile")}
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href={ROUTES.notificationSettings}>
-            <SettingsIcon className="size-4" aria-hidden="true" />
-            {t("shell.notificationSettings")}
           </Link>
         </DropdownMenuItem>
 

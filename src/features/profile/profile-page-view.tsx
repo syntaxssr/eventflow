@@ -14,7 +14,7 @@ import {
 
 import { DueBadge } from "@/components/common/due-badge"
 import { LanguageToggle } from "@/components/common/language-toggle"
-import { PageContainer, PageHeader } from "@/components/common/page-header"
+import { PageContainer } from "@/components/common/page-header"
 import { StatusBadge } from "@/components/common/status-badge"
 import { ThemeToggle } from "@/components/common/theme-toggle"
 import { UserAvatar } from "@/components/common/user-avatar"
@@ -25,10 +25,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { ROUTES } from "@/constants/app"
 import { getToday } from "@/constants/mock-date"
 import { TASK_STATUS_STYLE } from "@/constants/status"
 import { RecentActivityCard } from "@/features/dashboard/recent-activity-card"
+import { NotificationSettingsDialog } from "@/features/notifications/notification-settings-dialog"
+import { AvatarColorPicker } from "./avatar-color-picker"
+import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
 import { isDueSoon, isIncomplete } from "@/lib/due-date"
 import { formatDate } from "@/lib/format"
@@ -46,6 +50,8 @@ export function ProfilePageView() {
   const state = useAppState()
   const currentUser = useCurrentUser()
   const today = React.useMemo(() => getToday(), [])
+  // หน้านี้มีข้อมูลของผู้ใช้เสมอ จึงไม่มีสถานะ empty/error แยก
+  const { state: pageState } = usePageState(false)
 
   if (!currentUser) return null
 
@@ -59,13 +65,10 @@ export function ProfilePageView() {
   const activities = selectRecentActivities(state, 8, currentUser.id)
   const usersById = new Map(state.users.map((user) => [user.id, user]))
 
+  if (pageState === "loading") return <ProfileSkeleton />
+
   return (
     <PageContainer>
-      <PageHeader
-        title={t("nav.profile")}
-        description={t("profile.subtitle")}
-      />
-
       <Card data-testid="profile-card">
         <CardContent className="flex flex-wrap items-center gap-4 p-5">
           <UserAvatar user={currentUser} size="lg" />
@@ -82,14 +85,19 @@ export function ProfilePageView() {
             </p>
           </div>
           <div className="flex items-center gap-1.5">
+            <AvatarColorPicker />
             <LanguageToggle />
             <ThemeToggle />
-            <Button asChild variant="outline" size="sm">
-              <Link href={ROUTES.notificationSettings}>
+            <NotificationSettingsDialog>
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="open-notification-settings"
+              >
                 <BellIcon className="size-4" aria-hidden="true" />
                 {t("shell.notificationSettings")}
-              </Link>
-            </Button>
+              </Button>
+            </NotificationSettingsDialog>
           </div>
         </CardContent>
       </Card>
@@ -182,5 +190,62 @@ function TaskBucket({
         )}
       </CardContent>
     </Card>
+  )
+}
+
+/**
+ * โครงร่างตอนโหลด — ต้องเรียงและสูงเท่าหน้าจริง (ไม่มีหัวเพจแล้ว)
+ * การ์ดโปรไฟล์ → 3 กล่องงาน → การ์ดความเคลื่อนไหว
+ */
+function ProfileSkeleton() {
+  return (
+    <PageContainer>
+      <Card aria-hidden="true">
+        <CardContent className="flex flex-wrap items-center gap-4 p-5">
+          <Skeleton className="size-12 shrink-0 rounded-full" />
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-4 w-64" />
+            <Skeleton className="h-4 w-56" />
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Skeleton className="h-8 w-28" />
+            <Skeleton className="size-8" />
+            <Skeleton className="size-8" />
+            <Skeleton className="h-8 w-40" />
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-4 lg:grid-cols-3" aria-hidden="true">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Card key={index}>
+            <CardHeader>
+              <CardTitle>
+                <Skeleton className="h-5 w-40" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              {Array.from({ length: 5 }).map((_, row) => (
+                <Skeleton key={row} className="h-11" />
+              ))}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <Card aria-hidden="true">
+        <CardHeader>
+          <CardTitle>
+            <Skeleton className="h-5 w-44" />
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <Skeleton key={index} className="h-12" />
+          ))}
+        </CardContent>
+      </Card>
+    </PageContainer>
   )
 }
