@@ -37,8 +37,7 @@ import { RecentActivityCard } from "@/features/dashboard/recent-activity-card"
 import { TaskStatusChart } from "@/features/dashboard/task-status-chart"
 import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
-import { getReadableTextColor } from "@/lib/color"
-import { getEventColor, getEventIcon } from "@/lib/event"
+import { getEventColor, getEventIcon, getEventIconColor } from "@/lib/event"
 import {
   formatDateRange,
   formatDateTime,
@@ -167,7 +166,7 @@ export function EventDetailView({ eventId }: { eventId: string }) {
                 className="flex size-full items-center justify-center rounded-xl"
                 style={{
                   backgroundColor: eventColor,
-                  color: getReadableTextColor(eventColor),
+                  color: getEventIconColor(eventColor),
                 }}
                 aria-hidden="true"
               >

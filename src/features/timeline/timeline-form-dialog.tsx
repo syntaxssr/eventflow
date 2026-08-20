@@ -3,10 +3,11 @@
 import * as React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2Icon } from "lucide-react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
+import { TimePickerField } from "@/components/common/time-picker-field"
 import { UserAvatar } from "@/components/common/user-avatar"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -108,6 +109,7 @@ export function TimelineFormDialog({
       event?.startDate ?? "2026-09-18"
     ),
   })
+  const startTime = useWatch({ control: form.control, name: "startTime" })
 
   React.useEffect(() => {
     if (open) {
@@ -257,9 +259,12 @@ export function TimelineFormDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("timeline.startTime")}</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="time" disabled={isSubmitting} />
-                      </FormControl>
+                      <TimePickerField
+                        label={t("timeline.startTime")}
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={isSubmitting}
+                      />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -270,9 +275,15 @@ export function TimelineFormDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("timeline.endTime")}</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="time" disabled={isSubmitting} />
-                      </FormControl>
+                      {/* รายการไทม์ไลน์อยู่ในวันเดียวเสมอ เวลาสิ้นสุดจึงต้อง
+                          มาหลังเวลาเริ่มทุกกรณี */}
+                      <TimePickerField
+                        label={t("timeline.endTime")}
+                        value={field.value}
+                        onChange={field.onChange}
+                        min={startTime}
+                        disabled={isSubmitting}
+                      />
                       <FormMessage />
                     </FormItem>
                   )}

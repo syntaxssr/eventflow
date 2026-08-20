@@ -157,6 +157,11 @@ Brown / Orange / Yellow / Green / Blue / Purple / Pink / Red
 ชุดของตัวเองที่ [`event-schema.ts`](src/features/events/event-schema.ts)
 เพราะภาพปกเป็นของตกแต่งที่ไม่สื่อสถานะ จึงใช้โทนนุ่มชุดเดิมต่อได้
 
+**ไอคอนประจำกิจกรรม** ใช้กติกาตัวอักษรเดียวกับ avatar — พื้นคือสีประจำกิจกรรม
+(8 สีเดียวกัน) และไอคอนใช้**สีคู่ประจำของสีนั้น** ผ่าน `getEventIconColor()`
+ที่ [`lib/event.ts`](src/lib/event.ts) ไม่ใช่ดำ/ขาวกลาง ๆ
+(`getReadableTextColor` เหลือไว้เป็น fallback ของสีนอกพาเลตเหมือนเดิม)
+
 **การ์ดสรุปบน Dashboard** ใช้ 3 เฉดจากพาเลต avatar ชุดเดิม (ก่อนย้ายมาใช้สีสถานะ)
 เพื่อให้แยกการ์ดได้ทันทีโดยไม่ต้องอ่าน กำหนดเป็น token แยกไว้ที่ `globals.css`
 

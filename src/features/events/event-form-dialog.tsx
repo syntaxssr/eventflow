@@ -2,12 +2,13 @@
 
 import * as React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { CheckIcon, ImageOffIcon, Loader2Icon } from "lucide-react"
+import { CheckIcon, Loader2Icon } from "lucide-react"
 import { useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 import { DatePickerField } from "@/components/common/date-picker-field"
+import { TimePickerField } from "@/components/common/time-picker-field"
 import { useDemo } from "@/components/dev/demo-provider"
 import { Button } from "@/components/ui/button"
 import {
@@ -47,7 +48,7 @@ import { getFullName } from "@/lib/user"
 import { cn } from "@/lib/utils"
 import { useAppDispatch, useAppState, useCurrentUser } from "@/store"
 import { EVENT_STATUSES, type EventItem } from "@/types/event"
-import { COVER_OPTIONS, eventSchema, type EventFormValues } from "./event-schema"
+import { eventSchema, type EventFormValues } from "./event-schema"
 
 function toFormValues(event: EventItem | null, locale: "th" | "en", ownerId: string): EventFormValues {
   if (!event) {
@@ -63,7 +64,6 @@ function toFormValues(event: EventItem | null, locale: "th" | "en", ownerId: str
       expectedAttendees: 0,
       status: "draft",
       color: EVENT_COLOR_OPTIONS[4].value,
-      coverImage: "",
     }
   }
   return {
@@ -78,7 +78,6 @@ function toFormValues(event: EventItem | null, locale: "th" | "en", ownerId: str
     expectedAttendees: event.expectedAttendees,
     status: event.status,
     color: event.color,
-    coverImage: event.coverImage,
   }
 }
 
@@ -113,6 +112,7 @@ export function EventFormDialog({
   })
   const startDate = useWatch({ control: form.control, name: "startDate" })
   const endDate = useWatch({ control: form.control, name: "endDate" })
+  const startTime = useWatch({ control: form.control, name: "startTime" })
 
   // โหลดค่าเริ่มต้นใหม่ทุกครั้งที่เปิดกล่อง เพื่อไม่ให้ค่าจากครั้งก่อนค้าง
   React.useEffect(() => {
@@ -168,7 +168,6 @@ export function EventFormDialog({
           expectedAttendees: values.expectedAttendees,
           status: values.status,
           color: values.color,
-          coverImage: values.coverImage,
         },
       })
 
@@ -198,7 +197,6 @@ export function EventFormDialog({
         expectedAttendees: values.expectedAttendees,
         status: values.status,
         color: values.color,
-        coverImage: values.coverImage,
         createdAt: at,
         createdBy: currentUser.id,
         updatedAt: at,
@@ -325,9 +323,12 @@ export function EventFormDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("event.startTime")}</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="time" disabled={isSubmitting} />
-                      </FormControl>
+                      <TimePickerField
+                        label={t("event.startTime")}
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={isSubmitting}
+                      />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -338,9 +339,16 @@ export function EventFormDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("event.endTime")}</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="time" disabled={isSubmitting} />
-                      </FormControl>
+                      {/* จำกัดเฉพาะกิจกรรมวันเดียว (รวมตอนยังไม่เลือกวัน ซึ่ง
+                          นับเป็นวันเดียว) — ถ้าข้ามวัน เวลาสิ้นสุดมาก่อน
+                          เวลาเริ่มได้ตามปกติ */}
+                      <TimePickerField
+                        label={t("event.endTime")}
+                        value={field.value}
+                        onChange={field.onChange}
+                        min={startDate === endDate ? startTime : undefined}
+                        disabled={isSubmitting}
+                      />
                       <FormMessage />
                     </FormItem>
                   )}
@@ -500,60 +508,7 @@ export function EventFormDialog({
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="coverImage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("event.coverImage")}</FormLabel>
-                    <div
-                      role="radiogroup"
-                      aria-label={t("event.coverImage")}
-                      className="flex flex-wrap gap-2"
-                    >
-                      <button
-                        type="button"
-                        role="radio"
-                        aria-checked={field.value === ""}
-                        aria-label={t("event.coverNone")}
-                        onClick={() => field.onChange("")}
-                        className={cn(
-                          "focus-visible:outline-ring text-muted-foreground flex h-12 w-20 items-center justify-center rounded-md border-2 focus-visible:outline-2",
-                          field.value === ""
-                            ? "border-brand-500"
-                            : "border-border"
-                        )}
-                      >
-                        <ImageOffIcon className="size-4" aria-hidden="true" />
-                      </button>
-                      {COVER_OPTIONS.map((cover) => (
-                        <button
-                          key={cover}
-                          type="button"
-                          role="radio"
-                          aria-checked={field.value === cover}
-                          aria-label={cover.split("/").pop() ?? cover}
-                          onClick={() => field.onChange(cover)}
-                          style={{ backgroundImage: `url(${cover})` }}
-                          className={cn(
-                            "focus-visible:outline-ring relative h-12 w-20 rounded-md border-2 bg-cover bg-center focus-visible:outline-2",
-                            field.value === cover
-                              ? "border-brand-500"
-                              : "border-border"
-                          )}
-                        >
-                          {field.value === cover ? (
-                            <span className="bg-brand-500 text-brand-950 absolute -top-1.5 -right-1.5 flex size-4 items-center justify-center rounded-full">
-                              <CheckIcon className="size-3" aria-hidden="true" />
-                            </span>
-                          ) : null}
-                        </button>
-                      ))}
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
             </form>
           </Form>
 

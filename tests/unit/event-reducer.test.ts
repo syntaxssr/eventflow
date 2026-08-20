@@ -22,7 +22,6 @@ const NEW_EVENT: EventItem = {
   expectedAttendees: 30,
   color: "#C3DCFF",
   status: "draft",
-  coverImage: "",
   createdAt: AT,
   createdBy: "u-1",
   updatedAt: AT,

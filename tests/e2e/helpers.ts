@@ -1,4 +1,4 @@
-import type { Locator, Page } from "@playwright/test"
+import { expect, type Locator, type Page } from "@playwright/test"
 
 export const DEMO_EMAIL = "alisa.l@company.co.th"
 export const DEMO_PASSWORD = "eventflow"
@@ -168,4 +168,57 @@ export async function gotoRoute(page: Page, route: AppRoute) {
     .getByRole("link", { name: "ดูทั้งหมด" })
     .click()
   await page.waitForURL(`**${ROUTE_PATH[route]}`)
+}
+
+/**
+ * เลือกเวลาจาก `TimePickerField` (ป๊อปโอเวอร์รายการเวลาทุก 15 นาที)
+ *
+ * ใช้แทนการ `fill()` ช่อง `input[type="time"]` เดิม — รอให้ป๊อปโอเวอร์ก่อนหน้า
+ * ปิดสนิทก่อนเสมอ ไม่งั้นจะเจอ listbox ค้างสองอันระหว่าง animation
+ */
+export async function pickTime(
+  page: Page,
+  scope: Locator,
+  label: string,
+  time: string
+) {
+  await expect(page.getByRole("listbox")).toHaveCount(0)
+  await scope.getByLabel(label).click()
+  const list = page.getByRole("listbox")
+  await expect(list).toBeVisible()
+  await list.getByRole("option", { name: new RegExp(`^${time}`) }).click()
+  await expect(page.getByRole("listbox")).toHaveCount(0)
+}
+
+const THAI_MONTHS = [
+  "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+  "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม",
+]
+
+/**
+ * เลือกวันที่จาก `DatePickerField` (ปุ่ม + ปฏิทิน) ด้วยคีย์ ISO เช่น "2026-11-20"
+ *
+ * ใช้แทนการ `fill()` ช่อง `input[type="date"]` เดิม — ปฏิทินเปิดที่เดือนปัจจุบัน
+ * จึงกด "เดือนถัดไป" ไล่ไปจนเจอวันเป้าหมาย (aria-label ของปุ่มวันเป็นไทย
+ * ปีคริสต์ศักราช เช่น "วันศุกร์ที่ 20 พฤศจิกายน 2026")
+ */
+export async function pickDate(
+  page: Page,
+  scope: Locator,
+  label: string,
+  dateKey: string
+) {
+  const [year, month, day] = dateKey.split("-").map(Number)
+  const dayLabel = new RegExp(`ที่ ${day} ${THAI_MONTHS[month - 1]} ${year}$`)
+
+  await scope.getByLabel(label, { exact: true }).click()
+  const calendar = page.locator('[data-slot="popover-content"]')
+  await expect(calendar).toBeVisible()
+
+  const target = calendar.getByRole("button", { name: dayLabel })
+  for (let hop = 0; hop < 24 && !(await target.count()); hop += 1) {
+    await calendar.getByRole("button", { name: "Go to the Next Month" }).click()
+  }
+  await target.click()
+  await expect(calendar).toBeHidden()
 }

@@ -1,4 +1,5 @@
 import { daysBetween, fromDateKey, toDateKey } from "@/constants/mock-date"
+import { getEventForegroundColor } from "@/constants/event-colors"
 import {
   CalendarDaysIcon,
   ChartNoAxesColumnIncreasingIcon,
@@ -14,6 +15,7 @@ import type { DuplicateEventOptions, EventItem } from "@/types/event"
 import type { FileCategory } from "@/types/file"
 import type { Task } from "@/types/task"
 import type { TimelineItem } from "@/types/timeline"
+import { getReadableTextColor } from "./color"
 import { newId } from "./id"
 
 /**
@@ -21,6 +23,16 @@ import { newId } from "./id"
  */
 export function getEventColor(event: Pick<EventItem, "color">): string {
   return event.color
+}
+
+/**
+ * สีไอคอนบนพื้นสีประจำกิจกรรม — ใช้สีคู่ประจำของสีนั้นตามระบบสถานะ
+ * (เหมือนที่ avatar ทำ) ไม่ใช่ดำ/ขาวกลาง ๆ
+ *
+ * สีนอกพาเลต (ข้อมูลเก่าหรือกำหนดเอง) ถึงจะ fallback เป็นดำ/ขาวที่อ่านออก
+ */
+export function getEventIconColor(background: string): string {
+  return getEventForegroundColor(background) ?? getReadableTextColor(background)
 }
 
 /** Emoji สำหรับใช้เป็นภาพนำกิจกรรม โดยอิงจากคำสำคัญของชื่อทั้งไทยและอังกฤษ */

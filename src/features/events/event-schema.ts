@@ -30,7 +30,6 @@ export const eventSchema = z
       .min(0, { message: "event.attendeesInvalid" }),
     status: z.enum(EVENT_STATUSES),
     color: z.enum(EVENT_COLORS),
-    coverImage: z.string(),
   })
   .refine((values) => values.endDate >= values.startDate, {
     message: "event.endBeforeStart",
@@ -44,26 +43,3 @@ export const eventSchema = z
 
 export type EventFormValues = z.infer<typeof eventSchema>
 
-/**
- * ภาพปกให้เลือกใน Prototype (การอัปโหลดจริงอยู่ใน Phase 6)
- * แต่ละไฟล์คือสีพื้นไล่ระดับบนลงล่าง + เกรน สร้างจากสคริปต์ ไม่ได้วาดมือ
- *
- * เป็นชุดของตัวเอง ไม่ผูกกับพาเลต avatar แล้ว — ภาพปกเป็นของตกแต่งที่ไม่สื่อสถานะ
- * จึงใช้โทนนุ่มชุดนี้ต่อได้ ขณะที่ avatar ย้ายไปใช้ 8 สีสถานะ
- */
-export const COVER_OPTIONS = [
-  "butter",
-  "olive-gold",
-  "moss",
-  "peach",
-  "apricot",
-  "coral-red",
-  "mist",
-  "sage-teal",
-  "deep-ocean",
-  "orchid",
-  "taupe",
-  "sky",
-  "periwinkle",
-  "linen",
-].map((name) => `/covers/${name}.svg`)

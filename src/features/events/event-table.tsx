@@ -16,8 +16,7 @@ import {
 import { ROUTES } from "@/constants/app"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
-import { getReadableTextColor } from "@/lib/color"
-import { getEventColor } from "@/lib/event"
+import { getEventColor, getEventIconColor } from "@/lib/event"
 import { formatDateRange, formatNumber } from "@/lib/format"
 import type { EventItem, EventProgress } from "@/types/event"
 import type { User } from "@/types/user"
@@ -77,7 +76,7 @@ export function EventTable({ rows }: { rows: EventRow[] }) {
                   max={10}
                   overflowStyle={{
                     backgroundColor: eventColor,
-                    color: getReadableTextColor(eventColor),
+                    color: getEventIconColor(eventColor),
                   }}
                 />
               </TableCell>

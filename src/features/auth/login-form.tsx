@@ -82,7 +82,9 @@ export function LoginForm() {
     toast.success(
       user
         ? `${t("auth.welcomeBack")}, ${getFullName(user, locale)}`
-        : t("auth.welcomeBack")
+        : t("auth.welcomeBack"),
+      // อิโมจิเดียวกับที่ทักทายบน hero ของหน้า Login ใช้แทนไอคอนวงกลมเริ่มต้น
+      { icon: "👋🏻" }
     )
 
     router.replace(ROUTES.dashboard)

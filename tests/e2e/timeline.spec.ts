@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test"
 
-import { gotoRoute, signIn } from "./helpers"
+import { gotoRoute, pickTime, signIn } from "./helpers"
 
 async function gotoTimeline(page: Page) {
   await signIn(page)
@@ -75,8 +75,8 @@ test.describe("Phase 5 — Timeline editing", () => {
     const dialog = page.getByRole("dialog")
     await dialog.getByLabel("ชื่อรายการ").fill("แถลงข่าวก่อนงาน")
     await dialog.getByLabel("วันที่").fill("2026-09-10")
-    await dialog.getByLabel("เวลาเริ่ม").fill("10:00")
-    await dialog.getByLabel("เวลาสิ้นสุด").fill("11:00")
+    await pickTime(page, dialog, "เวลาเริ่ม", "10:00")
+    await pickTime(page, dialog, "เวลาสิ้นสุด", "11:00")
     await dialog.getByLabel("สถานที่").fill("ห้องแถลงข่าว ชั้น 1")
     await dialog.getByLabel(/อลิสา ลีลายุวัฒนกุล/).check()
     await dialog.getByRole("button", { name: "บันทึก" }).click()
@@ -89,19 +89,19 @@ test.describe("Phase 5 — Timeline editing", () => {
     )
   })
 
-  test("แสดง validation เมื่อเวลาสิ้นสุดมาก่อนเวลาเริ่ม", async ({ page }) => {
+  test("เลือกเวลาสิ้นสุดก่อนเวลาเริ่มไม่ได้เลย", async ({ page }) => {
     await gotoTimeline(page)
 
     await page.getByTestId("create-timeline").click()
     const dialog = page.getByRole("dialog")
-    await dialog.getByLabel("ชื่อรายการ").fill("รายการทดสอบเวลา")
-    await dialog.getByLabel("สถานที่").fill("ที่ไหนสักแห่ง")
-    await dialog.getByLabel(/อลิสา ลีลายุวัฒนกุล/).check()
-    await dialog.getByLabel("เวลาเริ่ม").fill("15:00")
-    await dialog.getByLabel("เวลาสิ้นสุด").fill("14:00")
-    await dialog.getByRole("button", { name: "บันทึก" }).click()
+    await pickTime(page, dialog, "เวลาเริ่ม", "15:00")
 
-    await expect(page.getByText("เวลาสิ้นสุดต้องมาหลังเวลาเริ่ม")).toBeVisible()
+    // ตัวเลือกเวลาสิ้นสุดเหลือเฉพาะเวลาหลัง 15:00 พร้อมบอกความยาวของช่วง
+    await dialog.getByLabel("เวลาสิ้นสุด").click()
+    const list = page.getByRole("listbox")
+    await expect(list.getByRole("option", { name: /^14:00/ })).toHaveCount(0)
+    await expect(list.getByRole("option").first()).toContainText("15:15")
+    await expect(list.getByRole("option").first()).toContainText("15 นาที")
   })
 
   test("แสดง validation เมื่อยังไม่เลือกผู้รับผิดชอบ", async ({ page }) => {
@@ -126,13 +126,13 @@ test.describe("Phase 5 — Timeline editing", () => {
       .click()
 
     const dialog = page.getByRole("dialog")
-    await dialog.getByLabel("เวลาเริ่ม").fill("19:30")
-    await dialog.getByLabel("เวลาสิ้นสุด").fill("20:10")
+    await pickTime(page, dialog, "เวลาเริ่ม", "19:30")
+    await pickTime(page, dialog, "เวลาสิ้นสุด", "20:15")
     await dialog.getByRole("button", { name: "บันทึก" }).click()
 
     await expect(page.getByText("บันทึกการเปลี่ยนแปลงแล้ว")).toBeVisible()
     await expect(page.getByTestId("timeline-phase-during")).toContainText(
-      "19:30–20:10"
+      "19:30–20:15"
     )
 
     // กิตติคุณ (u-3) เป็นผู้รับผิดชอบร่วม ต้องได้รับการแจ้งเตือน

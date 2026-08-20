@@ -11,8 +11,7 @@ import { Progress } from "@/components/ui/progress"
 import { ROUTES } from "@/constants/app"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
-import { getReadableTextColor } from "@/lib/color"
-import { getEventColor, getEventIcon } from "@/lib/event"
+import { getEventColor, getEventIcon, getEventIconColor } from "@/lib/event"
 import {
   formatDateRange,
   formatNumber,
@@ -43,13 +42,12 @@ export function EventCard({
         className="focus-visible:outline-ring block focus-visible:outline-2 focus-visible:-outline-offset-2"
       >
         <CardContent className="space-y-3">
-          <StatusBadge size="sm" style={EVENT_STATUS_STYLE[event.status]} />
           <div className="flex items-center gap-3">
             <span
               className="flex size-10 shrink-0 items-center justify-center rounded-xl"
               style={{
                 backgroundColor: eventColor,
-                color: getReadableTextColor(eventColor),
+                color: getEventIconColor(eventColor),
               }}
               aria-hidden="true"
             >
@@ -111,20 +109,26 @@ export function EventCard({
             </p>
           </div>
 
-          {/* กลุ่ม avatar สื่อความหมายในตัวอยู่แล้ว ไม่ต้องมีป้ายกำกับหรือเส้นคั่น
+          {/* แถวปิดท้าย: สถานะซ้าย ผู้รับผิดชอบขวา — สองอย่างนี้กินพื้นที่คนละฝั่ง
+              ของบรรทัดเดียวกันได้พอดี การ์ดจึงเตี้ยลงหนึ่งบรรทัด
+              กลุ่ม avatar สื่อความหมายในตัวอยู่แล้ว ไม่ต้องมีป้ายกำกับหรือเส้นคั่น
               aria-label คงไว้ให้ screen reader ยังรู้ว่ากลุ่มนี้คือผู้รับผิดชอบ */}
-          <div
-            className="flex min-h-6 items-center justify-end gap-2"
-            aria-label={t("event.assignees")}
-          >
-            <AvatarGroup
-              users={members}
-              max={10}
-              overflowStyle={{
-                backgroundColor: eventColor,
-                color: getReadableTextColor(eventColor),
-              }}
-            />
+          <div className="flex min-h-6 items-center justify-between gap-2">
+            <StatusBadge size="sm" style={EVENT_STATUS_STYLE[event.status]} />
+            <span
+              className="flex shrink-0 items-center gap-2"
+              aria-label={t("event.assignees")}
+            >
+              {/* โชว์ 4 คนแล้วรวบที่เหลือเป็น +N — มากกว่านี้จะเบียดกับป้ายสถานะ */}
+              <AvatarGroup
+                users={members}
+                max={4}
+                overflowStyle={{
+                  backgroundColor: eventColor,
+                  color: getEventIconColor(eventColor),
+                }}
+              />
+            </span>
           </div>
         </CardContent>
       </Link>

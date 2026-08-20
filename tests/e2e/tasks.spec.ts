@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test"
 
-import { gotoRoute, signIn } from "./helpers"
+import { gotoRoute, pickDate, signIn } from "./helpers"
 
 async function gotoMyTasks(page: Page) {
   await signIn(page)
@@ -298,7 +298,7 @@ test.describe("Phase 4 — Create & delete", () => {
     await page.getByTestId("create-task").click()
     const dialog = page.getByRole("dialog")
     await dialog.getByLabel("ชื่องาน").fill("ทดสอบเพิ่มงานใหม่")
-    await dialog.getByLabel("กำหนดส่ง").fill("2026-09-10")
+    await pickDate(page, dialog, "กำหนดส่ง", "2026-09-10")
     await dialog.getByRole("button", { name: "บันทึก" }).click()
 
     await expect(page.getByText("เพิ่มงานเรียบร้อยแล้ว")).toBeVisible()

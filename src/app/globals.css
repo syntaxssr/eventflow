@@ -645,20 +645,9 @@
   }
 }
 
-/* Sonner — การ์ดพื้นกลาง (popover) ตามค่าเริ่มต้นของไลบรารี สถานะสื่อผ่าน
-   ไอคอนที่รูปทรงต่างกันต่อชนิด ไม่พึ่งสีอย่างเดียว */
+/* Sonner — ไอคอนเป็นวงกลมสีที่ประกอบเองใน sonner.tsx (ToastIcon) แล้ว
+   รูปทรงต่างกันต่อชนิดในตัวไอคอนเองอยู่แล้ว จึงไม่พึ่งสีอย่างเดียว
+   เหลือแค่กันไม่ให้ไอคอนถูกบีบเมื่อข้อความยาว */
 [data-sonner-toast] [data-icon] {
   flex-shrink: 0;
-}
-[data-sonner-toast][data-type="success"] [data-icon] {
-  color: var(--success);
-}
-[data-sonner-toast][data-type="warning"] [data-icon] {
-  color: var(--warning);
-}
-[data-sonner-toast][data-type="info"] [data-icon] {
-  color: var(--info);
-}
-[data-sonner-toast][data-type="error"] [data-icon] {
-  color: var(--danger);
 }

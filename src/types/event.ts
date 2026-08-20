@@ -35,7 +35,6 @@ export interface EventItem extends AuditFields {
   /** สีประจำกิจกรรม — เลือกได้จาก EVENT_COLOR_OPTIONS */
   color: EventColor
   status: EventStatus
-  coverImage: string
   /** ถูกย้ายไป Trash เมื่อใด (null = ยังอยู่ในระบบ) */
   deletedAt: IsoDateTime | null
   deletedBy: Id | null

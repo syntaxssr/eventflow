@@ -2,7 +2,7 @@ import path from "node:path"
 
 import { expect, test } from "@playwright/test"
 
-import { gotoRoute, signIn } from "./helpers"
+import { gotoRoute, pickDate, pickTime, signIn } from "./helpers"
 
 const SAMPLE_FILE = path.join(
   __dirname,
@@ -31,8 +31,8 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
 
   const eventDialog = page.getByRole("dialog")
   await eventDialog.getByLabel("ชื่อกิจกรรม").fill("งานสัมมนาประจำไตรมาส Q4")
-  await eventDialog.getByLabel("วันที่เริ่มต้น").fill("2026-11-20")
-  await eventDialog.getByLabel("วันที่สิ้นสุด").fill("2026-11-20")
+  await pickDate(page, eventDialog, "วันที่เริ่มต้น", "2026-11-20")
+  await pickDate(page, eventDialog, "วันที่สิ้นสุด", "2026-11-20")
   await eventDialog.getByLabel("สถานที่").fill("ห้องประชุมใหญ่ สำนักงานใหญ่")
   await eventDialog.getByRole("button", { name: "บันทึก" }).click()
   await expect(page.getByText("สร้างกิจกรรมเรียบร้อยแล้ว")).toBeVisible()
@@ -49,7 +49,7 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
 
   const taskDialog = page.getByRole("dialog")
   await taskDialog.getByLabel("ชื่องาน").fill("เตรียมเอกสารประกอบสัมมนา")
-  await taskDialog.getByLabel("กำหนดส่ง").fill("2026-11-10")
+  await pickDate(page, taskDialog, "กำหนดส่ง", "2026-11-10")
   // ผู้รับผิดชอบ 3 คน (อลิสาถูกเลือกไว้เป็นค่าเริ่มต้น)
   await taskDialog.getByLabel(/หฤทัย ทิพยประไพ/).check()
   await taskDialog.getByLabel(/กิตติคุณ เจริญพานิช/).check()
@@ -107,8 +107,8 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
   const timelineDialog = page.getByRole("dialog")
   await timelineDialog.getByLabel("ชื่อรายการ").fill("ลงทะเบียนหน้างาน")
   await timelineDialog.getByLabel("วันที่").fill("2026-11-20")
-  await timelineDialog.getByLabel("เวลาเริ่ม").fill("08:30")
-  await timelineDialog.getByLabel("เวลาสิ้นสุด").fill("09:00")
+  await pickTime(page, timelineDialog, "เวลาเริ่ม", "08:30")
+  await pickTime(page, timelineDialog, "เวลาสิ้นสุด", "09:00")
   await timelineDialog.getByLabel("สถานที่").fill("หน้าห้องประชุมใหญ่")
   await timelineDialog.getByLabel(/อลิสา ลีลายุวัฒนกุล/).check()
   await timelineDialog.getByRole("button", { name: "บันทึก" }).click()

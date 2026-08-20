@@ -12,8 +12,7 @@ import { getToday } from "@/constants/mock-date"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
 import { daysBetween, fromDateKey } from "@/constants/mock-date"
-import { getReadableTextColor } from "@/lib/color"
-import { getEventColor, getEventIcon } from "@/lib/event"
+import { getEventColor, getEventIcon, getEventIconColor } from "@/lib/event"
 import {
   formatDateRange,
   formatNumber,
@@ -64,7 +63,7 @@ export function FeaturedEventCard({
                 className="flex size-11 shrink-0 items-center justify-center rounded-xl"
                 style={{
                   backgroundColor: eventColor,
-                  color: getReadableTextColor(eventColor),
+                  color: getEventIconColor(eventColor),
                 }}
                 aria-hidden="true"
               >

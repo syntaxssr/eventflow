@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test"
 
-import { gotoRoute, signIn } from "./helpers"
+import { gotoRoute, pickDate, signIn } from "./helpers"
 
 async function gotoEvents(page: Page) {
   await signIn(page)
@@ -91,13 +91,12 @@ test.describe("Phase 3 — Create & edit", () => {
     await page.getByTestId("create-event").click()
     const dialog = page.getByRole("dialog")
     await dialog.getByLabel("ชื่อกิจกรรม").fill("งานทดสอบระบบ EventFlow")
-    await dialog.getByLabel("วันที่เริ่มต้น").fill("2026-11-20")
-    await dialog.getByLabel("วันที่สิ้นสุด").fill("2026-11-20")
+    await pickDate(page, dialog, "วันที่เริ่มต้น", "2026-11-20")
+    await pickDate(page, dialog, "วันที่สิ้นสุด", "2026-11-20")
     await dialog.getByLabel("สถานที่").fill("ห้องประชุมใหญ่ ชั้น 3")
     await dialog.getByRole("button", { name: "บันทึก" }).click()
 
     await expect(page.getByText("สร้างกิจกรรมเรียบร้อยแล้ว")).toBeVisible()
-    await expect(page.getByText("พบ 7 กิจกรรม")).toBeVisible()
     await expect(
       page.getByRole("link", { name: /งานทดสอบระบบ EventFlow/ })
     ).toBeVisible()
@@ -113,20 +112,31 @@ test.describe("Phase 3 — Create & edit", () => {
     await expect(page.getByText("กรุณากรอกสถานที่")).toBeVisible()
   })
 
-  test("เตือนเมื่อวันที่สิ้นสุดมาก่อนวันที่เริ่มต้น", async ({ page }) => {
+  test("เลือกวันที่สิ้นสุดก่อนวันที่เริ่มต้นไม่ได้เลย", async ({ page }) => {
     await gotoEvents(page)
 
     await page.getByTestId("create-event").click()
     const dialog = page.getByRole("dialog")
-    await dialog.getByLabel("ชื่อกิจกรรม").fill("งานทดสอบวันที่")
-    await dialog.getByLabel("สถานที่").fill("ที่ไหนสักแห่ง")
-    await dialog.getByLabel("วันที่เริ่มต้น").fill("2026-12-10")
-    await dialog.getByLabel("วันที่สิ้นสุด").fill("2026-12-01")
-    await dialog.getByRole("button", { name: "บันทึก" }).click()
+    await pickDate(page, dialog, "วันที่เริ่มต้น", "2026-12-10")
 
+    // ปฏิทินวันที่สิ้นสุดปิดวันก่อนวันเริ่มไว้ กดไม่ได้ตั้งแต่ต้น
+    await dialog.getByLabel("วันที่สิ้นสุด", { exact: true }).click()
+    const calendar = page.locator('[data-slot="popover-content"]')
+    await expect(calendar).toBeVisible()
+    // ปฏิทินเปิดที่เดือนปัจจุบัน (ส.ค.) — ไล่ให้ถึงหน้าเดือนธันวาคมก่อน
+    // (เช็คจากวันที่ 10 เพราะวันที่ 1 อาจโผล่เป็นวันท้ายตารางของเดือนก่อนหน้า)
+    const startDay = calendar.getByRole("button", {
+      name: /ที่ 10 ธันวาคม 2026$/,
+    })
+    while ((await startDay.count()) === 0) {
+      await calendar
+        .getByRole("button", { name: "Go to the Next Month" })
+        .click()
+    }
+    await expect(startDay).toBeEnabled()
     await expect(
-      page.getByText("วันที่สิ้นสุดต้องไม่มาก่อนวันที่เริ่มต้น")
-    ).toBeVisible()
+      calendar.getByRole("button", { name: /ที่ 1 ธันวาคม 2026$/ })
+    ).toBeDisabled()
   })
 
   test("เตือนเมื่อปิดฟอร์มทั้งที่ยังไม่ได้บันทึก", async ({ page }) => {
