@@ -69,6 +69,19 @@ import { TaskTable } from "./task-table"
 import { useTaskActions } from "./use-task-actions"
 
 type ViewMode = "table" | "kanban" | "calendar"
+
+/** ความกว้างของตัวกรองแต่ละช่องตอนโหลด วัดจากแถบจริง */
+const SKELETON_FILTER_WIDTHS = [
+  "w-24",
+  "w-21",
+  "w-72",
+  "w-40",
+  "w-23",
+] as const
+
+/** จำนวนแถวโครงร่างของตาราง — เต็มหน้าจอพอดีโดยไม่ต้องเลื่อน */
+const SKELETON_TASK_ROWS = 8
+
 type DueFilter = "all" | "overdue" | "soon" | "incomplete"
 type Scope = "mine" | "all"
 
@@ -285,11 +298,32 @@ export function TasksView({
 
   if (pageState === "loading") {
     return (
-      <div className="space-y-3">
-        <Skeleton className="h-8 w-64" />
-        {Array.from({ length: 6 }).map((_, index) => (
-          <Skeleton key={index} className="h-12 w-full" />
-        ))}
+      // โครงร่างไล่ตามหน้าจริงทีละบล็อก ไม่งั้นพอโหลดเสร็จตารางจะกระโดด
+      <div className="space-y-4" aria-hidden="true">
+        {showHeader ? (
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Skeleton className="h-7 w-40" />
+            <Skeleton className="h-7 w-24" />
+          </div>
+        ) : null}
+
+        <div className="flex flex-wrap items-end gap-2">
+          {SKELETON_FILTER_WIDTHS.map((width, index) => (
+            <Skeleton key={index} className={cn("h-7", width)} />
+          ))}
+        </div>
+
+        <Skeleton className="h-5 w-24" />
+
+        {/* ตารางจริงมีหัวตารางแล้วตามด้วยแถวความสูงเท่า ๆ กัน */}
+        <div className="overflow-hidden rounded-xl border">
+          <Skeleton className="h-10 w-full rounded-none" />
+          {Array.from({ length: SKELETON_TASK_ROWS }).map((_, index) => (
+            <div key={index} className="border-t px-3 py-2.5">
+              <Skeleton className="h-5 w-full" />
+            </div>
+          ))}
+        </div>
       </div>
     )
   }
