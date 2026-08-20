@@ -1,14 +1,10 @@
 import { expect, test, type Page } from "@playwright/test"
 
-import { signIn } from "./helpers"
+import { gotoRoute, signIn } from "./helpers"
 
 async function gotoEvents(page: Page) {
   await signIn(page)
-  await page
-    .getByTestId("sidebar-nav")
-    .getByRole("link", { name: "กิจกรรม", exact: true })
-    .click()
-  await page.waitForURL("**/events")
+  await gotoRoute(page, "events")
   await expect(page.getByTestId("event-grid")).toBeVisible()
 }
 

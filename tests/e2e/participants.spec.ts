@@ -2,7 +2,7 @@ import path from "node:path"
 
 import { expect, test, type Page } from "@playwright/test"
 
-import { signIn } from "./helpers"
+import { gotoRoute, signIn } from "./helpers"
 
 const SAMPLE_FILE = path.join(
   __dirname,
@@ -15,11 +15,7 @@ const SAMPLE_FILE = path.join(
 
 async function gotoParticipants(page: Page) {
   await signIn(page)
-  await page
-    .getByTestId("sidebar-nav")
-    .getByRole("link", { name: "ผู้เข้าร่วม", exact: true })
-    .click()
-  await page.waitForURL("**/participants")
+  await gotoRoute(page, "participants")
   await expect(page.getByTestId("participant-summary")).toBeVisible()
 }
 
@@ -256,11 +252,7 @@ test.describe("Phase 7 — Excel export", () => {
 test.describe("Phase 7 — Event detail tab", () => {
   test("แท็บผู้เข้าร่วมในหน้ากิจกรรมใช้ข้อมูลเดียวกัน", async ({ page }) => {
     await signIn(page)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "กิจกรรม", exact: true })
-      .click()
-    await page.waitForURL("**/events")
+    await gotoRoute(page, "events")
     await page
       .getByRole("link", { name: /งานเลี้ยงประจำปีของบริษัท 2569/ })
       .first()

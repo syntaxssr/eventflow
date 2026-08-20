@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test"
 
+import { gotoRoute, type AppRoute } from "./helpers"
+
 const DEMO_EMAIL = "alisa.l@company.co.th"
 const DEMO_PASSWORD = "eventflow"
 
@@ -135,28 +137,42 @@ test.describe("Phase 1 — Application Shell", () => {
     await signIn(page)
     const nav = page.getByTestId("sidebar-nav")
 
-    const routes = [
+    // Sidebar เหลือแค่ 3 เมนูหลัก หน้าที่เหลือเข้าทางการ์ด/เมนูอื่น (ดูเทสต์ถัดไป)
+    const links = [
       { name: "กิจกรรม", url: /\/events$/ },
-      { name: "งานของฉัน", url: /\/my-tasks$/ },
-      { name: "ไฟล์", url: /\/files$/ },
-      { name: "ไทม์ไลน์", url: /\/timeline$/ },
-      { name: "ผู้เข้าร่วม", url: /\/participants$/ },
-      { name: "การแจ้งเตือน", url: /\/notifications$/ },
-      { name: "ประวัติการใช้งาน", url: /\/activity$/ },
       { name: "ถังขยะ", url: /\/trash$/ },
-      { name: "โปรไฟล์", url: /\/profile$/ },
-      { name: "ตั้งค่าการแจ้งเตือน", url: /\/settings\/notifications$/ },
       { name: "แดชบอร์ด", url: /\/dashboard$/ },
     ]
 
-    for (const route of routes) {
-      const link = nav.getByRole("link", { name: route.name, exact: true })
-      await expect(link).toBeVisible()
-      await link.click()
-      await page.waitForURL(route.url)
-      await expect(
-        page.getByRole("heading", { level: 1, name: route.name })
-      ).toBeVisible()
+    for (const link of links) {
+      const item = nav.getByRole("link", { name: link.name, exact: true })
+      await expect(item).toBeVisible()
+      await item.click()
+      await expect(page).toHaveURL(link.url)
+    }
+  })
+
+  test("ทุกหน้าหลักเปิดได้จากทางเข้าจริงในแอป", async ({ page }) => {
+    await signIn(page)
+
+    // ตรวจว่า "ไปถึงได้" เท่านั้น — หัวข้อของแต่ละหน้ามีเทสต์ของตัวเองอยู่แล้ว
+    // (และบางหน้า เช่น กิจกรรม ออกแบบใหม่ให้ไม่มีหัวเรื่อง h1)
+    const pages: { route: AppRoute; url: RegExp }[] = [
+      { route: "events", url: /\/events$/ },
+      { route: "myTasks", url: /\/my-tasks$/ },
+      { route: "files", url: /\/files$/ },
+      { route: "timeline", url: /\/timeline$/ },
+      { route: "participants", url: /\/participants/ },
+      { route: "notifications", url: /\/notifications$/ },
+      { route: "activity", url: /\/activity$/ },
+      { route: "trash", url: /\/trash$/ },
+      { route: "profile", url: /\/profile$/ },
+      { route: "dashboard", url: /\/dashboard$/ },
+    ]
+
+    for (const item of pages) {
+      await gotoRoute(page, item.route)
+      await expect(page).toHaveURL(item.url)
     }
   })
 
@@ -195,7 +211,7 @@ test.describe("Phase 1 — Application Shell", () => {
 
     const nav = page.getByTestId("sidebar-nav")
     await expect(nav.getByRole("link", { name: "Dashboard" })).toBeVisible()
-    await expect(nav.getByRole("link", { name: "My Tasks" })).toBeVisible()
+    await expect(nav.getByRole("link", { name: "Events" })).toBeVisible()
     await expect(page.locator("html")).toHaveAttribute("lang", "en")
   })
 
@@ -221,9 +237,8 @@ test.describe("Phase 1 — Application Shell", () => {
     })
 
     await signIn(page)
-    const nav = page.getByTestId("sidebar-nav")
-    await nav.getByRole("link", { name: "กิจกรรม", exact: true }).click()
-    await nav.getByRole("link", { name: "ไฟล์", exact: true }).click()
+    await gotoRoute(page, "events")
+    await gotoRoute(page, "files")
     await page.waitForLoadState("networkidle")
 
     expect(errors).toEqual([])

@@ -1,29 +1,24 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test, type Page } from "@playwright/test"
 
-import { signIn } from "./helpers"
+import { gotoRoute, signIn, type AppRoute } from "./helpers"
 
 /** เส้นทางหลักทั้งหมดที่ต้องตรวจ (ตาม concept ข้อ 6) */
-const MAIN_ROUTES: { path: string; link: string }[] = [
-  { path: "/dashboard", link: "แดชบอร์ด" },
-  { path: "/events", link: "กิจกรรม" },
-  { path: "/my-tasks", link: "งานของฉัน" },
-  { path: "/files", link: "ไฟล์" },
-  { path: "/timeline", link: "ไทม์ไลน์" },
-  { path: "/participants", link: "ผู้เข้าร่วม" },
-  { path: "/notifications", link: "การแจ้งเตือน" },
-  { path: "/activity", link: "ประวัติการใช้งาน" },
-  { path: "/trash", link: "ถังขยะ" },
-  { path: "/profile", link: "โปรไฟล์" },
-  { path: "/settings/notifications", link: "ตั้งค่าการแจ้งเตือน" },
+const MAIN_ROUTES: { path: string; route: AppRoute }[] = [
+  { path: "/dashboard", route: "dashboard" },
+  { path: "/events", route: "events" },
+  { path: "/my-tasks", route: "myTasks" },
+  { path: "/files", route: "files" },
+  { path: "/timeline", route: "timeline" },
+  { path: "/participants", route: "participants" },
+  { path: "/notifications", route: "notifications" },
+  { path: "/activity", route: "activity" },
+  { path: "/trash", route: "trash" },
+  { path: "/profile", route: "profile" },
 ]
 
-async function gotoRoute(page: Page, route: { path: string; link: string }) {
-  await page
-    .getByTestId("sidebar-nav")
-    .getByRole("link", { name: route.link, exact: true })
-    .click()
-  await page.waitForURL(`**${route.path}`)
+async function gotoAndSettle(page: Page, route: AppRoute) {
+  await gotoRoute(page, route)
   // รอ simulated loading ของหน้าจบก่อนสแกน
   await page.waitForTimeout(1500)
 }
@@ -60,7 +55,7 @@ test.describe("Phase 10 — Accessibility (axe)", () => {
       page,
     }) => {
       await signIn(page)
-      await gotoRoute(page, route)
+      await gotoAndSettle(page, route.route)
       await waitForToastsToClear(page)
 
       const results = await new AxeBuilder({ page })
@@ -77,6 +72,34 @@ test.describe("Phase 10 — Accessibility (axe)", () => {
       ).toEqual([])
     })
   }
+
+  test("Dialog ตั้งค่าการแจ้งเตือนไม่มี violation ระดับ serious/critical", async ({
+    page,
+  }) => {
+    await signIn(page)
+    await gotoRoute(page, "profile")
+    await waitForToastsToClear(page)
+    await page.getByTestId("open-notification-settings").click()
+    await expect(
+      page.getByTestId("notification-settings-dialog")
+    ).toBeVisible()
+
+    // สแกนเฉพาะ dialog — เนื้อหาหลังฉาก overlay ถูกหรี่ลง axe จึงวัด contrast
+    // ของมันเพี้ยน (หน้าที่อยู่เบื้องหลังถูกตรวจแยกไว้ในเทสต์ของแต่ละ route แล้ว)
+    const results = await new AxeBuilder({ page })
+      .include('[data-testid="notification-settings-dialog"]')
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze()
+    const severe = results.violations.filter((violation) =>
+      ["serious", "critical"].includes(violation.impact ?? "")
+    )
+    expect(
+      severe.map(
+        (violation) =>
+          `${violation.id} (${violation.nodes.length} nodes): ${violation.description}`
+      )
+    ).toEqual([])
+  })
 
   test("Toast ขณะแสดงเต็มมี contrast ผ่าน AA", async ({ page }) => {
     // signIn จบเมื่อถึง /dashboard — toast ต้อนรับยังแสดงอยู่ตอนนั้น
@@ -103,11 +126,7 @@ test.describe("Phase 10 — Accessibility (axe)", () => {
     page,
   }) => {
     await signIn(page)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "กิจกรรม", exact: true })
-      .click()
-    await page.waitForURL("**/events")
+    await gotoRoute(page, "events")
     await page
       .getByRole("link", { name: /งานเลี้ยงประจำปีของบริษัท 2569/ })
       .first()
@@ -142,7 +161,7 @@ test.describe("Phase 10 — Responsive & no horizontal overflow", () => {
           // mobile ไม่มี sidebar — ใช้ bottom nav + more sheet ไม่ต้องไล่ครบทุกหน้า
           break
         }
-        await gotoRoute(page, route)
+        await gotoAndSettle(page, route.route)
         const overflow = await page.evaluate(
           () =>
             document.documentElement.scrollWidth -
@@ -155,7 +174,7 @@ test.describe("Phase 10 — Responsive & no horizontal overflow", () => {
         // Mobile: bottom nav แสดง และแต่ละหน้าหลักไม่ overflow
         // วัดหน้าแรก (dashboard) ก่อนเพราะอยู่ที่นั่นแล้วหลัง login
         await expect(page.getByTestId("bottom-nav")).toBeVisible()
-        for (const path of ["/dashboard", "/events", "/my-tasks", "/notifications"]) {
+        for (const path of ["/dashboard", "/events", "/notifications"]) {
           if (path !== "/dashboard") {
             await page.getByTestId("bottom-nav").locator(`a[href="${path}"]`).click()
             await page.waitForURL(`**${path}`)
@@ -174,11 +193,7 @@ test.describe("Phase 10 — Responsive & no horizontal overflow", () => {
 
   test("ไม่มีการใช้ localStorage / sessionStorage เลย", async ({ page }) => {
     await signIn(page)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "กิจกรรม", exact: true })
-      .click()
-    await page.waitForURL("**/events")
+    await gotoRoute(page, "events")
 
     const storage = await page.evaluate(() => ({
       local: Object.keys(window.localStorage),

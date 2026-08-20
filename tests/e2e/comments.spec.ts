@@ -1,14 +1,10 @@
 import { expect, test, type Page } from "@playwright/test"
 
-import { signIn } from "./helpers"
+import { gotoRoute, signIn } from "./helpers"
 
 /** เปิดงานจากหน้า My Tasks ด้วยชื่องาน — สลับเป็นงานทั้งทีมได้เมื่องานไม่ใช่ของผู้ใช้ */
 async function openTask(page: Page, title: RegExp, scope: "mine" | "all" = "mine") {
-  await page
-    .getByTestId("sidebar-nav")
-    .getByRole("link", { name: "งานของฉัน", exact: true })
-    .click()
-  await page.waitForURL("**/my-tasks")
+  await gotoRoute(page, "myTasks")
   if (scope === "all") {
     await page.getByTestId("scope-select").click()
     await page.getByRole("option", { name: "งานทั้งทีม" }).click()
@@ -24,6 +20,13 @@ async function switchUser(page: Page, name: RegExp) {
   await page.getByTestId("switch-user-trigger").click()
   await page.getByRole("menuitemradio", { name }).click()
   await expect(page.getByTestId("user-menu")).toContainText(name)
+}
+
+/** ตั้งค่าการแจ้งเตือนเป็น dialog เปิดจากปุ่มบนการ์ดหน้าโปรไฟล์ */
+async function openNotificationSettings(page: Page) {
+  await gotoRoute(page, "profile")
+  await page.getByTestId("open-notification-settings").click()
+  await expect(page.getByTestId("notification-settings-dialog")).toBeVisible()
 }
 
 test.describe("Phase 8 — Comment thread", () => {
@@ -199,16 +202,17 @@ test.describe("Phase 8 — Mention & notifications", () => {
   }) => {
     // หฤทัยปิดการแจ้งเตือนประเภท mention ของตัวเอง
     await signIn(page, "haruthai.t@company.co.th")
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "ตั้งค่าการแจ้งเตือน", exact: true })
-      .click()
-    await page.waitForURL("**/settings/notifications")
+    await openNotificationSettings(page)
     await page.getByTestId("setting-mention").click()
     await expect(page.getByTestId("setting-mention")).toHaveAttribute(
       "data-state",
       "unchecked"
     )
+    // ปิด dialog ก่อน ไม่งั้น overlay บังเมนูผู้ใช้ตอนสลับผู้ใช้
+    await page.keyboard.press("Escape")
+    await expect(
+      page.getByTestId("notification-settings-dialog")
+    ).toBeHidden()
 
     // อลิสา mention หฤทัยในความคิดเห็น
     await switchUser(page, /อลิสา ลีลายุวัฒนกุล/)
@@ -221,11 +225,7 @@ test.describe("Phase 8 — Mention & notifications", () => {
 
     // กลับมาเป็นหฤทัย — จำนวนแจ้งเตือน "ถูกกล่าวถึง" ต้องเท่ากับ mock เดิม (1)
     await switchUser(page, /หฤทัย ทิพยประไพ/)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "การแจ้งเตือน", exact: true })
-      .click()
-    await page.waitForURL("**/notifications")
+    await gotoRoute(page, "notifications")
     await page.getByLabel("ประเภทการแจ้งเตือน").click()
     await page.getByRole("option", { name: "ถูกกล่าวถึง" }).click()
     await expect(page.getByText("พบ 1 รายการ")).toBeVisible()
@@ -266,11 +266,7 @@ test.describe("Phase 8 — Mention & notifications", () => {
 
   test("Settings แสดงสถานะบันทึกอัตโนมัติเมื่อสลับปุ่ม", async ({ page }) => {
     await signIn(page)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "ตั้งค่าการแจ้งเตือน", exact: true })
-      .click()
-    await page.waitForURL("**/settings/notifications")
+    await openNotificationSettings(page)
 
     await page.getByTestId("setting-dueSoon").click()
     await expect(page.getByTestId("save-indicator")).toBeVisible()

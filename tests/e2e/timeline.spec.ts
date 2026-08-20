@@ -1,14 +1,10 @@
 import { expect, test, type Page } from "@playwright/test"
 
-import { signIn } from "./helpers"
+import { gotoRoute, signIn } from "./helpers"
 
 async function gotoTimeline(page: Page) {
   await signIn(page)
-  await page
-    .getByTestId("sidebar-nav")
-    .getByRole("link", { name: "ไทม์ไลน์", exact: true })
-    .click()
-  await page.waitForURL("**/timeline")
+  await gotoRoute(page, "timeline")
   await expect(page.getByTestId("timeline-vertical")).toBeVisible()
 }
 

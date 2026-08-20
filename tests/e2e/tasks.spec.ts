@@ -1,14 +1,10 @@
 import { expect, test, type Page } from "@playwright/test"
 
-import { signIn } from "./helpers"
+import { gotoRoute, signIn } from "./helpers"
 
 async function gotoMyTasks(page: Page) {
   await signIn(page)
-  await page
-    .getByTestId("sidebar-nav")
-    .getByRole("link", { name: "งานของฉัน", exact: true })
-    .click()
-  await page.waitForURL("**/my-tasks")
+  await gotoRoute(page, "myTasks")
   await expect(page.getByTestId("task-table")).toBeVisible()
 }
 
@@ -215,12 +211,7 @@ test.describe("Phase 4 — Checklist", () => {
     await expect(page.getByTestId("task-status-select")).toContainText("เสร็จสิ้น")
 
     await page.keyboard.press("Escape")
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "แดชบอร์ด", exact: true })
-      .click()
-    await page.waitForURL("**/dashboard")
-
+    await gotoRoute(page, "dashboard")
     // เดิมเสร็จ 8 จาก 29 งาน — ติ๊ก checklist ครบทำให้เพิ่มเป็น 9
     await expect(page.getByText("เสร็จแล้ว 9 จาก 29 งาน")).toBeVisible()
   })

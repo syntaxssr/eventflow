@@ -2,7 +2,7 @@ import path from "node:path"
 
 import { expect, test } from "@playwright/test"
 
-import { signIn } from "./helpers"
+import { gotoRoute, signIn } from "./helpers"
 
 const SAMPLE_FILE = path.join(
   __dirname,
@@ -26,11 +26,7 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
   await signIn(page)
 
   /* ---- 2. สร้างกิจกรรมใหม่ ---- */
-  await page
-    .getByTestId("sidebar-nav")
-    .getByRole("link", { name: "กิจกรรม", exact: true })
-    .click()
-  await page.waitForURL("**/events")
+  await gotoRoute(page, "events")
   await page.getByTestId("create-event").click()
 
   const eventDialog = page.getByRole("dialog")
@@ -153,11 +149,7 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
   await page.keyboard.press("Escape")
 
   /* ---- 13.–14. Import Participants + Resolve Duplicate Email ---- */
-  await page
-    .getByTestId("sidebar-nav")
-    .getByRole("link", { name: "ผู้เข้าร่วม", exact: true })
-    .click()
-  await page.waitForURL("**/participants")
+  await gotoRoute(page, "participants")
   // กิจกรรมที่สร้างใหม่อยู่บนสุดของรายการ — เลือกงานเลี้ยงประจำปีที่มีรายชื่อเดิม
   await page.getByTestId("participant-event-select").click()
   await page
@@ -191,11 +183,7 @@ test("Main Flow: login → สร้างกิจกรรม → งาน+ch
   await expect(page.getByTestId("participant-summary-total")).toHaveText("93")
 
   /* ---- 15. Export PDF ---- */
-  await page
-    .getByTestId("sidebar-nav")
-    .getByRole("link", { name: "กิจกรรม", exact: true })
-    .click()
-  await page.waitForURL("**/events")
+  await gotoRoute(page, "events")
   await page
     .getByRole("link", { name: /งานเลี้ยงประจำปีของบริษัท 2569/ })
     .first()

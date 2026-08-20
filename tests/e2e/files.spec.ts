@@ -1,24 +1,16 @@
 import { expect, test, type Page } from "@playwright/test"
 
-import { signIn } from "./helpers"
+import { gotoRoute, signIn } from "./helpers"
 
 async function gotoFiles(page: Page) {
   await signIn(page)
-  await page
-    .getByTestId("sidebar-nav")
-    .getByRole("link", { name: "ไฟล์", exact: true })
-    .click()
-  await page.waitForURL("**/files")
+  await gotoRoute(page, "files")
   await expect(page.getByTestId("file-grid")).toBeVisible()
 }
 
 async function gotoTrash(page: Page) {
   await signIn(page)
-  await page
-    .getByTestId("sidebar-nav")
-    .getByRole("link", { name: "ถังขยะ", exact: true })
-    .click()
-  await page.waitForURL("**/trash")
+  await gotoRoute(page, "trash")
 }
 
 /** ไฟล์จำลองในหน่วยความจำ ไม่ต้องมีไฟล์จริงบนดิสก์ */
@@ -209,10 +201,7 @@ test.describe("Phase 6 — File detail & versions", () => {
     await expect(page.getByText("ย้ายไฟล์ไปถังขยะแล้ว")).toBeVisible()
     await expect(page.getByText("พบ 9 ไฟล์")).toBeVisible()
 
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "ถังขยะ", exact: true })
-      .click()
+    await gotoRoute(page, "trash")
     await expect(page.getByTestId("trash-table")).toContainText(
       "ผังที่นั่งและผังห้องจัดงาน"
     )
@@ -260,10 +249,7 @@ test.describe("Phase 6 — Trash", () => {
 
     await gotoFiles(page)
     await page.getByRole("button", { name: "มุมมองรายการ" }).click()
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "ถังขยะ", exact: true })
-      .click()
+    await gotoRoute(page, "trash")
     await page.waitForLoadState("networkidle")
 
     expect(errors).toEqual([])

@@ -61,7 +61,7 @@ export function RsvpSummaryCard({ summary }: { summary: RsvpSummary }) {
   })
 
   return (
-    <Card className="dashboard-detail-card">
+    <Card className="dashboard-detail-card" data-testid="rsvp-summary">
       <CardHeader>
         <CardTitle>{t("dashboard.rsvpSummary")}</CardTitle>
         <CardDescription className="flex items-center gap-1.5">

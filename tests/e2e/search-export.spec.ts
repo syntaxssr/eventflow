@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test"
 
-import { signIn } from "./helpers"
+import { gotoRoute, signIn } from "./helpers"
 
 async function openPalette(page: Page) {
   await page.keyboard.press("Control+k")
@@ -104,12 +104,7 @@ test.describe("Phase 9 — Activity History", () => {
     page,
   }) => {
     await signIn(page)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "ประวัติการใช้งาน", exact: true })
-      .click()
-    await page.waitForURL("**/activity")
-
+    await gotoRoute(page, "activity")
     await expect(page.getByText(/พบ \d+ รายการ/)).toBeVisible()
     const before = await page.getByTestId("activity-item").count()
     expect(before).toBeGreaterThan(50)
@@ -142,12 +137,7 @@ test.describe("Phase 9 — Activity History", () => {
 
   test("ค้นหาจากชื่อข้อมูลได้", async ({ page }) => {
     await signIn(page)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "ประวัติการใช้งาน", exact: true })
-      .click()
-    await page.waitForURL("**/activity")
-
+    await gotoRoute(page, "activity")
     await page.getByTestId("activity-search").fill("Golden Night")
     await expect(page.getByText(/พบ \d+ รายการ/)).toBeVisible()
     const results = page.getByTestId("activity-item")
@@ -158,11 +148,7 @@ test.describe("Phase 9 — Activity History", () => {
 test.describe("Phase 9 — Export", () => {
   test("ส่งออก PDF สรุปกิจกรรมได้ไฟล์จริง", async ({ page }) => {
     await signIn(page)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "กิจกรรม", exact: true })
-      .click()
-    await page.waitForURL("**/events")
+    await gotoRoute(page, "events")
     await page
       .getByRole("link", { name: /งานเลี้ยงประจำปีของบริษัท 2569/ })
       .first()
@@ -182,11 +168,7 @@ test.describe("Phase 9 — Export", () => {
 
   test("ส่งออก Excel เลือกเฉพาะบางชีตได้", async ({ page }) => {
     await signIn(page)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "กิจกรรม", exact: true })
-      .click()
-    await page.waitForURL("**/events")
+    await gotoRoute(page, "events")
     await page
       .getByRole("link", { name: /งานเลี้ยงประจำปีของบริษัท 2569/ })
       .first()
@@ -208,11 +190,7 @@ test.describe("Phase 9 — Export", () => {
 
   test("ไม่เลือกข้อมูลเลยจะส่งออกไม่ได้", async ({ page }) => {
     await signIn(page)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "กิจกรรม", exact: true })
-      .click()
-    await page.waitForURL("**/events")
+    await gotoRoute(page, "events")
     await page
       .getByRole("link", { name: /งานเลี้ยงประจำปีของบริษัท 2569/ })
       .first()
@@ -231,12 +209,7 @@ test.describe("Phase 9 — Export", () => {
 
   test("ดาวน์โหลดไฟล์จากหน้า Files ได้ไฟล์จริง", async ({ page }) => {
     await signIn(page)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "ไฟล์", exact: true })
-      .click()
-    await page.waitForURL("**/files")
-
+    await gotoRoute(page, "files")
     await page
       .getByRole("button", { name: /กำหนดการงานเลี้ยงประจำปี 2569/ })
       .click()
@@ -252,12 +225,7 @@ test.describe("Phase 9 — Profile", () => {
     page,
   }) => {
     await signIn(page)
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "โปรไฟล์", exact: true })
-      .click()
-    await page.waitForURL("**/profile")
-
+    await gotoRoute(page, "profile")
     const card = page.getByTestId("profile-card")
     await expect(card).toContainText("อลิสา ลีลายุวัฒนกุล")
     await expect(card).toContainText("alisa.l@company.co.th")
@@ -270,10 +238,7 @@ test.describe("Phase 9 — Profile", () => {
     await page.getByTestId("user-menu").click()
     await page.getByTestId("switch-user-trigger").click()
     await page.getByRole("menuitemradio", { name: /หฤทัย ทิพยประไพ/ }).click()
-    await page
-      .getByTestId("sidebar-nav")
-      .getByRole("link", { name: "โปรไฟล์", exact: true })
-      .click()
+    await gotoRoute(page, "profile")
     await expect(page.getByTestId("profile-card")).toContainText(
       "หฤทัย ทิพยประไพ"
     )
