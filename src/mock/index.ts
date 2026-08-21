@@ -54,6 +54,7 @@ function shiftValue(value: unknown, days: number): unknown {
 export function createInitialState(): AppState {
   const state: AppState = {
     session: null,
+    sessionHydrated: false,
     users: MOCK_USERS.map((user) => ({ ...user })),
     events: MOCK_EVENTS.map((event) => ({ ...event })),
     tasks: MOCK_TASKS.map((task) => ({

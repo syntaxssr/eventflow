@@ -41,6 +41,9 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         },
       }
 
+    case "auth/hydrate":
+      return { ...state, session: action.session, sessionHydrated: true }
+
     case "auth/signOut":
       return { ...state, session: null }
 

@@ -1,23 +1,17 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
-
-import { PageContainer, PageHeader } from "@/components/common/page-header"
-import { useT } from "@/i18n"
+import { PageContainer } from "@/components/common/page-header"
+import { Card, CardContent } from "@/components/ui/card"
 import { TasksView } from "./tasks-view"
 
 export function MyTasksView() {
-  const t = useT()
-  const searchParams = useSearchParams()
-  const isTeamScope = searchParams.get("scope") === "all"
-
   return (
     <PageContainer>
-      <PageHeader
-        title={t("nav.myTasks")}
-        description={isTeamScope ? t("task.subtitleAll") : t("task.subtitle")}
-      />
-      <TasksView />
+      <Card>
+        <CardContent className="[&_[data-slot=task-table]]:rounded-none [&_[data-slot=task-table]]:border-0">
+          <TasksView />
+        </CardContent>
+      </Card>
     </PageContainer>
   )
 }

@@ -6,22 +6,26 @@ import { Loader2Icon } from "lucide-react"
 
 import { ROUTES } from "@/constants/app"
 import { useT } from "@/i18n"
-import { useAppState } from "@/store"
+import { useAppState, useSessionHydrated } from "@/store"
 
 /**
  * ป้องกันหน้าภายในระบบ
  *
- * Prototype เก็บ session ไว้ใน memory เท่านั้น การ refresh จึงทำให้หลุดออกจากระบบ
- * และถูกส่งกลับไปหน้า Login เสมอ — เป็นพฤติกรรมที่ตั้งใจไว้
+ * Session อยู่ใน memory เป็นหลัก ยกเว้นผู้ที่ติ๊ก "จดจำฉันไว้" ซึ่งจะถูกกู้กลับมา
+ * จาก sessionStorage ตอนเปิดหน้า จึง refresh ได้โดยไม่หลุด (ดู store/session-storage)
+ *
+ * ต้องรอ `hydrated` ก่อนเสมอ ไม่งั้นจะเด้งไปหน้า Login ตั้งแต่จังหวะแรกที่ session
+ * ยังเป็น null ทั้งที่กำลังจะกู้กลับมาได้
  */
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const session = useAppState().session
+  const hydrated = useSessionHydrated()
   const router = useRouter()
   const t = useT()
 
   React.useEffect(() => {
-    if (!session) router.replace(ROUTES.login)
-  }, [session, router])
+    if (hydrated && !session) router.replace(ROUTES.login)
+  }, [hydrated, session, router])
 
   if (!session) {
     return (

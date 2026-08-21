@@ -70,6 +70,9 @@ import { useTaskActions } from "./use-task-actions"
 
 type ViewMode = "table" | "kanban" | "calendar"
 
+/** ตัวกรองใช้พื้น status-default ไม่ใช่ status-gray ของ background ไม่งั้นดูจมเหมือนถูกปิดใช้งาน */
+const FILTER_TRIGGER_CLASS = "bg-status-default dark:bg-input/30"
+
 /** ความกว้างของตัวกรองแต่ละช่องตอนโหลด วัดจากแถบจริง */
 const SKELETON_FILTER_WIDTHS = [
   "w-24",
@@ -405,6 +408,7 @@ export function TasksView({
               <Button
                 variant="outline"
                 size="sm"
+                className={FILTER_TRIGGER_CLASS}
                 data-testid="task-status-filter"
                 aria-label={
                   statuses.length > 0
@@ -485,6 +489,7 @@ export function TasksView({
               <Button
                 variant="outline"
                 size="sm"
+                className={FILTER_TRIGGER_CLASS}
                 aria-label={
                   priorities.length > 0
                     ? `${t("priority.label")}: ${priorities
@@ -560,7 +565,7 @@ export function TasksView({
               <Button
                 variant="outline"
                 size="sm"
-                className="w-72 justify-between"
+                className={cn("w-72 justify-between", FILTER_TRIGGER_CLASS)}
                 aria-label={t("task.assignees")}
               >
                 <span className="truncate">
@@ -602,7 +607,7 @@ export function TasksView({
               <Button
                 variant="outline"
                 size="sm"
-                className="w-40 justify-between"
+                className={cn("w-40 justify-between", FILTER_TRIGGER_CLASS)}
                 aria-label={t("task.filterDue")}
               >
                 <span className="truncate">{t(DUE_LABEL[due])}</span>
