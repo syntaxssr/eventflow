@@ -47,7 +47,7 @@ export function TaskTable({
               <button
                 type="button"
                 onClick={() => onOpenTask(task)}
-                className="hover:border-brand-300 focus-visible:outline-ring w-full space-y-2 rounded-lg border p-3 text-left transition-colors focus-visible:outline-2"
+                className="hover:border-brand-300 hover:bg-accent focus-visible:outline-ring w-full cursor-pointer space-y-2 rounded-lg border p-3 text-left transition-colors focus-visible:outline-2"
               >
                 <span className="flex items-start gap-1.5">
                   {task.dependsOn.length > 0 ? (
@@ -85,7 +85,10 @@ export function TaskTable({
         })}
       </ul>
 
-      <div className="hidden overflow-x-auto rounded-lg border sm:block">
+      <div
+        data-slot="task-table"
+        className="hidden overflow-x-auto rounded-lg border sm:block"
+      >
       <Table>
         <TableHeader className="bg-status-gray [&_th]:text-status-gray-foreground">
           <TableRow>
@@ -107,11 +110,18 @@ export function TaskTable({
               .filter((user): user is User => Boolean(user))
 
             return (
-              <TableRow key={task.id}>
-                <TableCell>
+              <TableRow
+                key={task.id}
+                onClick={() => onOpenTask(task)}
+                className="group cursor-pointer hover:bg-accent"
+              >
+                <TableCell className="relative before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-foreground before:opacity-0 before:transition-opacity group-hover:before:opacity-100 group-focus-within:before:opacity-100">
                   <button
                     type="button"
-                    onClick={() => onOpenTask(task)}
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      onOpenTask(task)
+                    }}
                     className="hover:text-brand-text focus-visible:outline-ring flex items-center gap-1.5 text-left font-medium focus-visible:outline-2"
                   >
                     {task.dependsOn.length > 0 ? (
