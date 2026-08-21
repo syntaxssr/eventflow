@@ -21,6 +21,11 @@ import type {
  */
 export interface AppState {
   session: AuthSession | null
+  /**
+   * true เมื่อพยายามกู้ session จาก sessionStorage เสร็จแล้ว (สำเร็จหรือไม่ก็ตาม)
+   * ตัวป้องกันหน้าต้องรอค่านี้ก่อนตัดสินใจเด้งไปหน้า Login
+   */
+  sessionHydrated: boolean
   users: User[]
   events: EventItem[]
   tasks: Task[]
@@ -44,6 +49,11 @@ export type AuthAction =
   | { type: "auth/signIn"; userId: Id; rememberMe: boolean; at: string }
   | { type: "auth/signOut" }
   | { type: "auth/switchUser"; userId: Id }
+  /**
+   * จบขั้นตอนกู้ session จาก sessionStorage ตอนเปิดหน้า
+   * `session` เป็น null ได้เมื่อไม่มีอะไรให้กู้ — ยังถือว่า hydrate เสร็จแล้ว
+   */
+  | { type: "auth/hydrate"; session: AuthSession | null }
 
 export type UserAction = {
   /** เปลี่ยนสี avatar ของผู้ใช้เอง — เลือกได้เฉพาะสีในพาเลต avatar */
