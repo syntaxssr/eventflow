@@ -93,6 +93,9 @@ export function DashboardView() {
     }
   }, [state, currentUser, today])
 
+  // แท็บความเคลื่อนไหวยืดยาวจนจบรายการ จึงต้องรู้ว่าแท็บไหนเปิดอยู่
+  const [detailTab, setDetailTab] = React.useState("urgent")
+
   const { state: pageState, retry } = usePageState(data.upcomingEvents.length === 0)
 
   if (pageState === "loading") {
@@ -148,7 +151,10 @@ export function DashboardView() {
         {/* ปฏิทินฝั่งขวาใช้ความสูงคงที่จาก 6 สัปดาห์ + รายการ 3 งาน
           ฝั่งซ้ายยืดการ์ดกิจกรรมหลักให้สูงเท่ากับแถวเดียวกัน */}
         <div className="grid gap-4 lg:grid-cols-3">
-        <div className="flex h-full min-h-0 flex-col gap-4 overflow-hidden lg:col-span-2">
+        <div
+          className="flex h-full min-h-0 flex-col gap-4 overflow-hidden lg:col-span-2"
+          data-detail-card-expand={detailTab === "activity"}
+        >
           {/* ชั้น 1 — ตัวเลขที่ต้องลงมือทำวันนี้เท่านั้น
               ตัด "งานที่ยังไม่เสร็จ" ออกเพราะนับซ้อนกับอีกสองใบ และตัดการแจ้งเตือน
               ที่ยังไม่อ่านออกเพราะมีกระดิ่งบน topbar อยู่แล้ว */}
@@ -195,7 +201,8 @@ export function DashboardView() {
           >
             <Tabs
               className="dashboard-featured-event-tabs"
-              defaultValue="urgent"
+              value={detailTab}
+              onValueChange={setDetailTab}
               data-testid="dashboard-detail-tabs"
             >
               <TabsList className="dashboard-featured-tabs-list">

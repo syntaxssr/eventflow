@@ -37,14 +37,12 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select"
-import { getAvatarForegroundColor } from "@/constants/avatar-colors"
-import { EVENT_STATUS_STYLE } from "@/constants/status"
+import { EVENT_STATUS_STYLE, FILTER_TRIGGER_CLASS } from "@/constants/status"
 import { getToday } from "@/constants/mock-date"
 import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
-import { getReadableTextColor } from "@/lib/color"
-import { getFullName } from "@/lib/user"
+import { getFullName, getUserColorStyle } from "@/lib/user"
 import { cn } from "@/lib/utils"
 import { useAppState } from "@/store"
 import {
@@ -201,15 +199,8 @@ export function EventsView() {
     ...(ownerId !== "all"
       ? (() => {
           const owner = selectedOwner
-          // ชิปใช้สีประจำตัวของคนนั้น จับคู่กับสีตัวอักษรของสีนั้นตามกติกา avatar
-          const ownerStyle = owner
-            ? {
-                backgroundColor: owner.avatarColor,
-                color:
-                  getAvatarForegroundColor(owner.avatarColor) ??
-                  getReadableTextColor(owner.avatarColor),
-              }
-            : undefined
+          // ชิปใช้สีประจำตัวของคนนั้น ชุดเดียวกับช่องที่เลือกแล้ว
+          const ownerStyle = owner ? getUserColorStyle(owner) : undefined
 
           return [
             {
@@ -333,7 +324,12 @@ export function EventsView() {
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" data-testid="status-filter">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={FILTER_TRIGGER_CLASS}
+                  data-testid="status-filter"
+                >
                   <FilterIcon className="size-4" aria-hidden="true" />
                   {statuses.length > 0 ? (
                     <span className="bg-brand-500 text-brand-950 ml-1 rounded-full px-1.5 text-[0.6875rem] font-bold">
@@ -382,15 +378,10 @@ export function EventsView() {
             >
               <SelectTrigger
                 size="sm"
-                className="w-72 max-w-none"
+                className={cn("w-72 max-w-none", FILTER_TRIGGER_CLASS)}
                 aria-label={t("event.assignees")}
               >
-                <span className="flex min-w-0 items-center gap-2">
-                  {selectedOwner ? (
-                    <UserAvatar user={selectedOwner} size="xs" />
-                  ) : null}
-                  <span className="truncate">{selectedOwnerLabel}</span>
-                </span>
+                <span className="min-w-0 truncate">{selectedOwnerLabel}</span>
               </SelectTrigger>
               <SelectContent position="popper" align="start" className="w-72">
                 <SelectItem value="all">
@@ -429,7 +420,11 @@ export function EventsView() {
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={FILTER_TRIGGER_CLASS}
+                >
                   <ArrowUpDownIcon className="size-4" aria-hidden="true" />
                   {t(SORT_LABEL[sort])}
                 </Button>

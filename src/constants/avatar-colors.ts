@@ -1,5 +1,5 @@
 /**
- * ชุดสี Avatar — ใช้ 8 สีสถานะชุดเดียวกับ Design System (Version 2)
+ * ชุดสี Avatar — ใช้ 8 สีสถานะชุดเดียวกับ Design System (เฉด Version 3)
  * ไม่รวม Default และ Gray เพราะความต่างจากพื้นผิวน้อยเกินไปจนแยกคนไม่ออก
  * (เหตุผลเดียวกับสีประจำกิจกรรมใน event-colors.ts)
  *
@@ -17,14 +17,14 @@ export interface AvatarColor {
 }
 
 export const AVATAR_PALETTE_ITEMS: AvatarColor[] = [
-  { name: "Brown", hex: "#D0B48A", foreground: "#332714" },
-  { name: "Orange", hex: "#FED5BE", foreground: "#702D00" },
-  { name: "Yellow", hex: "#FFE4A9", foreground: "#6B4900" },
-  { name: "Green", hex: "#AFE1AF", foreground: "#205520" },
-  { name: "Blue", hex: "#C3DCFF", foreground: "#00337C" },
-  { name: "Purple", hex: "#E4D0FB", foreground: "#470B75" },
-  { name: "Pink", hex: "#FCCDDE", foreground: "#71093D" },
-  { name: "Red", hex: "#FFCBCD", foreground: "#770B07" },
+  { name: "Brown", hex: "#B68A49", foreground: "#332714" },
+  { name: "Orange", hex: "#FFB78F", foreground: "#702D00" },
+  { name: "Yellow", hex: "#FFD67B", foreground: "#6B4900" },
+  { name: "Green", hex: "#67C567", foreground: "#143414" },
+  { name: "Blue", hex: "#95C1FF", foreground: "#00337C" },
+  { name: "Purple", hex: "#CB9EFF", foreground: "#490080" },
+  { name: "Pink", hex: "#FF9CC0", foreground: "#7A003D" },
+  { name: "Red", hex: "#FF9DA1", foreground: "#7E0500" },
 ]
 
 /** รายการ hex ล้วน (ใช้วนกำหนดให้ user) */

@@ -18,6 +18,9 @@ test.describe("Design System", () => {
     await page.getByRole("menuitemradio", { name: "มืด" }).click()
     await expect(html).toHaveClass(/dark/)
 
+    // ต้องรอให้เมนูปิดสนิทก่อนกดซ้ำ ไม่งั้นคลิกจะตกไปในจังหวะที่เมนูกำลังปิดแล้วไม่เปิดใหม่
+    await expect(page.getByRole("menu")).toBeHidden()
+
     await page.getByTestId("theme-toggle").click()
     await page.getByRole("menuitemradio", { name: "สว่าง" }).click()
     await expect(html).not.toHaveClass(/dark/)

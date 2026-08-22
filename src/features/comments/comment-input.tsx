@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Loader2Icon, PaperclipIcon, SendIcon, XIcon } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { UserAvatar } from "@/components/common/user-avatar"
 import { Button } from "@/components/ui/button"
@@ -137,7 +137,7 @@ export function CommentInput({
     for (const file of files) {
       const result = validateFile(file)
       if (!result.valid) {
-        toast.error(
+        appToast.error(
           result.error === "too_large"
             ? t("file.tooLarge", {
                 name: file.name,

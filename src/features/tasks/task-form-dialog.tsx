@@ -4,7 +4,7 @@ import * as React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2Icon } from "lucide-react"
 import { useForm, useWatch } from "react-hook-form"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 import { DatePickerField } from "@/components/common/date-picker-field"
@@ -152,7 +152,7 @@ export function TaskFormDialog({
     try {
       await demo.simulate()
     } catch {
-      toast.error(t("common.saveFailed"))
+      appToast.error(t("common.saveFailed"))
       return
     }
 
@@ -199,7 +199,7 @@ export function TaskFormDialog({
         },
         values.assigneeIds.filter((id) => !task.assigneeIds.includes(id))
       )
-      toast.success(t("task.updated"))
+      appToast.success(t("task.updated"))
     } else {
       const newTask: Task = {
         id: newId("t"),
@@ -246,7 +246,7 @@ export function TaskFormDialog({
         after: null,
         createdAt: at,
       })
-      toast.success(t("task.created"))
+      appToast.success(t("task.created"))
     }
 
     onOpenChange(false)

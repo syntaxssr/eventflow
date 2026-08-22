@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { LinkIcon, OctagonXIcon, PlusIcon, XIcon } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { StatusBadge } from "@/components/common/status-badge"
 import { Button } from "@/components/ui/button"
@@ -72,7 +72,7 @@ export function DependencySection({
 
     const validation = validateDependency(tasks, task.id, selected)
     if (!validation.valid) {
-      toast.error(t(ERROR_KEY[validation.reason ?? "duplicate"]))
+      appToast.error(t(ERROR_KEY[validation.reason ?? "duplicate"]))
       return
     }
 

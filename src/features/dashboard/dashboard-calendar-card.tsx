@@ -349,12 +349,11 @@ export function DashboardCalendarCard({
               const hasTask = entries.some((entry) => entry.kind === "task")
               const selected = key === selectedKey
               const isToday = key === todayKey
-              // วันนี้ย้อมแดงทับสีโปรเจกต์ จึงไม่ต้องคำนวณสีตัวอักษรของกิจกรรม
-              // ทุกสีในพาเลตผ่าน AA กับสีที่ getReadableTextColor เลือกให้
-              const eventTextColor =
-                hasEvent && !selected && !isToday
-                  ? getReadableTextColor(eventColor)
-                  : null
+              // วันนี้/วันที่เลือกยังคงสีโปรเจกต์ไว้ ทั้งคู่เพิ่มแค่เส้นประแดงทับลงไป
+              // ไม่ใช่แทนที่สี ไม่งั้นพอกดแล้วจะดูเหมือนวันนั้นไม่มีกิจกรรม
+              const eventTextColor = hasEvent
+                ? getReadableTextColor(eventColor)
+                : null
 
               return (
                 <button
@@ -377,20 +376,19 @@ export function DashboardCalendarCard({
                     "focus-visible:outline-ring flex aspect-square flex-col items-center justify-center gap-1 rounded-full border-2 border-transparent text-xs tabular-nums transition-colors focus-visible:outline-2 focus-visible:outline-offset-1",
                     !inMonth && !hasEvent && "text-muted-foreground/50",
                     !selected && !hasEvent && !isToday && "hover:bg-muted",
-                    // วันที่เลือกใช้วงแดงเส้นประ ตัวหนังสือแดง ไม่ถมพื้น
-                    // สลับเฉดตามธีม เพราะแดงพาสเทลบนพื้นสว่างได้แค่ 1.28:1 มองไม่เห็น
-                    selected &&
-                      !isToday &&
+                    hasEvent && "font-bold",
+                    // วันนี้และ/หรือวันที่เลือกที่ไม่มีกิจกรรม: วงแดงเส้นประ
+                    // ตัวหนังสือแดง ไม่ถมพื้น — วงเส้นประบอกอยู่แล้วว่าเป็นวันพิเศษ
+                    // จึงไม่ต้องถมสีทับซ้ำอีกชั้น สลับเฉดตามธีม เพราะแดงพาสเทล
+                    // บนพื้นสว่างได้แค่ 1.28:1 มองไม่เห็น
+                    (isToday || selected) &&
+                      !hasEvent &&
                       "border-status-red-foreground text-status-red-foreground dark:border-status-red dark:text-status-red border-dashed font-bold",
-                    hasEvent && !selected && !isToday && "font-bold",
-                    // วันนี้ใช้แดงเสมอ (คู่สี status red ผ่าน AA ทั้งสองธีม)
-                    // ย้อมทับทั้งสีโปรเจกต์และวันที่เลือก เพื่อให้หาวันนี้เจอทันที
-                    isToday &&
-                      "bg-status-red text-status-red-foreground font-bold",
-                    // วันนี้ที่ถูกเลือกอยู่ เติมเส้นประทับบนวงแดง
-                    // พื้นเป็นแดงพาสเทลทั้งสองธีม เส้นจึงใช้แดงเข้มค่าเดียวได้เลย
-                    isToday &&
-                      selected &&
+                    // วันนี้และ/หรือวันที่เลือกที่มีกิจกรรม: คงพื้นสีโปรเจกต์ไว้
+                    // แล้วล้อมเส้นประแดง พื้นกิจกรรมเป็นเฉดอ่อนเหมือนกันทั้งสองธีม
+                    // เส้นจึงใช้แดงเข้มค่าเดียว
+                    (isToday || selected) &&
+                      hasEvent &&
                       "border-status-red-foreground border-dashed"
                   )}
                   style={

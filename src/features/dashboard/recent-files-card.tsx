@@ -85,11 +85,11 @@ export function RecentFilesCard({
                     <span
                       className={cn(
                         "flex size-9 shrink-0 items-center justify-center rounded-lg",
-                        style.dashboardTile
+                        style.tile
                       )}
                       aria-hidden="true"
                     >
-                      <Icon className={cn("size-4.5", style.iconColor)} />
+                      <Icon className="size-4.5" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">

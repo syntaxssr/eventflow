@@ -4,7 +4,7 @@ import * as React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { CheckIcon, Loader2Icon } from "lucide-react"
 import { useForm, useWatch } from "react-hook-form"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 import { DatePickerField } from "@/components/common/date-picker-field"
@@ -38,11 +38,13 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { EVENT_STATUS_STYLE } from "@/constants/status"
 import { EVENT_COLOR_OPTIONS } from "@/constants/event-colors"
+import { EVENT_ICON_OPTIONS } from "@/constants/event-icons"
 import { useActivityLog } from "@/hooks/use-activity-log"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
 import { nowIso } from "@/lib/clock"
 import { getReadableTextColor } from "@/lib/color"
+import { getEventIconColor, getEventIconName } from "@/lib/event"
 import { newId } from "@/lib/id"
 import { getFullName } from "@/lib/user"
 import { cn } from "@/lib/utils"
@@ -64,6 +66,7 @@ function toFormValues(event: EventItem | null, locale: "th" | "en", ownerId: str
       expectedAttendees: 0,
       status: "draft",
       color: EVENT_COLOR_OPTIONS[4].value,
+      icon: EVENT_ICON_OPTIONS[0].name,
     }
   }
   return {
@@ -78,6 +81,8 @@ function toFormValues(event: EventItem | null, locale: "th" | "en", ownerId: str
     expectedAttendees: event.expectedAttendees,
     status: event.status,
     color: event.color,
+    // กิจกรรมเดิมที่ยังไม่เคยเลือกไอคอน ให้ฟอร์มเริ่มที่ไอคอนที่ระบบเดาให้อยู่แล้ว
+    icon: event.icon ?? getEventIconName(event),
   }
 }
 
@@ -113,6 +118,7 @@ export function EventFormDialog({
   const startDate = useWatch({ control: form.control, name: "startDate" })
   const endDate = useWatch({ control: form.control, name: "endDate" })
   const startTime = useWatch({ control: form.control, name: "startTime" })
+  const selectedColor = useWatch({ control: form.control, name: "color" })
 
   // โหลดค่าเริ่มต้นใหม่ทุกครั้งที่เปิดกล่อง เพื่อไม่ให้ค่าจากครั้งก่อนค้าง
   React.useEffect(() => {
@@ -143,7 +149,7 @@ export function EventFormDialog({
     try {
       await demo.simulate()
     } catch {
-      toast.error(t("common.saveFailed"))
+      appToast.error(t("common.saveFailed"))
       return
     }
 
@@ -168,6 +174,7 @@ export function EventFormDialog({
           expectedAttendees: values.expectedAttendees,
           status: values.status,
           color: values.color,
+          icon: values.icon,
         },
       })
 
@@ -182,7 +189,7 @@ export function EventFormDialog({
         createdAt: at,
       })
 
-      toast.success(t("event.updated"))
+      appToast.success(t("event.updated"))
     } else {
       const newEvent: EventItem = {
         id: newId("e"),
@@ -197,6 +204,7 @@ export function EventFormDialog({
         expectedAttendees: values.expectedAttendees,
         status: values.status,
         color: values.color,
+        icon: values.icon,
         createdAt: at,
         createdBy: currentUser.id,
         updatedAt: at,
@@ -217,7 +225,7 @@ export function EventFormDialog({
         createdAt: at,
       })
 
-      toast.success(t("event.created"))
+      appToast.success(t("event.created"))
     }
 
     onOpenChange(false)
@@ -508,7 +516,54 @@ export function EventFormDialog({
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="icon"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("event.icon")}</FormLabel>
+                    <div
+                      role="radiogroup"
+                      aria-label={t("event.icon")}
+                      className="flex flex-wrap gap-2"
+                    >
+                      {EVENT_ICON_OPTIONS.map((option) => {
+                        const selected = field.value === option.name
+                        const Icon = option.icon
+                        // พรีวิวใช้สีที่เลือกอยู่จริง จะได้เห็นคู่สี-ไอคอนก่อนบันทึก
+                        const preview = selected
+                          ? {
+                              backgroundColor: selectedColor,
+                              color: getEventIconColor(selectedColor),
+                            }
+                          : undefined
 
+                        return (
+                          <button
+                            key={option.name}
+                            type="button"
+                            role="radio"
+                            aria-checked={selected}
+                            aria-label={option.name}
+                            onClick={() => field.onChange(option.name)}
+                            disabled={isSubmitting}
+                            style={preview}
+                            className={cn(
+                              "focus-visible:outline-ring flex size-10 items-center justify-center rounded-xl border-2 transition-transform focus-visible:outline-2 disabled:cursor-not-allowed disabled:opacity-50",
+                              selected
+                                ? "border-foreground scale-110"
+                                : "border-border hover:scale-105"
+                            )}
+                          >
+                            <Icon className="size-5" aria-hidden="true" />
+                          </button>
+                        )
+                      })}
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </form>
           </Form>
 

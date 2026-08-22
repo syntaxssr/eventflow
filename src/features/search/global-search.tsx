@@ -162,6 +162,7 @@ export function GlobalSearch() {
             value={query}
             onValueChange={setQuery}
             placeholder={t("shell.searchPlaceholder")}
+            clearLabel={t("common.clearSearch")}
             data-testid="global-search-input"
           />
           <p className="sr-only" aria-live="polite">

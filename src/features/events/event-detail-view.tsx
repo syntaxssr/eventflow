@@ -267,28 +267,30 @@ export function EventDetailView({ eventId }: { eventId: string }) {
                   </p>
                 </div>
 
+                {/* ช่องไอคอนใช้เฉด Version 3 ชุดเดียวกับการ์ดสรุปบน Dashboard
+                    ไม่ใช่สีสถานะ Version 2 (ดู colors.md) */}
                 <div className="grid grid-cols-2 gap-3 border-t pt-4 sm:grid-cols-4">
                   <Metric
                     icon={TriangleAlertIcon}
-                    iconClassName="bg-danger text-danger-foreground"
+                    iconClassName="bg-icon-tile-red text-icon-tile-red-foreground"
                     label={t("dashboard.overdueTasks")}
                     value={data.progress.overdueTasks}
                   />
                   <Metric
                     icon={UsersIcon}
-                    iconClassName="bg-info text-info-foreground"
+                    iconClassName="bg-icon-tile-blue text-icon-tile-blue-foreground"
                     label={t("dashboard.participantSummary")}
                     value={data.rsvp.total}
                   />
                   <Metric
                     icon={FileTextIcon}
-                    iconClassName="bg-event-status-purple text-event-status-purple-foreground"
+                    iconClassName="bg-icon-tile-purple text-icon-tile-purple-foreground"
                     label={t("nav.files")}
                     value={data.files.length}
                   />
                   <Metric
                     icon={UserCheckIcon}
-                    iconClassName="bg-success text-success-foreground"
+                    iconClassName="bg-icon-tile-green text-icon-tile-green-foreground"
                     label={t("rsvp.attending")}
                     value={data.rsvp.attending}
                   />
@@ -349,7 +351,11 @@ export function EventDetailView({ eventId }: { eventId: string }) {
           <ParticipantsView eventId={event.id} />
             </TabsContent>
 
-            <TabsContent value="activity" className="pt-4">
+            <TabsContent
+              value="activity"
+              className="pt-4"
+              data-detail-card-expand="true"
+            >
           <RecentActivityCard
             activities={data.activities}
             usersById={data.usersById}

@@ -13,7 +13,10 @@ import {
 } from "@/components/ui/card"
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart"
 import { ROUTES } from "@/constants/app"
-import { TASK_STATUS_STYLE } from "@/constants/status"
+import {
+  TASK_STATUS_CHART_TONE,
+  TASK_STATUS_STYLE,
+} from "@/constants/status"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
 import { formatNumber } from "@/lib/format"
@@ -40,7 +43,7 @@ export function TaskStatusChart({
       status,
       {
         label: t(TASK_STATUS_STYLE[status].labelKey as TranslationKey),
-        color: TASK_STATUS_STYLE[status].chartColor,
+        color: TASK_STATUS_CHART_TONE[status].fill,
       },
     ])
     return Object.fromEntries(entries) as ChartConfig
@@ -51,11 +54,7 @@ export function TaskStatusChart({
     label: t(TASK_STATUS_STYLE[status].labelKey as TranslationKey),
     value: counts[status],
     percent: total === 0 ? 0 : Math.round((counts[status] / total) * 100),
-    // วง "ยังไม่เริ่ม" ใช้สีตัวอักษร Gray เฉพาะในกราฟ เพื่อไม่กลืนกับพื้นการ์ด
-    fill:
-      status === "not_started"
-        ? "var(--status-gray-foreground)"
-        : TASK_STATUS_STYLE[status].chartColor,
+    fill: TASK_STATUS_CHART_TONE[status].fill,
   }))
 
   return (
@@ -115,9 +114,7 @@ export function TaskStatusChart({
                   <span
                     className={cn(
                       "size-2.5 shrink-0 rounded-full",
-                      status === "not_started"
-                        ? "bg-status-gray-foreground"
-                        : style.dot
+                      TASK_STATUS_CHART_TONE[status].dot
                     )}
                     aria-hidden="true"
                   />

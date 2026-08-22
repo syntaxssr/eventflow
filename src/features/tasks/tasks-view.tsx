@@ -11,8 +11,9 @@ import {
   PlusIcon,
   SearchIcon,
   TableIcon,
+  XIcon,
 } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { EmptyState } from "@/components/common/empty-state"
 import { ErrorState } from "@/components/common/error-state"
@@ -41,7 +42,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { getToday } from "@/constants/mock-date"
 import {
+  DESTRUCTIVE_ACTION_CLASS,
   DUE_SOON_STYLE,
+  FILTER_TRIGGER_CLASS,
   OVERDUE_STYLE,
   PRIORITY_STYLE,
   TASK_STATUS_STYLE,
@@ -69,9 +72,6 @@ import { TaskTable } from "./task-table"
 import { useTaskActions } from "./use-task-actions"
 
 type ViewMode = "table" | "kanban" | "calendar"
-
-/** ตัวกรองใช้พื้น status-default ไม่ใช่ status-gray ของ background ไม่งั้นดูจมเหมือนถูกปิดใช้งาน */
-const FILTER_TRIGGER_CLASS = "bg-status-default dark:bg-input/30"
 
 /** ความกว้างของตัวกรองแต่ละช่องตอนโหลด วัดจากแถบจริง */
 const SKELETON_FILTER_WIDTHS = [
@@ -203,11 +203,13 @@ export function TasksView({
     () => new Map(state.users.map((user) => [user.id, user])),
     [state.users]
   )
+  const selectedAssignee =
+    assigneeId === "all" ? null : (usersById.get(assigneeId) ?? null)
   const selectedAssigneeLabel =
     assigneeId === "all"
       ? t("common.all")
-      : usersById.has(assigneeId)
-        ? getFullName(usersById.get(assigneeId)!, locale)
+      : selectedAssignee
+        ? getFullName(selectedAssignee, locale)
         : assigneeId
   const selectedDueStyle =
     due === "overdue"
@@ -281,7 +283,7 @@ export function TasksView({
   const handleMoveTask = (task: Task, status: TaskStatus) => {
     void run(async () => {
       await actions.setStatus(task, status)
-      toast.success(
+      appToast.success(
         t("task.movedTo", {
           task: tl(task.title),
           status: t(TASK_STATUS_STYLE[status].labelKey as TranslationKey),
@@ -387,8 +389,23 @@ export function TasksView({
                 value={taskNameQuery}
                 onChange={(event) => setTaskNameQuery(event.target.value)}
                 placeholder={t("task.searchNamePlaceholder")}
-                className="pl-9"
+                className={cn("pl-9", taskNameQuery ? "pr-9" : undefined)}
               />
+              {taskNameQuery ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={t("common.clearSearch")}
+                  onClick={() => setTaskNameQuery("")}
+                  className={cn(
+                    "absolute top-1/2 right-1 -translate-y-1/2",
+                    DESTRUCTIVE_ACTION_CLASS
+                  )}
+                >
+                  <XIcon className="size-4" aria-hidden="true" />
+                </Button>
+              ) : null}
             </div>
           </div>
         ) : null}

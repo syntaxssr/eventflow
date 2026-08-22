@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { BellOffIcon, CheckCheckIcon, FilterIcon } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { EmptyState } from "@/components/common/empty-state"
 import { ErrorState } from "@/components/common/error-state"
@@ -65,7 +65,7 @@ export function NotificationsPageView() {
   const markAll = () => {
     if (!currentUser) return
     dispatch({ type: "notification/markAllRead", userId: currentUser.id })
-    toast.success(t("notification.markedAllRead"))
+    appToast.success(t("notification.markedAllRead"))
   }
 
   const clearAll = () => {

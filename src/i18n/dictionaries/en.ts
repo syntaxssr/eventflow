@@ -18,6 +18,7 @@ export const en: Dictionary = {
     filter: "Filter",
     sort: "Sort",
     clearAll: "Clear all",
+    clearSearch: "Clear search",
     loading: "Loading...",
     retry: "Try again",
     back: "Back",
@@ -150,6 +151,7 @@ export const en: Dictionary = {
     assignees: "Assignees",
     dateRange: "Select date range",
     color: "Event color",
+    icon: "Event icon",
     create: "Create event",
     createTitle: "Create a new event",
     createDescription:
@@ -852,6 +854,25 @@ export const en: Dictionary = {
     notificationColorsNote: "The bell count badge uses the Version 3 shade, because at 16px the Version 2 shade is too faint to catch the eye. The number on it still passes AA.",
     notificationBadgeSample: "Unread count badge",
     notificationIconColorsNote: "Notification list icons use the full Version 3 shades (no opacity) so the 36px tiles stay legible and identical in both themes. Non-status types keep the muted tile.",
+    destructiveActionColors: "Icon delete button color",
+    destructiveActionSample:
+      "Trash icon buttons, plus the event and file delete menu items",
+    destructiveActionIdle: "Idle",
+    destructiveActionHover: "Hover",
+    destructiveActionMenuIdle: "Menu item — idle",
+    destructiveActionMenuHover: "Menu item — hover",
+    destructiveActionColorsNote:
+      "Uses the Version 4 shade here only. A ghost button has no fill behind it, so the pastel shades sink into the surface (Version 2 reaches 1.24:1, Version 3 reaches 1.72:1). Version 4 reaches 2.77:1 on light and 5.34:1 on dark, so one value covers both themes. Hover fills with the same colour at low opacity. Filled delete buttons and form error states keep destructive.",
+    fileTypeColors: "File type icon colors",
+    fileTypeColorsNote:
+      "File icon tiles on the Files page and the Dashboard recent-files card use the same Version 3 shades as other icon tiles, matched to each file extension's familiar color.",
+    avatarColors: "Avatar colors",
+    avatarColorsNote:
+      "Eight status colors in Version 3 shades (Default and Gray excluded). Avatars are as small as 24px and often stacked, so Version 2 shades are too pale to tell people apart. Initials always use the paired foreground color.",
+    chartColors: "Task status summary card colors",
+    chartColorsNote:
+      "Rings and dots use Version 3 shades because they are thick strokes on the card surface where Version 2 fades out. \"Not started\" has no Version 3 shade, so it uses the gray foreground color instead.",
+    clearSearchSample: "Clear button in search fields",
     progressColors: "Progress bar colors",
     progressColorsNote: "Shifts with the completed percentage. Uses the Version 3 shades here only, because the bar is thin and sits on a similarly light track. Green is reserved for 100%.",
     iconWithBackground: "With a color background: use that color's foreground",
@@ -876,7 +897,7 @@ export const en: Dictionary = {
     selectDueDate: "Due date options",
     selectDueDateDescription: "Show colors in the menu, keep the selected filter field neutral, and apply the color to its active filter chip.",
     selectPeople: "Assignee list",
-    selectPeopleDescription: "Show the user-colored avatar and name in both the menu and the selected field; the active filter chip uses that person's own colour as its background.",
+    selectPeopleDescription: "Show the user-coloured avatar and name in the menu. The selected field shows the full name and nickname on the plain Default surface — no avatar, no colour fill — so every filter field reads as one row. That person's colour appears on the active filter chip instead.",
     selectPeopleWidth: "288px wide to accommodate the longest name",
     avatarStackRule: "Avatar groups have no white outline; the first item is leftmost and on top.",
     datePicker: "Date picker",

@@ -1,7 +1,9 @@
 "use client"
 
 import { DatePickerField } from "@/components/common/date-picker-field"
+import { FILTER_TRIGGER_CLASS } from "@/constants/status"
 import { useLocale } from "@/i18n"
+import { cn } from "@/lib/utils"
 
 /** ตัวเลือกวันเริ่มและวันสิ้นสุดของหน้ากิจกรรม */
 export function EventDateRangePicker({
@@ -48,7 +50,7 @@ export function EventDateRangePicker({
             min={"min" in field ? field.min : undefined}
             max={"max" in field ? field.max : undefined}
             size="sm"
-            className="w-44"
+            className={cn("w-44", FILTER_TRIGGER_CLASS)}
           />
         </div>
       ))}

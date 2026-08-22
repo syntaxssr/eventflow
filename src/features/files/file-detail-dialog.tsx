@@ -9,7 +9,7 @@ import {
   Trash2Icon,
   UploadIcon,
 } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 import { UserAvatar } from "@/components/common/user-avatar"
@@ -109,7 +109,7 @@ export function FileDetailDialog({
               variant="outline"
               onClick={() => {
                 void downloadMockFile(file)
-                toast.success(t("file.downloadStarted"))
+                appToast.success(t("file.downloadStarted"))
               }}
               data-testid="download-file"
             >

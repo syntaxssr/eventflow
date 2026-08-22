@@ -6,8 +6,9 @@ import { RotateCcwIcon, Trash2Icon } from "lucide-react"
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 import { EmptyState } from "@/components/common/empty-state"
 import { ErrorState } from "@/components/common/error-state"
-import { PageContainer, PageHeader } from "@/components/common/page-header"
+import { PageContainer } from "@/components/common/page-header"
 import { UserAvatar } from "@/components/common/user-avatar"
+import { FileTypeBadge } from "@/features/files/file-type-badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
@@ -18,7 +19,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { FILE_TYPE_STYLE } from "@/constants/file-type"
 import { useFileActions } from "@/features/files/use-file-actions"
 import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
@@ -59,14 +59,9 @@ export function TrashView() {
 
   const { state: pageState, retry } = usePageState(files.length === 0)
 
-  const header = (
-    <PageHeader title={t("nav.trash")} description={t("trash.subtitle")} />
-  )
-
   if (pageState === "error") {
     return (
       <PageContainer>
-        {header}
         <ErrorState onRetry={retry} />
       </PageContainer>
     )
@@ -75,7 +70,6 @@ export function TrashView() {
   if (pageState === "loading") {
     return (
       <PageContainer>
-        {header}
         <Skeleton className="h-64 w-full" />
       </PageContainer>
     )
@@ -84,7 +78,6 @@ export function TrashView() {
   if (files.length === 0) {
     return (
       <PageContainer>
-        {header}
         <EmptyState
           icon={Trash2Icon}
           title={t("trash.emptyTitle")}
@@ -96,7 +89,6 @@ export function TrashView() {
 
   return (
     <PageContainer>
-      {header}
 
       <p className="text-muted-foreground text-sm" aria-live="polite">
         {t("trash.resultCount", { count: files.length })}
@@ -131,8 +123,8 @@ export function TrashView() {
               return (
                 <TableRow key={file.id}>
                   <TableCell className="font-medium">{file.name}</TableCell>
-                  <TableCell className="text-sm">
-                    {FILE_TYPE_STYLE[file.type].label}
+                  <TableCell>
+                    <FileTypeBadge type={file.type} />
                   </TableCell>
                   <TableCell className="text-sm">
                     {event ? tl(event.title) : "—"}
@@ -157,7 +149,9 @@ export function TrashView() {
                       className={cn(
                         "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap",
                         expiring
-                          ? "border-danger/35 bg-danger/15 text-foreground dark:border-danger/45 dark:bg-danger/25"
+                          ? // ป้ายใกล้ถูกลบถาวรใช้คู่สีแดงเฉด Version 3 เพราะป้ายเล็ก
+                            // เฉด Version 2 แบบลดความทึบจางจนไม่เตือนอะไร (ดู colors.md)
+                            "bg-icon-tile-red text-icon-tile-red-foreground border-transparent"
                           : "border-border bg-muted text-muted-foreground"
                       )}
                     >

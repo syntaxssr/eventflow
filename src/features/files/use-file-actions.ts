@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { useDemo } from "@/components/dev/demo-provider"
 import { ROUTES } from "@/constants/app"
@@ -172,7 +172,7 @@ export function useFileActions() {
         },
         at
       )
-      toast.success(t("file.versionUploaded"))
+      appToast.success(t("file.versionUploaded"))
     },
     [currentUser, dispatch, logActivity, notifyTeam, save, t]
   )
@@ -213,7 +213,7 @@ export function useFileActions() {
         after: { th: `เวอร์ชัน ${nextNumber}`, en: `Version ${nextNumber}` },
         createdAt: at,
       })
-      toast.success(t("file.versionRestored"))
+      appToast.success(t("file.versionRestored"))
     },
     [currentUser, dispatch, logActivity, save, t]
   )
@@ -247,7 +247,7 @@ export function useFileActions() {
         { th: "มีการแก้ไขไฟล์", en: "A file was edited" },
         at
       )
-      toast.success(t("file.renamed"))
+      appToast.success(t("file.renamed"))
     },
     [currentUser, dispatch, logActivity, notifyTeam, save, t]
   )
@@ -287,7 +287,7 @@ export function useFileActions() {
         { th: "มีการแก้ไขไฟล์", en: "A file was edited" },
         at
       )
-      toast.success(t("file.moved"))
+      appToast.success(t("file.moved"))
     },
     [currentUser, dispatch, logActivity, notifyTeam, save, state.fileCategories, t]
   )
@@ -309,7 +309,7 @@ export function useFileActions() {
         after: { th: "ย้ายไปถังขยะ", en: "Moved to trash" },
         createdAt: at,
       })
-      toast.success(t("file.deleted"))
+      appToast.delete(t("file.deleted"))
     },
     [currentUser, dispatch, logActivity, save, t]
   )
@@ -329,7 +329,7 @@ export function useFileActions() {
         before: { th: "ถังขยะ", en: "Trash" },
         after: { th: "กู้คืนแล้ว", en: "Restored" },
       })
-      toast.success(t("trash.restored"))
+      appToast.success(t("trash.restored"))
     },
     [currentUser, dispatch, logActivity, save, t]
   )
@@ -338,7 +338,7 @@ export function useFileActions() {
     async (file: FileItem) => {
       await save()
       dispatch({ type: "file/purge", id: file.id })
-      toast.success(t("trash.purged"))
+      appToast.delete(t("trash.purged"))
     },
     [dispatch, save, t]
   )
@@ -356,7 +356,7 @@ export function useFileActions() {
           order: state.fileCategories.length,
         },
       })
-      toast.success(t("file.categoryAdded"))
+      appToast.success(t("file.categoryAdded"))
     },
     [dispatch, save, state.fileCategories.length, t]
   )

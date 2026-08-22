@@ -45,6 +45,7 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-message: var(--destructive-message);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -106,13 +107,6 @@
   --color-stat-yellow: #f4d887;
   --color-stat-blocked: var(--blocked);
 
-  /* สีไอคอนประเภทไฟล์ */
-  --color-file-powerpoint: #e79c75;
-  --color-file-excel: var(--success);
-  --color-file-pdf: var(--danger);
-  --color-file-word: var(--info);
-  --color-file-image: #ac81af;
-
   /* สีสถานะกลาง — พื้นและข้อความต้องใช้เป็นคู่ตาม Design System */
   --color-status-default: var(--status-default);
   --color-status-default-foreground: var(--status-default-foreground);
@@ -135,11 +129,27 @@
   --color-status-red: var(--status-red);
   --color-status-red-foreground: var(--status-red-foreground);
 
+  /* ปุ่มลบแบบไอคอน — เฉด Version 4 ใช้เฉพาะจุดนี้ */
+  --color-destructive-action: var(--destructive-action);
+
   /* ป้ายแจ้งเตือน — เฉด Version 3 ใช้เฉพาะจุดนี้ */
   --color-notification-badge: var(--notification-badge);
   --color-notification-badge-foreground: var(--notification-badge-foreground);
 
-  /* ไอคอนรายการแจ้งเตือน — เฉด Version 3 ใช้เฉพาะจุดนี้ */
+  /* ช่องไอคอน (รายการแจ้งเตือน + การ์ดสรุป) — เฉด Version 3 ใช้เฉพาะจุดนี้ */
+  --color-icon-tile-red: var(--icon-tile-red);
+  --color-icon-tile-red-foreground: var(--icon-tile-red-foreground);
+  --color-icon-tile-orange: var(--icon-tile-orange);
+  --color-icon-tile-orange-foreground: var(--icon-tile-orange-foreground);
+  --color-icon-tile-yellow: var(--icon-tile-yellow);
+  --color-icon-tile-yellow-foreground: var(--icon-tile-yellow-foreground);
+  --color-icon-tile-blue: var(--icon-tile-blue);
+  --color-icon-tile-blue-foreground: var(--icon-tile-blue-foreground);
+  --color-icon-tile-green: var(--icon-tile-green);
+  --color-icon-tile-green-foreground: var(--icon-tile-green-foreground);
+  --color-icon-tile-purple: var(--icon-tile-purple);
+  --color-icon-tile-purple-foreground: var(--icon-tile-purple-foreground);
+
   --color-notification-icon-red: var(--notification-icon-red);
   --color-notification-icon-red-foreground: var(--notification-icon-red-foreground);
   --color-notification-icon-yellow: var(--notification-icon-yellow);
@@ -180,6 +190,15 @@
   color: #1c1c1c;
 }
 
+/* ซ่อนกากบาทล้างค่าของเบราว์เซอร์ในช่อง type="search"
+   เพราะสีของมันมาจาก UA (ฟ้าบนบางเบราว์เซอร์) คุมไม่ได้
+   ช่องค้นหาจึงเรนเดอร์ปุ่มล้างของตัวเองด้วยสีแดงของระบบแทน */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 /* การ์ดสรุปบน Dashboard: hover ใช้เฉดเดียวกับไอคอนที่อ่อนลงหนึ่งระดับ
    (Version 2 -> Version 1) เพื่อให้ feedback ชัดแต่ยังอ่านเนื้อหาได้ง่าย */
 .dashboard-stat-card--blue:hover {
@@ -196,6 +215,10 @@
 
 .dashboard-stat-card--red:hover {
   background-color: #f5d5d6;
+}
+
+.dashboard-stat-card--green:hover {
+  background-color: #d9e3db;
 }
 
 /* ทุกการ์ดใต้แท็บ Dashboard สูงเท่ากัน เพื่อไม่ให้หน้าเลื่อนเมื่อสลับแท็บ */
@@ -290,6 +313,57 @@
 .dashboard-featured-event-tabs .dashboard-detail-card > [data-slot="card-content"] {
   min-width: 0;
   max-width: 100%;
+}
+
+/* พลุกระดาษรอบ ๆ ภาพใน Toast — ชิ้นกระดาษกระจายออกจากกลางภาพไปทุกทิศพร้อมหมุน
+   ระยะและทิศของแต่ละชิ้นส่งมาทาง --tx / --ty (ดู gif-toast.tsx) */
+@keyframes toast-confetti-burst {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(0.4);
+  }
+  12% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) rotate(540deg) scale(1);
+  }
+}
+
+.toast-confetti-piece {
+  animation: toast-confetti-burst 2.4s ease-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-confetti-piece {
+    animation: none;
+    opacity: 0.65;
+  }
+}
+
+/* แท็บ "ความเคลื่อนไหวล่าสุด" ยืดยาวจนจบรายการ ไม่ scroll อยู่ในการ์ด
+   (รายการเรียงตามเวลา การ scroll ซ้อนสองชั้นทำให้ไล่ลำดับยาก) */
+[data-detail-card-expand="true"],
+[data-detail-card-expand="true"] > [data-slot="card"] {
+  height: auto;
+  overflow: visible;
+}
+
+[data-detail-card-expand="true"] .dashboard-featured-event-tabs,
+[data-detail-card-expand="true"]
+  .dashboard-featured-event-tabs
+  > [data-slot="tabs-content"],
+[data-detail-card-expand="true"] .dashboard-detail-card,
+[data-detail-card-expand="true"]
+  .dashboard-detail-card
+  > [data-slot="card-content"] {
+  height: auto;
+  flex: 0 0 auto;
+  overflow: visible;
 }
 
 .dashboard-featured-detail .dashboard-detail-card {
@@ -422,24 +496,52 @@
   --progress-blue: #95c1ff;
   --progress-green: #67c567;
 
+  /* ---- ปุ่มลบแบบไอคอน — ใช้เฉด Version 4 เฉพาะจุดนี้ ----
+     ไอคอนถังขยะเป็นเส้นบางบนปุ่ม ghost ที่ไม่มีพื้นรอง เฉดพาสเทลจึงจมหมด
+     Version 2 (#ffcbcd) ต่างจากพื้นการ์ดแค่ 1.24:1 และ Version 3 (#ff9da1) ได้ 1.72:1
+     ทั้งคู่ยังอ่านเป็นปุ่มที่ถูกปิดใช้งาน Version 4 ได้ 2.77:1 บนธีมสว่าง
+     และ 5.34:1 บนธีมมืด จึงใช้ค่าเดียวได้ทั้งสองธีม
+     ห้ามนำไปใช้แทนสีสถานะที่อื่น (ดู colors.md) */
+  --destructive-action: #fd535e;
+
+  /* ข้อความ/เส้นขอบของ error state ในฟอร์ม — คู่สีแดงเฉด Version 3
+     ธีมสว่างใช้ฝั่งตัวอักษร (#7e0500) ธีมมืดใช้ฝั่งพื้น (#ff9da1)
+     เพราะเป็นตัวอักษรบนพื้นการ์ด ไม่ใช่ป้ายที่มีพื้นรอง (ดู colors.md) */
+  --destructive-message: var(--icon-tile-red-foreground);
+
   /* ---- ป้ายแจ้งเตือน — ใช้เฉด Version 3 เฉพาะจุดนี้ ----
      ป้ายเลขบนปุ่มระฆังเล็กแค่ 16px เฉด Version 2 จึงจางเกินจนแทบไม่สะดุดตา
      เข้มขึ้นหนึ่งระดับให้เห็นทันทีว่ามีของค้างอยู่ ตัวเลขยังผ่าน AA (5.55:1) */
   --notification-badge: #ff9da1;
   --notification-badge-foreground: #7e0500;
 
-  /* ---- ไอคอนในรายการแจ้งเตือน — ใช้เฉด Version 3 เฉพาะจุดนี้ ----
-     ช่องไอคอนเป็นสี่เหลี่ยมเล็ก 36px ที่ต้องอ่านออกทั้งสองธีม เฉด Version 3
-     เต็มค่าให้พื้นคงที่ทุกธีมและคู่สีตัวอักษรผ่าน AA โดยไม่ต้องลดความทึบ
+  /* ---- ช่องไอคอน — ใช้เฉด Version 3 เฉพาะจุดนี้ ----
+     ช่องไอคอนเป็นสี่เหลี่ยมเล็ก (36px ในรายการแจ้งเตือน, 48px บนการ์ดสรุป)
+     ที่ต้องอ่านออกทั้งสองธีม เฉด Version 3 เต็มค่าให้พื้นคงที่ทุกธีมและคู่สี
+     ตัวอักษรผ่าน AA โดยไม่ต้องลดความทึบ
      ห้ามนำไปใช้แทนสีสถานะที่อื่น (ดู colors.md) */
-  --notification-icon-red: #ff9da1;
-  --notification-icon-red-foreground: #7e0500;
-  --notification-icon-yellow: #ffd67b;
-  --notification-icon-yellow-foreground: #6b4900;
-  --notification-icon-blue: #95c1ff;
-  --notification-icon-blue-foreground: #00337c;
-  --notification-icon-green: #67c567;
-  --notification-icon-green-foreground: #143414;
+  --icon-tile-red: #ff9da1;
+  --icon-tile-red-foreground: #7e0500;
+  --icon-tile-orange: #ffb78f;
+  --icon-tile-orange-foreground: #702d00;
+  --icon-tile-yellow: #ffd67b;
+  --icon-tile-yellow-foreground: #6b4900;
+  --icon-tile-blue: #95c1ff;
+  --icon-tile-blue-foreground: #00337c;
+  --icon-tile-green: #67c567;
+  --icon-tile-green-foreground: #143414;
+  --icon-tile-purple: #cb9eff;
+  --icon-tile-purple-foreground: #490080;
+
+  /* ชื่อเดิมของช่องไอคอนแจ้งเตือน — ชี้มาที่ชุดเดียวกันเพื่อไม่ให้มีสองแหล่งที่มา */
+  --notification-icon-red: var(--icon-tile-red);
+  --notification-icon-red-foreground: var(--icon-tile-red-foreground);
+  --notification-icon-yellow: var(--icon-tile-yellow);
+  --notification-icon-yellow-foreground: var(--icon-tile-yellow-foreground);
+  --notification-icon-blue: var(--icon-tile-blue);
+  --notification-icon-blue-foreground: var(--icon-tile-blue-foreground);
+  --notification-icon-green: var(--icon-tile-green);
+  --notification-icon-green-foreground: var(--icon-tile-green-foreground);
 
   /* ---- Chart ----
      1 สีเน้น (--chart-1 = info/ฟ้า) + ไล่น้ำหนักดำสำหรับหมวดที่เหลือ */
@@ -497,6 +599,8 @@
 
   --destructive: var(--danger);
   --destructive-foreground: var(--danger-foreground);
+  /* ธีมมืดสลับไปใช้ฝั่งพื้นของคู่สีแดง Version 3 เพื่อให้ตัวอักษรอ่านออกบนพื้นเข้ม */
+  --destructive-message: var(--icon-tile-red);
 
   --border: rgb(242 242 240 / 12%);
   --input: rgb(242 242 240 / 15%);

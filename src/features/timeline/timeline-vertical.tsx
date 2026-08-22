@@ -31,7 +31,7 @@ import { AvatarGroup } from "@/components/common/avatar-group"
 import { EmptyState } from "@/components/common/empty-state"
 import { StatusBadge } from "@/components/common/status-badge"
 import { Button } from "@/components/ui/button"
-import { READINESS_STYLE } from "@/constants/status"
+import { DESTRUCTIVE_ACTION_CLASS, READINESS_STYLE } from "@/constants/status"
 import { getToday, toDateKey } from "@/constants/mock-date"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
@@ -267,7 +267,7 @@ function TimelineRow({
             <Button
               size="icon-xs"
               variant="ghost"
-              className="text-destructive"
+              className={DESTRUCTIVE_ACTION_CLASS}
               onClick={() => onDelete(item)}
               aria-label={`${t("common.delete")}: ${tl(item.title)}`}
             >

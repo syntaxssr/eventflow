@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { useDemo } from "@/components/dev/demo-provider"
 import { ROUTES } from "@/constants/app"
@@ -38,7 +38,7 @@ export function useCommentActions(task: Task) {
       await demo.simulate()
       return true
     } catch {
-      toast.error(t("common.saveFailed"))
+      appToast.error(t("common.saveFailed"))
       return false
     }
   }, [demo, t])
@@ -102,7 +102,7 @@ export function useCommentActions(task: Task) {
         )
       }
 
-      toast.success(t("comment.added"))
+      appToast.success(t("comment.added"))
       return true
     },
     [currentUser, dispatch, logActivity, notify, save, t, task]
@@ -118,7 +118,7 @@ export function useCommentActions(task: Task) {
         body: { th: body, en: body },
         at: nowIso(),
       })
-      toast.success(t("comment.updated"))
+      appToast.success(t("comment.updated"))
       return true
     },
     [currentUser, dispatch, save, t]
@@ -129,7 +129,7 @@ export function useCommentActions(task: Task) {
       if (!currentUser || !(await save())) return false
 
       dispatch({ type: "comment/delete", id: comment.id })
-      toast.success(t("comment.deleted"))
+      appToast.delete(t("comment.deleted"))
       return true
     },
     [currentUser, dispatch, save, t]

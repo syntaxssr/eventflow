@@ -10,52 +10,36 @@ import type { FileType } from "@/types/file"
 
 interface FileTypeStyle {
   icon: LucideIcon
-  /** class ของกล่องไอคอน (พื้นหลัง + สีไอคอน) */
+  /** class ของกล่องไอคอน (พื้นหลัง + สีไอคอน) — ใช้ --icon-tile-* (เฉด Version 3)
+   *  โดยจับคู่สีให้ใกล้เคียงสีประจำนามสกุลไฟล์ */
   tile: string
-  /** พื้นกล่องไอคอนตามประเภทไฟล์ ใช้กับรายการไฟล์ล่าสุดบน Dashboard */
-  dashboardTile: string
-  /** สีของไอคอนลดน้ำหนักลงเพื่อให้สมดุลกับพื้นกล่อง */
-  iconColor: string
   label: string
 }
-
-/** ทุกประเภทไฟล์ใช้ tile สีเทาเดียวกัน — แยกแยะด้วยไอคอนแทนสี */
-const FILE_TILE = "bg-muted text-muted-foreground"
 
 export const FILE_TYPE_STYLE: Record<FileType, FileTypeStyle> = {
   powerpoint: {
     icon: PresentationIcon,
-    tile: FILE_TILE,
-    dashboardTile: "bg-file-powerpoint",
-    iconColor: "text-foreground/70",
+    tile: "bg-icon-tile-orange text-icon-tile-orange-foreground",
     label: "PowerPoint",
   },
   excel: {
     icon: FileSpreadsheetIcon,
-    tile: FILE_TILE,
-    dashboardTile: "bg-file-excel",
-    iconColor: "text-foreground/70",
+    tile: "bg-icon-tile-green text-icon-tile-green-foreground",
     label: "Excel",
   },
   pdf: {
     icon: FileTextIcon,
-    tile: FILE_TILE,
-    dashboardTile: "bg-file-pdf",
-    iconColor: "text-foreground/70",
+    tile: "bg-icon-tile-red text-icon-tile-red-foreground",
     label: "PDF",
   },
   word: {
     icon: FileTextIcon,
-    tile: FILE_TILE,
-    dashboardTile: "bg-file-word",
-    iconColor: "text-foreground/70",
+    tile: "bg-icon-tile-blue text-icon-tile-blue-foreground",
     label: "Word",
   },
   image: {
     icon: FileImageIcon,
-    tile: FILE_TILE,
-    dashboardTile: "bg-file-image",
-    iconColor: "text-foreground/70",
+    tile: "bg-icon-tile-purple text-icon-tile-purple-foreground",
     label: "Image",
   },
 }

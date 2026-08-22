@@ -1,7 +1,7 @@
 "use client"
 
 import { RotateCcwIcon, WrenchIcon } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -125,7 +125,7 @@ export function DevToolsPanel() {
               resetStore()
               demo.setForcedState("normal")
               demo.setFailNextAction(false)
-              toast.success(t("devTools.resetDone"))
+              appToast.success(t("devTools.resetDone"))
             }}
           >
             <RotateCcwIcon className="size-4" aria-hidden="true" />

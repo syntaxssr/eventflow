@@ -6,9 +6,12 @@ import {
   CalendarDaysIcon,
   ChevronDownIcon,
   FilterIcon,
+  Trash2Icon,
   XIcon,
 } from "lucide-react"
 import { toast } from "sonner"
+
+import { appToast } from "@/lib/gif-toast"
 
 import { AvatarGroup } from "@/components/common/avatar-group"
 import { DatePickerField } from "@/components/common/date-picker-field"
@@ -35,9 +38,12 @@ import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { APP_NAME } from "@/constants/app"
+import { AVATAR_PALETTE_ITEMS } from "@/constants/avatar-colors"
+import { FILE_TYPE_STYLE } from "@/constants/file-type"
 import { NOTIFICATION_META } from "@/constants/notification"
 import { MOCK_USERS } from "@/mock"
 import {
+  DESTRUCTIVE_ACTION_CLASS,
   DUE_SOON_STYLE,
   EVENT_STATUS_STYLE,
   OVERDUE_STYLE,
@@ -45,12 +51,15 @@ import {
   PRIORITY_STYLE,
   READINESS_STYLE,
   RSVP_STATUS_STYLE,
+  TASK_STATUS_CHART_TONE,
   TASK_STATUS_STYLE,
   type StatusStyle,
 } from "@/constants/status"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
 import { getFullName } from "@/lib/user"
+import { FILE_TYPES } from "@/types/file"
+import { TASK_STATUSES } from "@/types/task"
 import { cn } from "@/lib/utils"
 
 const BRAND_STEPS = [
@@ -830,6 +839,168 @@ export function DesignSystemView() {
               </div>
               <div className="space-y-2">
                 <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                  {t("designSystem.destructiveActionColors")}
+                </p>
+                {/* ตัวอย่างใช้คลาสชุดเดียวกับปุ่มลบจริง สีจึงเปลี่ยนตามกันเสมอ
+                    ตัวขวาบังคับสถานะ hover ค้างไว้ เพราะชี้เมาส์ทีละปุ่มจะเทียบไม่ได้ */}
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      className={DESTRUCTIVE_ACTION_CLASS}
+                      aria-label={t("common.delete")}
+                    >
+                      <Trash2Icon className="size-4" aria-hidden="true" />
+                    </Button>
+                    <p className="text-sm">
+                      {t("designSystem.destructiveActionIdle")}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="text-destructive-action bg-destructive-action/15 dark:bg-destructive-action/20 flex size-7 items-center justify-center rounded-[min(var(--radius-md),10px)]"
+                      aria-hidden="true"
+                    >
+                      <Trash2Icon className="size-4" />
+                    </span>
+                    <p className="text-sm">
+                      {t("designSystem.destructiveActionHover")}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      className={DESTRUCTIVE_ACTION_CLASS}
+                      aria-label={t("common.clearSearch")}
+                    >
+                      <XIcon className="size-4" aria-hidden="true" />
+                    </Button>
+                    <p className="text-sm">
+                      {t("designSystem.clearSearchSample")}
+                    </p>
+                  </div>
+                  <p className="text-sm">
+                    {t("designSystem.destructiveActionSample")}
+                  </p>
+                </div>
+                {/* เมนูลบ — จำลองแถวในเมนูจริง ทั้งสถานะปกติและตอนชี้เมาส์ */}
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                  {[
+                    { key: "destructiveActionMenuIdle", focus: false },
+                    { key: "destructiveActionMenuHover", focus: true },
+                  ].map(({ key, focus }) => (
+                    <div key={key} className="flex items-center gap-2">
+                      <span
+                        className={cn(
+                          "text-destructive-action flex items-center gap-1.5 rounded-md px-1.5 py-1 text-sm",
+                          focus && "bg-destructive-action/15"
+                        )}
+                        aria-hidden="true"
+                      >
+                        <Trash2Icon className="size-4" />
+                        {t("common.delete")}
+                      </span>
+                      <p className="text-sm">
+                        {t(`designSystem.${key}` as TranslationKey)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  {t("designSystem.destructiveActionColorsNote")}
+                </p>
+              </div>
+              {/* ไอคอนประเภทไฟล์ — ดึงจาก FILE_TYPE_STYLE ตัวจริง สีจึงตรงกับหน้าไฟล์เสมอ */}
+              <div className="space-y-2">
+                <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                  {t("designSystem.fileTypeColors")}
+                </p>
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                  {FILE_TYPES.map((type) => {
+                    const style = FILE_TYPE_STYLE[type]
+                    const Icon = style.icon
+                    return (
+                      <div key={type} className="flex items-center gap-2">
+                        <span
+                          className={cn(
+                            "flex size-9 shrink-0 items-center justify-center rounded-lg",
+                            style.tile
+                          )}
+                          aria-hidden="true"
+                        >
+                          <Icon className="size-4" />
+                        </span>
+                        <p className="text-sm">{style.label}</p>
+                      </div>
+                    )
+                  })}
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  {t("designSystem.fileTypeColorsNote")}
+                </p>
+              </div>
+              {/* Avatar — ดึงจากพาเลตตัวจริง ทั้งพื้นและสีตัวอักษรคู่ของมัน */}
+              <div className="space-y-2">
+                <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                  {t("designSystem.avatarColors")}
+                </p>
+                <div className="flex flex-wrap items-center gap-3">
+                  {AVATAR_PALETTE_ITEMS.map((item) => (
+                    <div key={item.name} className="flex items-center gap-2">
+                      <span
+                        className="flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                        style={{
+                          backgroundColor: item.hex,
+                          color: item.foreground,
+                        }}
+                        aria-hidden="true"
+                      >
+                        AB
+                      </span>
+                      <div className="leading-tight">
+                        <p className="text-sm">{item.name}</p>
+                        <p className="text-muted-foreground font-mono text-[0.6875rem]">
+                          {item.hex.toLowerCase()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  {t("designSystem.avatarColorsNote")}
+                </p>
+              </div>
+              {/* จุดสีในการ์ดสรุปงานตามสถานะ — ใช้กราฟจริงเพื่อไม่ให้ค่าหลุดจากกัน */}
+              <div className="space-y-2">
+                <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+                  {t("designSystem.chartColors")}
+                </p>
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                  {TASK_STATUSES.map((status) => (
+                    <div key={status} className="flex items-center gap-2">
+                      <span
+                        className={cn(
+                          "size-2.5 shrink-0 rounded-full",
+                          TASK_STATUS_CHART_TONE[status].dot
+                        )}
+                        aria-hidden="true"
+                      />
+                      <p className="text-sm">
+                        {t(
+                          TASK_STATUS_STYLE[status].labelKey as TranslationKey
+                        )}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  {t("designSystem.chartColorsNote")}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
                   {t("designSystem.progressColors")}
                 </p>
                 {/* แบ่งความกว้างการ์ดเท่า ๆ กัน แถบยืดเต็มช่องที่เหลือของแต่ละช่อง
@@ -990,8 +1161,12 @@ export function DesignSystemView() {
                     </p>
                   </div>
                   <div className="space-y-2">
-                    <div className="border-input flex h-7 w-72 items-center justify-between rounded-[min(var(--radius-md),10px)] border px-2.5 text-sm">
-                      <span>{getFullName(MOCK_USERS[0], locale)}</span>
+                    {/* ช่องที่เลือกแล้วเป็นพื้นเรียบ ไม่มี avatar และไม่ย้อมสีประจำตัว
+                        ส่วนรายการข้างล่างยังเป็น avatar เต็ม */}
+                    <div className="border-input bg-status-default dark:bg-input/30 flex h-7 w-72 items-center justify-between rounded-[min(var(--radius-md),10px)] border px-2.5 text-sm">
+                      <span className="truncate">
+                        {getFullName(MOCK_USERS[0], locale)}
+                      </span>
                       <span className="text-muted-foreground">⌄</span>
                     </div>
                     <div className="border-border w-72 rounded-lg border p-1">
@@ -1144,7 +1319,7 @@ export function DesignSystemView() {
                   <Button
                     size="sm"
                     onClick={() =>
-                      toast.success(t("toast.success"), {
+                      appToast.success(t("toast.success"), {
                         description: "คุณกำลังไปได้สวย",
                       })
                     }
@@ -1166,12 +1341,26 @@ export function DesignSystemView() {
                     size="sm"
                     variant="destructive"
                     onClick={() =>
-                      toast.error(t("toast.genericError"), {
+                      appToast.error(t("toast.genericError"), {
                         description: "ตอนนี้ต้องรีบดูแลด่วน",
                       })
                     }
                   >
                     Toast error
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => appToast.welcome("WELCOME")}
+                  >
+                    Toast welcome
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => appToast.delete("ลบเรียบร้อยแล้ว")}
+                  >
+                    Toast delete
                   </Button>
                 </div>
                 <Alert>

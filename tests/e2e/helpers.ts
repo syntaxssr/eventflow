@@ -1,5 +1,18 @@
 import { expect, type Locator, type Page } from "@playwright/test"
 
+import { MOCK_DATE_SHIFT_DAYS, shiftDateKey } from "@/constants/mock-date"
+import { formatDate } from "@/lib/format"
+
+/**
+ * ข้อความวันที่ที่หน้าจอแสดงจริง สำหรับวันที่ที่เขียนไว้ใน Mock Data
+ *
+ * Mock Data ถูกเลื่อนทั้งชุดให้ ANCHOR_TODAY_ISO ตรงกับวันนี้ (ดู mock-date.ts)
+ * เทสต์จึงห้ามผูกกับข้อความวันที่ตายตัว ไม่งั้นจะพังทุกวันที่ไม่ใช่วัน anchor
+ */
+export function mockDateText(anchorDateKey: string): string {
+  return formatDate(shiftDateKey(anchorDateKey, MOCK_DATE_SHIFT_DAYS), "th")
+}
+
 export const DEMO_EMAIL = "alisa.l@company.co.th"
 export const DEMO_PASSWORD = "eventflow"
 

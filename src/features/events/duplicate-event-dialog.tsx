@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { CheckIcon, CopyIcon, Loader2Icon, XIcon } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { useDemo } from "@/components/dev/demo-provider"
 import { Button } from "@/components/ui/button"
@@ -113,7 +113,7 @@ function DuplicateEventForm({
       await demo.simulate()
     } catch {
       setSubmitting(false)
-      toast.error(t("common.saveFailed"))
+      appToast.error(t("common.saveFailed"))
       return
     }
 
@@ -147,7 +147,7 @@ function DuplicateEventForm({
 
     setSubmitting(false)
     onDone()
-    toast.success(t("event.duplicated"))
+    appToast.success(t("event.duplicated"))
     router.push(ROUTES.eventDetail(result.event.id))
   }
 

@@ -7,6 +7,8 @@ import { EyeIcon, EyeOffIcon, Loader2Icon, TriangleAlertIcon } from "lucide-reac
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
+import { appToast } from "@/lib/gif-toast"
+
 import { useDemo } from "@/components/dev/demo-provider"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -24,8 +26,7 @@ import { ROUTES } from "@/constants/app"
 import { MOCK_NOW_ISO } from "@/constants/mock-date"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
-import { getFullName } from "@/lib/user"
-import { authenticate, findUserById } from "@/mock"
+import { authenticate } from "@/mock"
 import { useAppDispatch } from "@/store"
 import { loginSchema, type LoginValues } from "./login-schema"
 import { MockAccountPanel } from "./mock-account-panel"
@@ -35,7 +36,7 @@ const UNDERLINE_INPUT =
   "h-11 rounded-none border-0 border-b border-input bg-transparent px-0 text-base focus-visible:border-foreground focus-visible:ring-0 aria-invalid:ring-0 dark:bg-transparent"
 
 export function LoginForm() {
-  const { t, locale } = useLocale()
+  const { t } = useLocale()
   const router = useRouter()
   const dispatch = useAppDispatch()
   const demo = useDemo()
@@ -58,7 +59,7 @@ export function LoginForm() {
       await demo.simulate()
     } catch {
       setFormError("toast.genericError")
-      toast.error(t("toast.genericError"))
+      appToast.error(t("toast.genericError"))
       return
     }
 
@@ -66,7 +67,7 @@ export function LoginForm() {
 
     if (!credential) {
       setFormError("auth.invalidCredentials")
-      toast.error(t("auth.invalidCredentials"))
+      appToast.error(t("auth.invalidCredentials"))
       form.setFocus("email")
       return
     }
@@ -78,14 +79,9 @@ export function LoginForm() {
       at: MOCK_NOW_ISO,
     })
 
-    const user = findUserById(credential.userId)
-    toast.success(
-      user
-        ? `${t("auth.welcomeBack")}, ${getFullName(user, locale)}`
-        : t("auth.welcomeBack"),
-      // อิโมจิเดียวกับที่ทักทายบน hero ของหน้า Login ใช้แทนไอคอนวงกลมเริ่มต้น
-      { icon: "👋🏻" }
-    )
+    // Toast ต้อนรับใช้ภาพเคลื่อนไหวหมวด welcome ซึ่งสลับภาพใหม่ทุกครั้งที่เข้าสู่ระบบ
+    // ข้อความเหลือคำเดียวเพราะภาพเป็นตัวสื่อสารหลัก และชื่อผู้ใช้อยู่บน Topbar อยู่แล้ว
+    appToast.welcome("WELCOME")
 
     router.replace(ROUTES.dashboard)
   }
@@ -107,7 +103,7 @@ export function LoginForm() {
           <div
             role="alert"
             data-testid="login-error"
-            className="border-destructive/30 bg-destructive/10 text-destructive flex items-start gap-2 rounded-lg border px-3 py-2.5 text-sm"
+            className="border-destructive-message/30 bg-destructive-message/10 text-destructive-message flex items-start gap-2 rounded-lg border px-3 py-2.5 text-sm"
           >
             <TriangleAlertIcon
               className="mt-0.5 size-4 shrink-0"
