@@ -24,6 +24,7 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
+import type { EmployeeStatus } from "@/types/employee"
 import type { EventStatus } from "@/types/event"
 import type { ParticipantType, RsvpStatus } from "@/types/participant"
 import type { Priority, TaskStatus } from "@/types/task"
@@ -408,3 +409,31 @@ export const DUE_SOON_STYLE = {
   badge: DUE_SOON_BADGE,
   dot: DUE_SOON_DOT,
 } as const
+
+/**
+ * สถานะพนักงานในทะเบียน — ใช้สีเดียวกับสถานะตอบรับเพื่อให้อ่านความหมายได้ทันที
+ * (ทำงานอยู่ = เขียว, ลาพัก = เหลือง, ลาออก = เทา)
+ */
+export const EMPLOYEE_STATUS_STYLE: Record<EmployeeStatus, StatusStyle> = {
+  active: {
+    labelKey: "employeeStatus.active",
+    icon: BadgeCheckIcon,
+    badge: EVENT_SUCCESS_BADGE,
+    dot: SUCCESS_DOT,
+    chartColor: "var(--success)",
+  },
+  on_leave: {
+    labelKey: "employeeStatus.onLeave",
+    icon: CircleDashedIcon,
+    badge: RSVP_PENDING_BADGE,
+    dot: WARNING_DOT,
+    chartColor: "var(--warning)",
+  },
+  resigned: {
+    labelKey: "employeeStatus.resigned",
+    icon: BanIcon,
+    badge: STATUS_GRAY_BADGE,
+    dot: STATUS_GRAY_DOT,
+    chartColor: "var(--status-gray)",
+  },
+}

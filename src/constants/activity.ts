@@ -4,6 +4,7 @@ import {
   FilePlusIcon,
   FolderInputIcon,
   ListChecksIcon,
+  MailCheckIcon,
   MessageSquareIcon,
   PencilIcon,
   RotateCcwIcon,
@@ -85,4 +86,8 @@ export const ACTIVITY_META: Record<ActivityAction, ActivityMeta> = {
     labelKey: "activityAction.commentMentioned",
     icon: MessageSquareIcon,
   },
+  employee_added: { labelKey: "activityAction.employeeAdded", icon: UserPlusIcon },
+  employee_updated: { labelKey: "activityAction.employeeUpdated", icon: PencilIcon },
+  employee_deleted: { labelKey: "activityAction.employeeDeleted", icon: Trash2Icon },
+  rsvp_submitted: { labelKey: "activityAction.rsvpSubmitted", icon: MailCheckIcon },
 }

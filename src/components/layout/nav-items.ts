@@ -1,7 +1,11 @@
 import {
   BellIcon,
   CalendarDaysIcon,
+  ContactIcon,
+  FerrisWheelIcon,
   LayoutDashboardIcon,
+  LayoutGridIcon,
+  MailCheckIcon,
   Trash2Icon,
   UserIcon,
   type LucideIcon,
@@ -16,10 +20,39 @@ export interface NavItem {
   icon: LucideIcon
 }
 
+/** เมนูแม่ที่พับ/ขยายได้ ไม่มีหน้าของตัวเอง — มีไว้รวมเมนูย่อย */
+export interface NavGroup {
+  id: string
+  labelKey: TranslationKey
+  icon: LucideIcon
+  children: NavItem[]
+}
+
+export type NavEntry = NavItem | NavGroup
+
+export function isNavGroup(entry: NavEntry): entry is NavGroup {
+  return "children" in entry
+}
+
+/** เมนูย่อยใต้ "เบ็ดเตล็ด" — เครื่องมือเสริมที่ไม่ผูกกับกิจกรรมใดกิจกรรมหนึ่ง */
+export const MISC_NAV: NavItem[] = [
+  { href: ROUTES.employees, labelKey: "nav.employees", icon: ContactIcon },
+  { href: ROUTES.spinWheel, labelKey: "nav.spinWheel", icon: FerrisWheelIcon },
+  { href: ROUTES.rsvpForm, labelKey: "nav.rsvpForm", icon: MailCheckIcon },
+]
+
+export const MISC_NAV_GROUP: NavGroup = {
+  id: "misc",
+  labelKey: "nav.misc",
+  icon: LayoutGridIcon,
+  children: MISC_NAV,
+}
+
 /** เมนูหลักบน Sidebar (Desktop) */
-export const MAIN_NAV: NavItem[] = [
+export const MAIN_NAV: NavEntry[] = [
   { href: ROUTES.dashboard, labelKey: "nav.dashboard", icon: LayoutDashboardIcon },
   { href: ROUTES.events, labelKey: "nav.events", icon: CalendarDaysIcon },
+  MISC_NAV_GROUP,
   { href: ROUTES.trash, labelKey: "nav.trash", icon: Trash2Icon },
 ]
 
@@ -36,8 +69,9 @@ export const MOBILE_NAV: NavItem[] = [
   { href: ROUTES.notifications, labelKey: "nav.notifications", icon: BellIcon },
 ]
 
-/** เมนูที่เหลือ แสดงในหน้า More/Drawer ของ Mobile */
+/** เมนูที่เหลือ แสดงในหน้า More/Drawer ของ Mobile — เมนูย่อยของเบ็ดเตล็ดถูกคลี่ออกมาเป็นการ์ดเดี่ยว */
 export const MOBILE_MORE_NAV: NavItem[] = [
+  ...MISC_NAV,
   { href: ROUTES.trash, labelKey: "nav.trash", icon: Trash2Icon },
   ...ACCOUNT_NAV,
 ]
@@ -46,4 +80,9 @@ export const MOBILE_MORE_NAV: NavItem[] = [
 export function isNavItemActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/"
   return pathname === href || pathname.startsWith(`${href}/`)
+}
+
+/** เมนูแม่ถือว่า active เมื่อมีเมนูย่อยตัวใดตัวหนึ่ง active */
+export function isNavGroupActive(pathname: string, group: NavGroup): boolean {
+  return group.children.some((item) => isNavItemActive(pathname, item.href))
 }

@@ -49,12 +49,22 @@ export type AppRoute =
   | "activity"
   | "participants"
   | "timeline"
+  | "employees"
+  | "spinWheel"
+  | "rsvpForm"
 
 /** เมนูที่เหลืออยู่บน Sidebar จริง ๆ (ที่เหลือถูกย้ายไปจุดอื่นแล้ว) */
 const SIDEBAR_LINKS: Partial<Record<AppRoute, string>> = {
   dashboard: "แดชบอร์ด",
   events: "กิจกรรม",
   trash: "ถังขยะ",
+}
+
+/** เมนูย่อยใต้กลุ่ม "เบ็ดเตล็ด" บน Sidebar — ต้องคลี่กลุ่มก่อนถ้ายังพับอยู่ */
+const MISC_LINKS: Partial<Record<AppRoute, string>> = {
+  employees: "รายชื่อ-ข้อมูลพนักงาน",
+  spinWheel: "เกมส์วงล้อ",
+  rsvpForm: "แบบฟอร์ม RSVP",
 }
 
 const ROUTE_PATH: Record<AppRoute, string> = {
@@ -68,6 +78,9 @@ const ROUTE_PATH: Record<AppRoute, string> = {
   activity: "/activity",
   participants: "/participants",
   timeline: "/timeline",
+  employees: "/employees",
+  spinWheel: "/spin-wheel",
+  rsvpForm: "/rsvp-form",
 }
 
 /** แท็บบนการ์ดกิจกรรมเด่นของ Dashboard ที่มีลิงก์ "ดูทั้งหมด" อยู่ข้างใน */
@@ -114,6 +127,19 @@ export async function gotoRoute(page: Page, route: AppRoute) {
       .getByTestId("sidebar-nav")
       .getByRole("link", { name: sidebarLabel, exact: true })
       .click()
+    await page.waitForURL(`**${ROUTE_PATH[route]}`)
+    return
+  }
+
+  const miscLabel = MISC_LINKS[route]
+  if (miscLabel) {
+    const nav = page.getByTestId("sidebar-nav")
+    const link = nav.getByRole("link", { name: miscLabel, exact: true })
+    // กลุ่มที่พับอยู่ไม่ render ลิงก์ย่อยเลย จึงต้องคลี่ก่อน
+    if (!(await link.isVisible())) {
+      await nav.getByTestId("nav-group-misc").click()
+    }
+    await link.click()
     await page.waitForURL(`**${ROUTE_PATH[route]}`)
     return
   }

@@ -24,6 +24,29 @@ describe("ความสมบูรณ์ของ Mock Data", () => {
     expect(new Set(state.participants.map((p) => p.id)).size).toBe(
       state.participants.length
     )
+    expect(new Set(state.employees.map((e) => e.id)).size).toBe(
+      state.employees.length
+    )
+  })
+
+  it("ทะเบียนพนักงานไม่มีรหัสหรืออีเมลซ้ำ และทุกคนเริ่มงานก่อนวันนี้", () => {
+    const codes = state.employees.map((e) => e.employeeCode)
+    const emails = state.employees.map((e) => e.email.toLowerCase())
+    expect(new Set(codes).size).toBe(codes.length)
+    expect(new Set(emails).size).toBe(emails.length)
+
+    for (const employee of state.employees) {
+      expect(employee.startDate <= MOCK_TODAY_ISO, employee.id).toBe(true)
+      expect(employee.firstName.th, employee.id).not.toBe("")
+      expect(employee.firstName.en, employee.id).not.toBe("")
+    }
+  })
+
+  it("ทีมจัดงานทุกคนอยู่ในทะเบียนพนักงานด้วยอีเมลเดียวกัน", () => {
+    const employeeEmails = new Set(state.employees.map((e) => e.email))
+    for (const user of state.users) {
+      expect(employeeEmails.has(user.email), user.id).toBe(true)
+    }
   })
 
   it("ทุกกิจกรรมอ้างถึงผู้รับผิดชอบที่มีอยู่จริง", () => {

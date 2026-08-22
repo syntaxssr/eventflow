@@ -396,6 +396,28 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       }
     }
 
+    /* ---- Employee ---- */
+    case "employee/add":
+      return { ...state, employees: [action.employee, ...state.employees] }
+
+    case "employee/update":
+      return {
+        ...state,
+        employees: state.employees.map((employee) =>
+          employee.id === action.id
+            ? { ...employee, ...action.changes }
+            : employee
+        ),
+      }
+
+    case "employee/delete": {
+      const ids = new Set(action.ids)
+      return {
+        ...state,
+        employees: state.employees.filter((employee) => !ids.has(employee.id)),
+      }
+    }
+
     /* ---- Comment ---- */
     case "comment/add":
       return { ...state, comments: [...state.comments, action.comment] }

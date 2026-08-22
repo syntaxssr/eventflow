@@ -18,6 +18,9 @@ export const ROUTES = {
   notifications: "/notifications",
   activity: "/activity",
   trash: "/trash",
+  employees: "/employees",
+  spinWheel: "/spin-wheel",
+  rsvpForm: "/rsvp-form",
   profile: "/profile",
   designSystem: "/design-system",
 } as const
