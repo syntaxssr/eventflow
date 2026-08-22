@@ -6,7 +6,7 @@ import {
   FileUpIcon,
   Loader2Icon,
 } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { Button } from "@/components/ui/button"
 import { useLocale } from "@/i18n"
@@ -38,7 +38,7 @@ export function ImportStepUpload({
       file.name.toLowerCase().endsWith(extension)
     )
     if (!isExcel) {
-      toast.error(t("participant.onlyExcel"))
+      appToast.error(t("participant.onlyExcel"))
       return
     }
 
@@ -46,12 +46,12 @@ export function ImportStepUpload({
     try {
       const data = readWorkbookRows(await file.arrayBuffer())
       if (data.headers.length === 0 || data.rows.length === 0) {
-        toast.error(t("participant.fileEmpty"))
+        appToast.error(t("participant.fileEmpty"))
         return
       }
       onFileLoaded(file.name, data)
     } catch {
-      toast.error(t("toast.genericError"))
+      appToast.error(t("toast.genericError"))
     } finally {
       setReading(false)
     }
@@ -151,7 +151,7 @@ export function ImportStepUpload({
               buildTemplateWorkbook(),
               "eventflow-participants-template.xlsx"
             )
-            toast.success(t("participant.templateDownloaded"))
+            appToast.success(t("participant.templateDownloaded"))
           }}
           data-testid="download-template"
         >

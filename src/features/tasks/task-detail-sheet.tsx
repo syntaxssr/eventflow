@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { PencilLineIcon, Trash2Icon } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { AvatarGroup } from "@/components/common/avatar-group"
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
@@ -25,7 +25,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { PRIORITY_STYLE, TASK_STATUS_STYLE } from "@/constants/status"
+import {
+  DESTRUCTIVE_ACTION_CLASS,
+  PRIORITY_STYLE,
+  TASK_STATUS_STYLE,
+} from "@/constants/status"
 import { CommentSection } from "@/features/comments/comment-section"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
@@ -78,7 +82,7 @@ export function TaskDetailSheet({
     }
     void run(async () => {
       await actions.setStatus(task, status)
-      toast.success(t("task.statusChanged"))
+      appToast.success(t("task.statusChanged"))
     })
   }
 
@@ -137,7 +141,7 @@ export function TaskDetailSheet({
                 <Button
                   size="icon-sm"
                   variant="ghost"
-                  className="text-destructive"
+                  className={DESTRUCTIVE_ACTION_CLASS}
                   onClick={() => setConfirmDelete(true)}
                   aria-label={t("common.delete")}
                   data-testid="delete-task"
@@ -232,7 +236,7 @@ export function TaskDetailSheet({
           actions.overrideBlock(task)
           await run(async () => {
             await actions.setStatus(task, status)
-            toast.success(t("task.statusChanged"))
+            appToast.success(t("task.statusChanged"))
           })
         }}
       />

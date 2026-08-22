@@ -8,7 +8,7 @@ import {
   ListIcon,
   PlusIcon,
 } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 import { EmptyState } from "@/components/common/empty-state"
@@ -233,7 +233,7 @@ export function TimelineView({ eventId }: { eventId?: string }) {
           setPendingMove(null)
           await run(async () => {
             await actions.reorder(move.item, move.orderedIds)
-            toast.success(t("timeline.moved"))
+            appToast.success(t("timeline.moved"))
           })
         }}
       />

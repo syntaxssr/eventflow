@@ -9,7 +9,7 @@ import {
   PencilLineIcon,
   Trash2Icon,
 } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 import { useDemo } from "@/components/dev/demo-provider"
@@ -68,7 +68,7 @@ export function EventActionsMenu({ event }: { event: EventItem }) {
       await demo.simulate()
     } catch {
       setBusy(false)
-      toast.error(t("common.saveFailed"))
+      appToast.error(t("common.saveFailed"))
       return
     }
 
@@ -99,7 +99,7 @@ export function EventActionsMenu({ event }: { event: EventItem }) {
 
     setBusy(false)
     setConfirmCancel(false)
-    toast.success(t("event.statusChanged"))
+    appToast.success(t("event.statusChanged"))
   }
 
   const handleDelete = async () => {
@@ -110,7 +110,7 @@ export function EventActionsMenu({ event }: { event: EventItem }) {
       await demo.simulate()
     } catch {
       setBusy(false)
-      toast.error(t("common.saveFailed"))
+      appToast.error(t("common.saveFailed"))
       return
     }
 
@@ -129,7 +129,7 @@ export function EventActionsMenu({ event }: { event: EventItem }) {
 
     setBusy(false)
     setConfirmDelete(false)
-    toast.success(t("event.deleted"))
+    appToast.delete(t("event.deleted"))
     router.push(ROUTES.events)
   }
 

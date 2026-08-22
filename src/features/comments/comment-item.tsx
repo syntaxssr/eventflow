@@ -25,6 +25,7 @@ import { useLocale } from "@/i18n"
 import { splitMentionSegments } from "@/lib/comment"
 import { formatDateTime, formatFileSize, formatRelativeTime } from "@/lib/format"
 import { getFullName, getLegalName } from "@/lib/user"
+import { DESTRUCTIVE_ACTION_CLASS } from "@/constants/status"
 import { cn } from "@/lib/utils"
 import type { CommentNode } from "@/types/comment"
 import type { FileType } from "@/types/file"
@@ -227,7 +228,7 @@ export function CommentItem({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                className="text-destructive size-7"
+                className={cn(DESTRUCTIVE_ACTION_CLASS, "size-7")}
                 disabled={busy}
                 onClick={() => onDelete(node)}
                 aria-label={t("common.delete")}

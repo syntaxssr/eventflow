@@ -120,8 +120,11 @@ test.describe("Phase 4 — Task views", () => {
     await gotoMyTasks(page)
     await useTeamScope(page)
 
+    // ตัวกรองกำหนดส่งเปลี่ยนจาก Select เป็น DropdownMenu แล้ว จึงเป็น menuitemradio
     await page.getByLabel("กำหนดส่ง").click()
-    await page.getByRole("option", { name: "เกินกำหนด" }).click()
+    await page.getByRole("menuitemradio", { name: "เกินกำหนด" }).click()
+    // ระหว่างเมนูยังเปิด เนื้อหาหลังเมนูถูกซ่อนจาก accessibility tree จึงนับแถวไม่ได้
+    await expect(page.getByRole("menu")).toBeHidden()
 
     const rows = page.getByTestId("task-table").getByRole("row")
     const count = await rows.count()

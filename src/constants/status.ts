@@ -219,6 +219,30 @@ export const TASK_STATUS_STYLE: Record<TaskStatus, StatusStyle> = {
   },
 }
 
+/**
+ * สีของวงแหวนและจุดในการ์ด "สรุปงานตามสถานะ" — ใช้เฉด Version 3 (ดู colors.md)
+ *
+ * วงแหวนเป็นเส้นหนาบนพื้นการ์ด เฉด Version 2 ที่ใช้กับ Badge จึงจางเกินไป
+ * "ยังไม่เริ่ม" ไม่มีเฉด Version 3 (เทาไม่มีชุดนี้) จึงใช้สีตัวอักษรของเทาแทน
+ * เพื่อไม่ให้กลืนกับพื้นการ์ด
+ */
+export const TASK_STATUS_CHART_TONE: Record<
+  TaskStatus,
+  { fill: string; dot: string }
+> = {
+  not_started: {
+    fill: "var(--status-gray-foreground)",
+    dot: "bg-status-gray-foreground",
+  },
+  in_progress: { fill: "var(--icon-tile-blue)", dot: "bg-icon-tile-blue" },
+  awaiting_review: {
+    fill: "var(--icon-tile-yellow)",
+    dot: "bg-icon-tile-yellow",
+  },
+  blocked: { fill: "var(--icon-tile-orange)", dot: "bg-icon-tile-orange" },
+  completed: { fill: "var(--icon-tile-green)", dot: "bg-icon-tile-green" },
+}
+
 export const PRIORITY_STYLE: Record<Priority, StatusStyle> = {
   low: {
     labelKey: "priority.low",
@@ -342,6 +366,32 @@ export const READINESS_STYLE: Record<ReadinessStatus, StatusStyle> = {
     chartColor: "var(--success)",
   },
 }
+
+/**
+ * คลาสของช่องตัวกรองบนแถบฟิลเตอร์ (ปุ่ม outline, Select, ช่องวันที่)
+ *
+ * ค่าเริ่มต้นของ outline คือ `bg-background` ซึ่งชี้ไปที่ status-gray
+ * พอวางบนพื้น status-default ของการ์ดจะเข้มกว่าพื้นจนดูเหมือนถูกปิดใช้งาน
+ * จึงบังคับเป็น status-default ให้เสมอกับพื้น
+ *
+ * ธีมมืดคงพฤติกรรมเดิมไว้ เพราะโทเคน status-* นิยามเฉพาะธีมสว่าง
+ * ถ้าปล่อยให้ตกไปใช้ค่าเดียวกันจะกลายเป็นช่องสีขาวโพลนบนพื้นมืด
+ */
+export const FILTER_TRIGGER_CLASS = "bg-status-default dark:bg-input/30"
+
+/**
+ * คลาสของปุ่มลบแบบไอคอน (ปุ่ม ghost ไอคอนถังขยะ)
+ *
+ * ใช้เฉด Version 4 เฉพาะจุดนี้ เพราะไอคอนเป็นเส้นบางบนปุ่มที่ไม่มีพื้นรอง
+ * เฉดพาสเทลจึงจมจนดูเหมือนถูกปิดใช้งาน (ดู colors.md)
+ *
+ * ต้องทับ hover ของ variant ghost ให้ครบทั้งสามตัว ไม่งั้นจะเพี้ยนคนละแบบ
+ * - `hover:text-foreground` ทำให้สีแดงหายตอนชี้เมาส์
+ * - `hover:bg-muted` และ `dark:hover:bg-muted/50` เป็นคนละ variant กัน
+ *   ถ้าทับแค่ตัวแรก ธีมมืดจะยังได้พื้นเทาของ ghost อยู่
+ */
+export const DESTRUCTIVE_ACTION_CLASS =
+  "text-destructive-action hover:text-destructive-action hover:bg-destructive-action/15 dark:hover:bg-destructive-action/15"
 
 /** สไตล์ของ Badge "เกินกำหนด / Overdue" */
 export const OVERDUE_STYLE = {

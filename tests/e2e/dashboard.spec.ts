@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test"
 
-import { forceScreenState, signIn } from "./helpers"
+import { forceScreenState, mockDateText, signIn } from "./helpers"
 
 /** เปิดแท็บข้อมูลประกอบด้านล่าง Dashboard ตามชื่อแท็บ */
 async function openDetailTab(
@@ -22,18 +22,19 @@ async function statValue(
 }
 
 test.describe("Phase 2 — Dashboard", () => {
-  test("ทักทายด้วยชื่อผู้ใช้ที่เข้าสู่ระบบ", async ({ page }) => {
+  // คำทักทายถูกถอดออกจาก Dashboard แล้ว ชื่อผู้ใช้ที่ล็อกอินอยู่เหลือที่เมนูผู้ใช้บน Topbar
+  test("แสดงชื่อผู้ใช้ที่เข้าสู่ระบบบนเมนูผู้ใช้", async ({ page }) => {
     await signIn(page)
-    await expect(
-      page.getByRole("heading", { level: 1, name: /สวัสดี อลิสา ลีลายุวัฒนกุล/ })
-    ).toBeVisible()
+    await expect(page.getByTestId("user-menu")).toContainText(
+      "อลิสา ลีลายุวัฒนกุล"
+    )
   })
 
   test("แสดงการ์ดสรุปครบทั้ง 3 ใบพร้อมตัวเลข", async ({ page }) => {
     await signIn(page)
 
     for (const label of [
-      "กิจกรรมที่กำลังจะมาถึง",
+      "กำลังจะมาถึง",
       "งานใกล้ครบกำหนด",
       "งานเกินกำหนด",
       "งานติดขัด",
@@ -54,7 +55,8 @@ test.describe("Phase 2 — Dashboard", () => {
     await expect(
       page.getByRole("heading", { name: "งานเลี้ยงประจำปีของบริษัท 2569" })
     ).toBeVisible()
-    await expect(page.getByText("18 ก.ย. 2569")).toBeVisible()
+    // วันที่ของ Mock ถูกเลื่อนให้สัมพันธ์กับ "วันนี้" จริง จึงคำนวณจาก anchor แทนค่าคงที่
+    await expect(page.getByText(mockDateText("2026-09-18"))).toBeVisible()
     await expect(page.getByText("17:00 – 22:00")).toBeVisible()
     await expect(page.getByText(/อีก \d+ วัน/)).toBeVisible()
     await expect(page.getByText(/เสร็จแล้ว \d+ จาก \d+ งาน/)).toBeVisible()
@@ -133,9 +135,9 @@ test.describe("Phase 2 — Dashboard", () => {
     await page.getByTestId("switch-user-trigger").click()
     await page.getByRole("menuitemradio", { name: /กิตติคุณ เจริญพานิช/ }).click()
 
-    await expect(
-      page.getByRole("heading", { level: 1, name: /สวัสดี กิตติคุณ เจริญพานิช/ })
-    ).toBeVisible()
+    await expect(page.getByTestId("user-menu")).toContainText(
+      "กิตติคุณ เจริญพานิช"
+    )
 
     // งานของกิตติคุณ (u-3) ต้องเข้ามาแทน และงานของอลิสาต้องหายไป
     await expect(urgentTasks).toContainText("สรุปยอดจองโต๊ะรอบแรก")

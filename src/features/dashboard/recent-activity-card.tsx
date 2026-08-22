@@ -21,11 +21,16 @@ import { formatRelativeTime } from "@/lib/format"
 import { getFullName } from "@/lib/user"
 import type { Activity } from "@/types/activity"
 import type { User } from "@/types/user"
-import {
-  DASHBOARD_LIST_PAGE_SIZE,
-  DashboardListPagination,
-} from "./dashboard-list-pagination"
 
+/**
+ * ความเคลื่อนไหวล่าสุดแสดงยาวรวดเดียว ไม่แบ่งหน้า
+ *
+ * ต่างจากการ์ดงานด่วนและไฟล์ล่าสุดที่ยังแบ่งหน้าอยู่ เพราะรายการนี้เรียงตามเวลา
+ * การกดข้ามหน้าไปมาทำให้เสียลำดับเวลาที่เป็นสาระของมัน เลื่อนอ่านรวดเดียวตรงกว่า
+ *
+ * แท็บนี้จึงยืดการ์ดให้ยาวจนจบรายการแทนการ scroll ซ้อนอยู่ในการ์ด
+ * (ดู [data-detail-card-expand] ใน globals.css)
+ */
 export function RecentActivityCard({
   activities,
   usersById,
@@ -34,13 +39,6 @@ export function RecentActivityCard({
   usersById: Map<string, User>
 }) {
   const { t, tl, locale } = useLocale()
-  const [page, setPage] = React.useState(0)
-  const totalPages = Math.ceil(activities.length / DASHBOARD_LIST_PAGE_SIZE)
-  const currentPage = Math.min(page, Math.max(0, totalPages - 1))
-  const visibleActivities = activities.slice(
-    currentPage * DASHBOARD_LIST_PAGE_SIZE,
-    (currentPage + 1) * DASHBOARD_LIST_PAGE_SIZE
-  )
 
   return (
     <Card
@@ -68,7 +66,7 @@ export function RecentActivityCard({
           />
         ) : (
           <ol className="space-y-3">
-            {visibleActivities.map((activity) => {
+            {activities.map((activity) => {
               const actor = usersById.get(activity.actorId)
               const meta = ACTIVITY_META[activity.action]
               const Icon = meta.icon
@@ -117,11 +115,6 @@ export function RecentActivityCard({
             })}
           </ol>
         )}
-        <DashboardListPagination
-          page={currentPage}
-          totalItems={activities.length}
-          onPageChange={setPage}
-        />
       </CardContent>
     </Card>
   )

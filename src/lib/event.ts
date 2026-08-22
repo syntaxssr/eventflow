@@ -1,15 +1,10 @@
 import { daysBetween, fromDateKey, toDateKey } from "@/constants/mock-date"
 import { getEventForegroundColor } from "@/constants/event-colors"
 import {
-  CalendarDaysIcon,
-  ChartNoAxesColumnIncreasingIcon,
-  HandIcon,
-  PartyPopperIcon,
-  RocketIcon,
-  ShieldCheckIcon,
-  SproutIcon,
-  type LucideIcon,
-} from "lucide-react"
+  getEventIconByName,
+  type EventIconName,
+} from "@/constants/event-icons"
+import { type LucideIcon } from "lucide-react"
 import type { DateKey } from "@/types/common"
 import type { DuplicateEventOptions, EventItem } from "@/types/event"
 import type { FileCategory } from "@/types/file"
@@ -49,18 +44,39 @@ export function getEventEmoji(event: Pick<EventItem, "title">): string {
   return "📅"
 }
 
-/** ไอคอนกิจกรรมสำหรับพื้นหลังสีประจำกิจกรรม โดยอิงจากชื่อทั้งไทยและอังกฤษ */
-export function getEventIcon(event: Pick<EventItem, "title">): LucideIcon {
+/**
+ * ชื่อไอคอนที่เดาได้จากชื่อกิจกรรม ใช้เมื่อยังไม่เคยเลือกไอคอนไว้
+ *
+ * คืนเป็นชื่อ ไม่ใช่คอมโพเนนต์ เพื่อให้ฟอร์มเอาไปตั้งเป็นค่าเริ่มต้นของตัวเลือกได้
+ */
+export function getEventIconName(
+  event: Pick<EventItem, "title">
+): EventIconName {
   const title = `${event.title.th} ${event.title.en}`.toLowerCase()
 
-  if (/ปฐมนิเทศ|orientation|onboarding/.test(title)) return HandIcon
-  if (/ความปลอดภัย|security|อบรม|training/.test(title)) return ShieldCheckIcon
-  if (/ปลูกป่า|ป่าชายเลน|mangrove|csr/.test(title)) return SproutIcon
-  if (/ประชุม|meeting|town hall/.test(title)) return ChartNoAxesColumnIncreasingIcon
-  if (/เปิดตัว|launch/.test(title)) return RocketIcon
-  if (/งานเลี้ยง|party|celebration/.test(title)) return PartyPopperIcon
+  if (/ปฐมนิเทศ|orientation|onboarding/.test(title)) return "hand"
+  if (/ความปลอดภัย|security|อบรม|training/.test(title)) return "shield"
+  if (/ปลูกป่า|ป่าชายเลน|mangrove|csr/.test(title)) return "sprout"
+  if (/ประชุม|meeting|town hall/.test(title)) return "chart"
+  if (/เปิดตัว|launch/.test(title)) return "rocket"
+  if (/งานเลี้ยง|party|celebration/.test(title)) return "party"
 
-  return CalendarDaysIcon
+  return "calendar"
+}
+
+/**
+ * ไอคอนกิจกรรมสำหรับพื้นหลังสีประจำกิจกรรม
+ *
+ * ใช้ไอคอนที่ผู้ใช้เลือกไว้ก่อนเสมอ ถ้ายังไม่ได้เลือก (`icon` เป็น null
+ * หรือชื่อหลุดจากชุด) ค่อยเดาจากชื่อทั้งไทยและอังกฤษเหมือนพฤติกรรมเดิม
+ */
+export function getEventIcon(
+  event: Pick<EventItem, "title"> & Partial<Pick<EventItem, "icon">>
+): LucideIcon {
+  return (
+    getEventIconByName(event.icon ?? null) ??
+    getEventIconByName(getEventIconName(event))!
+  )
 }
 
 export interface DuplicateEventInput {

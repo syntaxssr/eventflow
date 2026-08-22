@@ -7,6 +7,7 @@ import type {
   TimeString,
 } from "./common"
 import type { EventColor } from "@/constants/event-colors"
+import type { EventIconName } from "@/constants/event-icons"
 
 export const EVENT_STATUSES = [
   "draft",
@@ -34,6 +35,11 @@ export interface EventItem extends AuditFields {
   expectedAttendees: number
   /** สีประจำกิจกรรม — เลือกได้จาก EVENT_COLOR_OPTIONS */
   color: EventColor
+  /**
+   * ไอคอนประจำกิจกรรม — เลือกได้จาก EVENT_ICON_OPTIONS
+   * null = ให้เดาจากชื่อกิจกรรมเหมือนเดิม (พฤติกรรมก่อนมีตัวเลือกนี้)
+   */
+  icon: EventIconName | null
   status: EventStatus
   /** ถูกย้ายไป Trash เมื่อใด (null = ยังอยู่ในระบบ) */
   deletedAt: IsoDateTime | null

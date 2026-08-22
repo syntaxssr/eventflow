@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { useDemo } from "@/components/dev/demo-provider"
 import { ROUTES } from "@/constants/app"
@@ -84,7 +84,7 @@ export function useTimelineActions() {
         after: null,
         createdAt: at,
       })
-      toast.success(t("timeline.created"))
+      appToast.success(t("timeline.created"))
     },
     [currentUser, dispatch, logActivity, save, t]
   )
@@ -149,7 +149,7 @@ export function useTimelineActions() {
         after: null,
         createdAt: at,
       })
-      toast.success(t("timeline.deleted"))
+      appToast.delete(t("timeline.deleted"))
     },
     [currentUser, dispatch, logActivity, save, t]
   )

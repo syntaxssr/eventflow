@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowLeftRightIcon, LogOutIcon, UserIcon } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { UserAvatar } from "@/components/common/user-avatar"
 import { Button } from "@/components/ui/button"
@@ -40,7 +40,7 @@ export function UserMenu({ showName = true }: { showName?: boolean }) {
     dispatch({ type: "auth/switchUser", userId })
     const nextUser = users.find((user) => user.id === userId)
     if (nextUser) {
-      toast.success(`${t("auth.switchedTo")}: ${getFullName(nextUser, locale)}`)
+      appToast.success(`${t("auth.switchedTo")}: ${getFullName(nextUser, locale)}`)
     }
   }
 

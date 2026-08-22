@@ -3,6 +3,8 @@
 import * as React from "react"
 import { toast } from "sonner"
 
+import { appToast } from "@/lib/gif-toast"
+
 import { useDemo } from "@/components/dev/demo-provider"
 import { ROUTES } from "@/constants/app"
 import { TASK_STATUS_STYLE } from "@/constants/status"
@@ -161,7 +163,7 @@ export function useTaskActions() {
           task.assigneeIds
         )
 
-        toast.success(t("task.autoCompleted"))
+        appToast.success(t("task.autoCompleted"))
         return
       }
 
@@ -258,7 +260,7 @@ export function useTaskActions() {
           task.assigneeIds
         )
       }
-      toast.success(t("task.dependencyAdded"))
+      appToast.success(t("task.dependencyAdded"))
     },
     [currentUser, dispatch, notify, save, state.tasks, t]
   )
@@ -267,7 +269,7 @@ export function useTaskActions() {
     async (task: Task, dependencyId: string) => {
       await save()
       dispatch({ type: "task/removeDependency", taskId: task.id, dependencyId })
-      toast.success(t("task.dependencyRemoved"))
+      appToast.success(t("task.dependencyRemoved"))
     },
     [dispatch, save, t]
   )
@@ -294,7 +296,7 @@ export function useTaskActions() {
         before: null,
         after: null,
       })
-      toast.success(t("task.deleted"))
+      appToast.delete(t("task.deleted"))
     },
     [currentUser, dispatch, logActivity, save, t]
   )

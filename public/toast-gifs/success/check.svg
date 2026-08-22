@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <circle cx="48" cy="48" r="46" fill="#67c567"/>
+  <path d="M28 50 L43 64 L70 34" fill="none" stroke="#143414" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="80" stroke-dashoffset="80">
+    <animate attributeName="stroke-dashoffset" values="80;0;0;80" dur="2s" repeatCount="indefinite"/>
+  </path>
+</svg>

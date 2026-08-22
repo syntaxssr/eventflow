@@ -52,6 +52,7 @@ import { useAppState } from "@/store"
 import { selectActiveEvents } from "@/store/selectors"
 import { FILE_TYPES, type FileItem, type FileType } from "@/types/file"
 import { FileDetailDialog } from "./file-detail-dialog"
+import { FileTypeBadge } from "./file-type-badge"
 import { FileUploadZone } from "./file-upload-zone"
 import { useFileActions } from "./use-file-actions"
 
@@ -417,8 +418,8 @@ export function FilesView({ eventId }: { eventId?: string }) {
                         {file.name}
                       </button>
                     </TableCell>
-                    <TableCell className="text-sm">
-                      {FILE_TYPE_STYLE[file.type].label}
+                    <TableCell>
+                      <FileTypeBadge type={file.type} />
                     </TableCell>
                     <TableCell className="text-sm">
                       {category ? tl(category.name) : "—"}

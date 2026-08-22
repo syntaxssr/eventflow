@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { DownloadIcon, Loader2Icon } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { useDemo } from "@/components/dev/demo-provider"
 import { Button } from "@/components/ui/button"
@@ -59,7 +59,7 @@ export function ExportParticipantsDialog({
     try {
       await demo.simulate()
     } catch {
-      toast.error(t("toast.genericError"))
+      appToast.error(t("toast.genericError"))
       setBusy(false)
       return
     }
@@ -98,7 +98,7 @@ export function ExportParticipantsDialog({
     downloadWorkbook(workbook, "eventflow-participants.xlsx")
 
     setBusy(false)
-    toast.success(t("participant.exportDone"))
+    appToast.success(t("participant.exportDone"))
     onOpenChange(false)
   }
 

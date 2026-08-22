@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { useDemo } from "@/components/dev/demo-provider"
 import { useActivityLog } from "@/hooks/use-activity-log"
@@ -62,7 +62,7 @@ export function useParticipantActions() {
       await demo.simulate()
       return true
     } catch {
-      toast.error(t("common.saveFailed"))
+      appToast.error(t("common.saveFailed"))
       return false
     }
   }, [demo, t])
@@ -94,7 +94,7 @@ export function useParticipantActions() {
         before: null,
         after: null,
       })
-      toast.success(t("participant.added"))
+      appToast.success(t("participant.added"))
       return true
     },
     [currentUser, dispatch, logActivity, save, t]
@@ -128,7 +128,7 @@ export function useParticipantActions() {
         before: null,
         after: null,
       })
-      toast.success(t("participant.updated"))
+      appToast.success(t("participant.updated"))
       return true
     },
     [currentUser, dispatch, logActivity, save, t]
@@ -158,7 +158,7 @@ export function useParticipantActions() {
         before: null,
         after: null,
       })
-      toast.success(t("participant.deleted", { count: participants.length }))
+      appToast.delete(t("participant.deleted", { count: participants.length }))
       return true
     },
     [currentUser, dispatch, logActivity, save, t]
@@ -189,7 +189,7 @@ export function useParticipantActions() {
         before: null,
         after: RSVP_LABEL[rsvpStatus],
       })
-      toast.success(t("participant.rsvpChanged", { count: participants.length }))
+      appToast.success(t("participant.rsvpChanged", { count: participants.length }))
       return true
     },
     [currentUser, dispatch, logActivity, save, t]
@@ -245,7 +245,7 @@ export function useParticipantActions() {
         })
       }
 
-      toast.success(
+      appToast.success(
         t("participant.importSuccess", {
           created: created.length,
           updated: updated.length,

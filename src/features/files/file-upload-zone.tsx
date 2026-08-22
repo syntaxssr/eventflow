@@ -8,7 +8,7 @@ import {
   UploadIcon,
   XIcon,
 } from "lucide-react"
-import { toast } from "sonner"
+import { appToast } from "@/lib/gif-toast"
 
 import { useDemo } from "@/components/dev/demo-provider"
 import { Button } from "@/components/ui/button"
@@ -114,7 +114,7 @@ export function FileUploadZone({
         const validation = validateFile(file)
 
         if (!validation.valid) {
-          toast.error(
+          appToast.error(
             validation.error === "too_large"
               ? t("file.tooLarge", {
                   name: file.name,
@@ -155,7 +155,7 @@ export function FileUploadZone({
 
   React.useEffect(() => {
     if (successCount > 0) {
-      toast.success(t("file.uploaded"))
+      appToast.success(t("file.uploaded"))
     }
     // แจ้งครั้งเดียวต่อจำนวนที่สำเร็จเพิ่มขึ้น
   }, [successCount, t])

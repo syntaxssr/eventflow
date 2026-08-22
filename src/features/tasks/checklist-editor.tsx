@@ -35,6 +35,7 @@ import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { useLocale } from "@/i18n"
 import { checklistProgress } from "@/lib/checklist"
+import { DESTRUCTIVE_ACTION_CLASS } from "@/constants/status"
 import { cn } from "@/lib/utils"
 import type { ChecklistItem, Task } from "@/types/task"
 import { useTaskActions } from "./use-task-actions"
@@ -348,7 +349,10 @@ function ChecklistRow({
           <Button
             size="icon-xs"
             variant="ghost"
-            className="text-destructive opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+            className={cn(
+              DESTRUCTIVE_ACTION_CLASS,
+              "opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+            )}
             onClick={onRequestDelete}
             aria-label={`${t("common.delete")}: ${label}`}
           >

@@ -14,8 +14,10 @@ import {
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
 } from "@/components/ui/input-group"
-import { SearchIcon, CheckIcon } from "lucide-react"
+import { DESTRUCTIVE_ACTION_CLASS } from "@/constants/status"
+import { SearchIcon, CheckIcon, XIcon } from "lucide-react"
 
 function Command({
   className,
@@ -67,8 +69,14 @@ function CommandDialog({
 
 function CommandInput({
   className,
+  clearLabel = "Clear search",
   ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input>) {
+}: React.ComponentProps<typeof CommandPrimitive.Input> & {
+  clearLabel?: string
+}) {
+  const { value, onValueChange } = props
+  const canClear = Boolean(value) && typeof onValueChange === "function"
+
   return (
     <div data-slot="command-input-wrapper" className="p-1 pb-0">
       <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
@@ -83,6 +91,19 @@ function CommandInput({
         <InputGroupAddon>
           <SearchIcon className="size-4 shrink-0 opacity-50" />
         </InputGroupAddon>
+        {/* ปุ่มล้างค่าของเราเอง — กากบาทของเบราว์เซอร์คุมสีไม่ได้ */}
+        {canClear ? (
+          <InputGroupAddon align="inline-end">
+            <InputGroupButton
+              size="icon-xs"
+              aria-label={clearLabel}
+              onClick={() => onValueChange?.("")}
+              className={DESTRUCTIVE_ACTION_CLASS}
+            >
+              <XIcon className="size-3.5" aria-hidden="true" />
+            </InputGroupButton>
+          </InputGroupAddon>
+        ) : null}
       </InputGroup>
     </div>
   )

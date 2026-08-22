@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <circle cx="48" cy="48" r="46" fill="#ffb78f"/>
+  <g fill="#702d00">
+    <rect x="18" y="62" width="60" height="9" rx="4"/>
+    <rect x="30" y="34" width="14" height="14" rx="3"><animate attributeName="x" values="30;72" dur="1.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"/></rect>
+    <rect x="52" y="44" width="12" height="12" rx="3"><animate attributeName="x" values="52;80" dur="1.6s" begin="0.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="1.6s" begin="0.4s" repeatCount="indefinite"/></rect>
+  </g>
+</svg>

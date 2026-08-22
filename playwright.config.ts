@@ -22,6 +22,9 @@ export default defineConfig({
     trace: "on-first-retry",
     locale: "th-TH",
     timezoneId: "Asia/Bangkok",
+    // ปิดอนิเมชันฝั่งระบบ — ตัวเลขบนการ์ดสรุปใช้ useCountUp ซึ่งข้ามการนับขึ้น
+    // เมื่อผู้ใช้ตั้ง prefers-reduced-motion เทสต์จึงอ่านค่าจริงได้ทันที
+    contextOptions: { reducedMotion: "reduce" },
   },
   projects: [
     {

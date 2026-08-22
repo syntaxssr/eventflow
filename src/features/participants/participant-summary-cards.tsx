@@ -8,50 +8,51 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-import { Card, CardContent } from "@/components/ui/card"
-import { useLocale } from "@/i18n"
-import { formatNumber } from "@/lib/format"
-import { cn } from "@/lib/utils"
+import { StatCard } from "@/features/dashboard/stat-card"
+import type { TranslationKey } from "@/i18n/types"
 import type { RsvpSummary } from "@/types/participant"
 
-/** การ์ดสรุปสถานะตอบรับ 4 ใบ: ทั้งหมด / เข้าร่วม / ไม่เข้าร่วม / ยังไม่ตอบรับ */
+/**
+ * การ์ดสรุปสถานะตอบรับ 4 ใบ: ทั้งหมด / เข้าร่วม / ไม่เข้าร่วม / ยังไม่ตอบรับ
+ *
+ * ใช้ StatCard ใบเดียวกับการ์ดสรุปบน Dashboard เพื่อให้แถบตัวเลขสรุปทั้งแอป
+ * อ่านเหมือนกัน แต่ไม่ส่ง href เพราะการ์ดชุดนี้อยู่บนหน้าปลายทางอยู่แล้ว
+ */
 export function ParticipantSummaryCards({ summary }: { summary: RsvpSummary }) {
-  const { t, locale } = useLocale()
-
   const cards: {
     key: string
-    label: string
+    labelKey: TranslationKey
     value: number
     icon: LucideIcon
-    tile: string
+    tone: React.ComponentProps<typeof StatCard>["tone"]
   }[] = [
     {
       key: "total",
-      label: t("participant.summaryTotal"),
+      labelKey: "participant.summaryTotal",
       value: summary.total,
       icon: UsersIcon,
-      tile: "bg-brand-50 text-brand-900 dark:bg-brand-500/15 dark:text-brand-300",
+      tone: "brand",
     },
     {
       key: "attending",
-      label: t("rsvp.attending"),
+      labelKey: "rsvp.attending",
       value: summary.attending,
       icon: CircleCheckIcon,
-      tile: "bg-success/20 text-success-foreground dark:bg-success/25",
+      tone: "success",
     },
     {
       key: "notAttending",
-      label: t("rsvp.notAttending"),
+      labelKey: "rsvp.notAttending",
       value: summary.notAttending,
       icon: CircleXIcon,
-      tile: "bg-danger/15 text-danger-foreground dark:bg-danger/25",
+      tone: "danger",
     },
     {
       key: "pending",
-      label: t("rsvp.pending"),
+      labelKey: "rsvp.pending",
       value: summary.pending,
       icon: CircleHelpIcon,
-      tile: "bg-warning/25 text-warning-foreground dark:bg-warning/30",
+      tone: "warning",
     },
   ]
 
@@ -60,35 +61,16 @@ export function ParticipantSummaryCards({ summary }: { summary: RsvpSummary }) {
       className="grid grid-cols-2 gap-3 lg:grid-cols-4"
       data-testid="participant-summary"
     >
-      {cards.map((card) => {
-        const Icon = card.icon
-        return (
-          <Card key={card.key}>
-            <CardContent className="flex items-center gap-3 p-4">
-              <span
-                className={cn(
-                  "flex size-9 shrink-0 items-center justify-center rounded-lg",
-                  card.tile
-                )}
-                aria-hidden="true"
-              >
-                <Icon className="size-4" />
-              </span>
-              <span className="min-w-0">
-                <span
-                  className="block text-xl font-bold tabular-nums"
-                  data-testid={`participant-summary-${card.key}`}
-                >
-                  {formatNumber(card.value, locale)}
-                </span>
-                <span className="text-muted-foreground block truncate text-xs">
-                  {card.label}
-                </span>
-              </span>
-            </CardContent>
-          </Card>
-        )
-      })}
+      {cards.map((card) => (
+        <StatCard
+          key={card.key}
+          labelKey={card.labelKey}
+          value={card.value}
+          icon={card.icon}
+          tone={card.tone}
+          valueTestId={`participant-summary-${card.key}`}
+        />
+      ))}
     </div>
   )
 }

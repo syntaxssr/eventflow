@@ -1,16 +1,19 @@
 /**
- * สีประจำกิจกรรม — ใช้ 8 สีสถานะจาก Design System Version 2
+ * สีประจำกิจกรรม — ใช้ 8 สีสถานะจาก Design System Version 3
  * ไม่รวม Default และ Gray เพราะความต่างจากพื้นผิวน้อยเกินไปสำหรับการแยกกิจกรรม
+ *
+ * ใช้ Version 3 ไม่ใช่ Version 2 เพราะสีนี้ไปอยู่บนช่องไอคอนสี่เหลี่ยมเล็ก
+ * ที่มีแต่ไอคอนล้วน ๆ เฉดพาสเทลของ Version 2 จึงจางเกินจนแยกกิจกรรมไม่ออก
  */
 export const EVENT_COLOR_OPTIONS = [
-  { name: "Brown", value: "#D0B48A", foreground: "#332714" },
-  { name: "Orange", value: "#FED5BE", foreground: "#702D00" },
-  { name: "Yellow", value: "#FFE4A9", foreground: "#6B4900" },
-  { name: "Green", value: "#AFE1AF", foreground: "#205520" },
-  { name: "Blue", value: "#C3DCFF", foreground: "#00337C" },
-  { name: "Purple", value: "#E4D0FB", foreground: "#470B75" },
-  { name: "Pink", value: "#FCCDDE", foreground: "#71093D" },
-  { name: "Red", value: "#FFCBCD", foreground: "#770B07" },
+  { name: "Brown", value: "#B68A49", foreground: "#332714" },
+  { name: "Orange", value: "#FFB78F", foreground: "#702D00" },
+  { name: "Yellow", value: "#FFD67B", foreground: "#6B4900" },
+  { name: "Green", value: "#67C567", foreground: "#143414" },
+  { name: "Blue", value: "#95C1FF", foreground: "#00337C" },
+  { name: "Purple", value: "#CB9EFF", foreground: "#490080" },
+  { name: "Pink", value: "#FF9CC0", foreground: "#7A003D" },
+  { name: "Red", value: "#FF9DA1", foreground: "#7E0500" },
 ] as const
 
 export const EVENT_COLORS = EVENT_COLOR_OPTIONS.map((option) => option.value)
