@@ -152,6 +152,36 @@ test.describe("Phase 1 — Application Shell", () => {
     }
   })
 
+  test("เมนูเบ็ดเตล็ดคลี่แล้วเข้าหน้าย่อยได้ครบ", async ({ page }) => {
+    await signIn(page)
+    const nav = page.getByTestId("sidebar-nav")
+    const group = nav.getByTestId("nav-group-misc")
+
+    await expect(group).toBeVisible()
+    await expect(group).toHaveAttribute("aria-expanded", "false")
+    await group.click()
+    await expect(group).toHaveAttribute("aria-expanded", "true")
+
+    const links = [
+      { name: "รายชื่อ-ข้อมูลพนักงาน", url: /\/employees$/ },
+      { name: "เกมส์วงล้อ", url: /\/spin-wheel$/ },
+      { name: "แบบฟอร์ม RSVP", url: /\/rsvp-form$/ },
+    ]
+
+    for (const link of links) {
+      const item = nav.getByRole("link", { name: link.name, exact: true })
+      await expect(item).toBeVisible()
+      await item.click()
+      await expect(page).toHaveURL(link.url)
+      await expect(item).toHaveAttribute("aria-current", "page")
+      // เข้าหน้าย่อยแล้วกลุ่มต้องยังคลี่อยู่ ไม่พับกลับ
+      await expect(group).toHaveAttribute("aria-expanded", "true")
+    }
+
+    // เมนูแม่ต้องไม่ถูกนับเป็นลิงก์ — เทสต์เดิมที่ไล่คลิกลิงก์ 3 อันจึงยังใช้ได้
+    await expect(nav.getByRole("link", { name: "เบ็ดเตล็ด" })).toHaveCount(0)
+  })
+
   test("ทุกหน้าหลักเปิดได้จากทางเข้าจริงในแอป", async ({ page }) => {
     await signIn(page)
 
@@ -166,6 +196,9 @@ test.describe("Phase 1 — Application Shell", () => {
       { route: "notifications", url: /\/notifications$/ },
       { route: "activity", url: /\/activity$/ },
       { route: "trash", url: /\/trash$/ },
+      { route: "employees", url: /\/employees$/ },
+      { route: "spinWheel", url: /\/spin-wheel$/ },
+      { route: "rsvpForm", url: /\/rsvp-form$/ },
       { route: "profile", url: /\/profile$/ },
       { route: "dashboard", url: /\/dashboard$/ },
     ]

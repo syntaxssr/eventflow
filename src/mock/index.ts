@@ -6,6 +6,7 @@ import {
 import type { AppState } from "@/store/types"
 import { MOCK_ACTIVITIES } from "./activities"
 import { MOCK_COMMENTS } from "./comments"
+import { MOCK_EMPLOYEES } from "./employees"
 import { MOCK_EVENTS } from "./events"
 import { MOCK_FILE_CATEGORIES, MOCK_FILES } from "./files"
 import { MOCK_NOTIFICATIONS } from "./notifications"
@@ -74,6 +75,7 @@ export function createInitialState(): AppState {
     })),
     fileCategories: MOCK_FILE_CATEGORIES.map((category) => ({ ...category })),
     participants: MOCK_PARTICIPANTS.map((participant) => ({ ...participant })),
+    employees: MOCK_EMPLOYEES.map((employee) => ({ ...employee })),
     comments: MOCK_COMMENTS.map((comment) => ({
       ...comment,
       mentionIds: [...comment.mentionIds],

@@ -7,9 +7,10 @@ import type {
 import { MOCK_USERS } from "./users"
 
 /** [ไทย, English] */
-type NamePair = [string, string]
+export type NamePair = [string, string]
 
-const FIRST_NAMES: NamePair[] = [
+/** ชุดชื่อ-นามสกุลกลาง — ทะเบียนพนักงานใช้ชุดเดียวกันเพื่อให้ชื่อตรงกันข้ามหน้า */
+export const FIRST_NAMES: NamePair[] = [
   ["ชัยวัฒน์", "Chaiwat"],
   ["ณัฐริกา", "Nattarika"],
   ["ภูริช", "Phurich"],
@@ -36,7 +37,7 @@ const FIRST_NAMES: NamePair[] = [
   ["ทิพย์สุดา", "Thipsuda"],
 ]
 
-const LAST_NAMES: NamePair[] = [
+export const LAST_NAMES: NamePair[] = [
   ["บุญมาก", "Boonmak"],
   ["ทองสุข", "Thongsuk"],
   ["เจริญพร", "Charoenporn"],
@@ -63,7 +64,7 @@ const LAST_NAMES: NamePair[] = [
   ["ครองทรัพย์", "Krongsap"],
 ]
 
-const DEPARTMENTS: LocalizedText[] = [
+export const DEPARTMENTS: LocalizedText[] = [
   { th: "ฝ่ายขายและการตลาด", en: "Sales & Marketing" },
   { th: "ฝ่ายปฏิบัติการ", en: "Operations" },
   { th: "ฝ่ายบัญชีและการเงิน", en: "Finance & Accounting" },

@@ -2,6 +2,7 @@ import type {
   Activity,
   AuthSession,
   Comment,
+  Employee,
   EventItem,
   FileCategory,
   FileItem,
@@ -33,6 +34,8 @@ export interface AppState {
   files: FileItem[]
   fileCategories: FileCategory[]
   participants: Participant[]
+  /** ทะเบียนพนักงานทั้งบริษัท — ไม่ผูกกับกิจกรรมใด */
+  employees: Employee[]
   comments: Comment[]
   notifications: Notification[]
   activities: Activity[]
@@ -128,6 +131,11 @@ export type ParticipantAction =
     }
   | { type: "participant/import"; created: Participant[]; updated: Participant[] }
 
+export type EmployeeAction =
+  | { type: "employee/add"; employee: Employee }
+  | { type: "employee/update"; id: Id; changes: Partial<Employee> }
+  | { type: "employee/delete"; ids: Id[] }
+
 export type CommentAction =
   | { type: "comment/add"; comment: Comment }
   | { type: "comment/update"; id: Id; body: Comment["body"]; at: string }
@@ -156,6 +164,7 @@ export type AppAction =
   | TimelineAction
   | FileAction
   | ParticipantAction
+  | EmployeeAction
   | CommentAction
   | NotificationAction
   | ActivityAction

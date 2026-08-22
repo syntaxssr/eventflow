@@ -30,6 +30,10 @@ export const ACTIVITY_ACTIONS = [
   "participant_conflict_resolved",
   "comment_added",
   "comment_mentioned",
+  "employee_added",
+  "employee_updated",
+  "employee_deleted",
+  "rsvp_submitted",
 ] as const
 
 export type ActivityAction = (typeof ACTIVITY_ACTIONS)[number]
@@ -42,6 +46,7 @@ export type ActivityTargetType =
   | "timeline"
   | "participant"
   | "comment"
+  | "employee"
 
 export interface Activity {
   id: Id
