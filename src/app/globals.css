@@ -315,27 +315,27 @@ input[type="search"]::-webkit-search-decoration {
   max-width: 100%;
 }
 
-/* พลุกระดาษหลัง Toast — ชิ้นกระดาษร่วงลงพร้อมหมุน วนไม่รู้จบตลอดที่ Toast ค้างอยู่ */
-@keyframes toast-confetti-fall {
+/* พลุกระดาษรอบ ๆ ภาพใน Toast — ชิ้นกระดาษกระจายออกจากกลางภาพไปทุกทิศพร้อมหมุน
+   ระยะและทิศของแต่ละชิ้นส่งมาทาง --tx / --ty (ดู gif-toast.tsx) */
+@keyframes toast-confetti-burst {
   0% {
     opacity: 0;
-    transform: translateY(-20%) rotate(0deg);
+    transform: translate(0, 0) rotate(0deg) scale(0.4);
   }
-  10% {
+  12% {
     opacity: 1;
   }
-  90% {
+  80% {
     opacity: 1;
   }
   100% {
     opacity: 0;
-    /* ระยะร่วงคิดเป็น px เพราะ % ของ transform อิงความสูงของชิ้นกระดาษเอง (ไม่กี่ px) */
-    transform: translateY(230px) rotate(540deg);
+    transform: translate(var(--tx), var(--ty)) rotate(540deg) scale(1);
   }
 }
 
 .toast-confetti-piece {
-  animation: toast-confetti-fall 2.6s linear infinite;
+  animation: toast-confetti-burst 2.4s ease-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

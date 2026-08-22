@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { toast, type ExternalToast } from "sonner"
 
 import { pickToastGif, type ToastGifCategory } from "@/constants/toast-gif"
@@ -12,39 +13,44 @@ const CELEBRATES: ToastGifCategory[] = ["welcome", "success"]
  * สีใช้เฉด Version 3 ชุดเดียวกับช่องไอคอนทั้งระบบ
  */
 const CONFETTI = [
-  { left: "2%", delay: "0s", duration: "2.6s", color: "var(--icon-tile-blue)", size: 8 },
-  { left: "9%", delay: "0.9s", duration: "3.1s", color: "var(--icon-tile-red)", size: 6 },
-  { left: "15%", delay: "0.4s", duration: "2.3s", color: "var(--icon-tile-yellow)", size: 7 },
-  { left: "22%", delay: "1.4s", duration: "2.9s", color: "var(--icon-tile-green)", size: 9 },
-  { left: "29%", delay: "0.2s", duration: "3.3s", color: "var(--icon-tile-purple)", size: 6 },
-  { left: "35%", delay: "1.1s", duration: "2.5s", color: "var(--icon-tile-orange)", size: 8 },
-  { left: "42%", delay: "0.6s", duration: "3s", color: "var(--icon-tile-blue)", size: 7 },
-  { left: "48%", delay: "1.7s", duration: "2.4s", color: "var(--icon-tile-yellow)", size: 9 },
-  { left: "55%", delay: "0.35s", duration: "2.8s", color: "var(--icon-tile-green)", size: 6 },
-  { left: "61%", delay: "1.25s", duration: "3.2s", color: "var(--icon-tile-red)", size: 8 },
-  { left: "68%", delay: "0.75s", duration: "2.6s", color: "var(--icon-tile-purple)", size: 7 },
-  { left: "74%", delay: "1.55s", duration: "3.1s", color: "var(--icon-tile-orange)", size: 9 },
-  { left: "81%", delay: "0.15s", duration: "2.7s", color: "var(--icon-tile-blue)", size: 6 },
-  { left: "87%", delay: "1s", duration: "2.35s", color: "var(--icon-tile-green)", size: 8 },
-  { left: "93%", delay: "0.5s", duration: "3s", color: "var(--icon-tile-yellow)", size: 7 },
-  { left: "98%", delay: "1.35s", duration: "2.55s", color: "var(--icon-tile-red)", size: 6 },
+  { tx: "175px", ty: "0px", delay: "0.0s", duration: "2.2s", color: "var(--icon-tile-blue)", size: 6 },
+  { tx: "178px", ty: "75px", delay: "0.28s", duration: "2.55s", color: "var(--icon-tile-yellow)", size: 7 },
+  { tx: "157px", ty: "80px", delay: "0.56s", duration: "2.9s", color: "var(--icon-tile-green)", size: 8 },
+  { tx: "60px", ty: "141px", delay: "0.84s", duration: "3.25s", color: "var(--icon-tile-purple)", size: 9 },
+  { tx: "36px", ty: "123px", delay: "1.12s", duration: "2.2s", color: "var(--icon-tile-red)", size: 6 },
+  { tx: "-70px", ty: "141px", delay: "1.4s", duration: "2.55s", color: "var(--icon-tile-orange)", size: 7 },
+  { tx: "-87px", ty: "108px", delay: "0.0s", duration: "2.9s", color: "var(--icon-tile-blue)", size: 8 },
+  { tx: "-178px", ty: "75px", delay: "0.28s", duration: "3.25s", color: "var(--icon-tile-yellow)", size: 9 },
+  { tx: "-193px", ty: "43px", delay: "0.56s", duration: "2.2s", color: "var(--icon-tile-green)", size: 6 },
+  { tx: "-172px", ty: "-26px", delay: "0.84s", duration: "2.55s", color: "var(--icon-tile-purple)", size: 7 },
+  { tx: "-193px", ty: "-43px", delay: "1.12s", duration: "2.9s", color: "var(--icon-tile-red)", size: 8 },
+  { tx: "-132px", ty: "-115px", delay: "1.4s", duration: "3.25s", color: "var(--icon-tile-orange)", size: 9 },
+  { tx: "-88px", ty: "-108px", delay: "0.0s", duration: "2.2s", color: "var(--icon-tile-blue)", size: 6 },
+  { tx: "0px", ty: "-150px", delay: "0.28s", duration: "2.55s", color: "var(--icon-tile-yellow)", size: 7 },
+  { tx: "36px", ty: "-123px", delay: "0.56s", duration: "2.9s", color: "var(--icon-tile-green)", size: 8 },
+  { tx: "112px", ty: "-115px", delay: "0.84s", duration: "3.25s", color: "var(--icon-tile-purple)", size: 9 },
+  { tx: "157px", ty: "-80px", delay: "1.12s", duration: "2.2s", color: "var(--icon-tile-red)", size: 6 },
+  { tx: "202px", ty: "-26px", delay: "1.4s", duration: "2.55s", color: "var(--icon-tile-orange)", size: 7 },
 ]
 
 function Confetti() {
   return (
-    <div className="pointer-events-none absolute inset-x-0 -top-2 bottom-0 overflow-hidden">
+    <div className="pointer-events-none absolute inset-0">
       {CONFETTI.map((piece, index) => (
         <span
           key={index}
-          className="toast-confetti-piece absolute top-0 block rounded-[2px]"
-          style={{
-            left: piece.left,
-            width: piece.size,
-            height: piece.size * 1.6,
-            backgroundColor: piece.color,
-            animationDelay: piece.delay,
-            animationDuration: piece.duration,
-          }}
+          className="toast-confetti-piece absolute top-1/2 left-1/2 block rounded-[2px]"
+          style={
+            {
+              width: piece.size,
+              height: piece.size * 1.6,
+              backgroundColor: piece.color,
+              animationDelay: piece.delay,
+              animationDuration: piece.duration,
+              "--tx": piece.tx,
+              "--ty": piece.ty,
+            } as React.CSSProperties
+          }
           aria-hidden="true"
         />
       ))}
