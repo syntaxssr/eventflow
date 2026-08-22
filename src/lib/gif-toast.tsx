@@ -12,15 +12,22 @@ const CELEBRATES: ToastGifCategory[] = ["welcome", "success"]
  * สีใช้เฉด Version 3 ชุดเดียวกับช่องไอคอนทั้งระบบ
  */
 const CONFETTI = [
-  { left: "4%", delay: "0s", color: "var(--icon-tile-blue)", size: 8 },
-  { left: "15%", delay: "0.7s", color: "var(--icon-tile-yellow)", size: 6 },
-  { left: "26%", delay: "0.3s", color: "var(--icon-tile-green)", size: 9 },
-  { left: "37%", delay: "1.1s", color: "var(--icon-tile-purple)", size: 7 },
-  { left: "48%", delay: "0.15s", color: "var(--icon-tile-red)", size: 8 },
-  { left: "59%", delay: "0.9s", color: "var(--icon-tile-orange)", size: 6 },
-  { left: "70%", delay: "0.45s", color: "var(--icon-tile-blue)", size: 9 },
-  { left: "81%", delay: "1.3s", color: "var(--icon-tile-green)", size: 7 },
-  { left: "92%", delay: "0.6s", color: "var(--icon-tile-yellow)", size: 8 },
+  { left: "2%", delay: "0s", duration: "2.6s", color: "var(--icon-tile-blue)", size: 8 },
+  { left: "9%", delay: "0.9s", duration: "3.1s", color: "var(--icon-tile-red)", size: 6 },
+  { left: "15%", delay: "0.4s", duration: "2.3s", color: "var(--icon-tile-yellow)", size: 7 },
+  { left: "22%", delay: "1.4s", duration: "2.9s", color: "var(--icon-tile-green)", size: 9 },
+  { left: "29%", delay: "0.2s", duration: "3.3s", color: "var(--icon-tile-purple)", size: 6 },
+  { left: "35%", delay: "1.1s", duration: "2.5s", color: "var(--icon-tile-orange)", size: 8 },
+  { left: "42%", delay: "0.6s", duration: "3s", color: "var(--icon-tile-blue)", size: 7 },
+  { left: "48%", delay: "1.7s", duration: "2.4s", color: "var(--icon-tile-yellow)", size: 9 },
+  { left: "55%", delay: "0.35s", duration: "2.8s", color: "var(--icon-tile-green)", size: 6 },
+  { left: "61%", delay: "1.25s", duration: "3.2s", color: "var(--icon-tile-red)", size: 8 },
+  { left: "68%", delay: "0.75s", duration: "2.6s", color: "var(--icon-tile-purple)", size: 7 },
+  { left: "74%", delay: "1.55s", duration: "3.1s", color: "var(--icon-tile-orange)", size: 9 },
+  { left: "81%", delay: "0.15s", duration: "2.7s", color: "var(--icon-tile-blue)", size: 6 },
+  { left: "87%", delay: "1s", duration: "2.35s", color: "var(--icon-tile-green)", size: 8 },
+  { left: "93%", delay: "0.5s", duration: "3s", color: "var(--icon-tile-yellow)", size: 7 },
+  { left: "98%", delay: "1.35s", duration: "2.55s", color: "var(--icon-tile-red)", size: 6 },
 ]
 
 function Confetti() {
@@ -36,6 +43,7 @@ function Confetti() {
             height: piece.size * 1.6,
             backgroundColor: piece.color,
             animationDelay: piece.delay,
+            animationDuration: piece.duration,
           }}
           aria-hidden="true"
         />
@@ -62,9 +70,6 @@ export function gifToast(
 ) {
   const src = pickToastGif(category)
   const celebrates = CELEBRATES.includes(category)
-  // คำสั้น ๆ อย่าง "WELCOME" ขยายใหญ่และถ่างตัวอักษรได้ ส่วนประโยคยาวต้องลดลง
-  // ไม่งั้นจะตัดบรรทัดสามสี่แถวจนอ่านยากกว่าเดิม
-  const isHeadline = message.length <= 18
 
   return toast.custom(
     (id) => (
@@ -75,8 +80,7 @@ export function gifToast(
       >
         {celebrates ? <Confetti /> : null}
 
-        {/* ข้อความวางทับบนภาพพร้อมม่านไล่สีด้านล่าง — เด่นกว่าวางใต้ภาพบนพื้นโปร่งใส
-            และอ่านออกเสมอไม่ว่า GIF จะสว่างหรือมืด */}
+        {/* ภาพล้วน ไม่มีข้อความ — ข้อความยังอยู่ให้ screen reader อ่านเท่านั้น */}
         <div className="relative w-[92%] overflow-hidden rounded-xl shadow-lg">
           {src ? (
             // eslint-disable-next-line @next/next/no-img-element -- ไฟล์ WebP/GIF เคลื่อนไหว ไม่ต้องผ่านตัวปรับขนาดของ next/image
@@ -92,22 +96,12 @@ export function gifToast(
               className="block h-44 w-full object-cover"
             />
           ) : null}
-
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent px-3 pt-8 pb-3 text-center">
-            <p
-              className={`font-black text-balance text-white uppercase drop-shadow-[0_2px_6px_rgba(0,0,0,0.85)] ${
-                isHeadline
-                  ? "text-xl leading-none tracking-[0.1em] whitespace-nowrap"
-                  : "text-base leading-snug tracking-normal"
-              }`}
-            >
-              {message}
-            </p>
-            {description ? (
-              <p className="mt-1 text-xs text-white/85">{description}</p>
-            ) : null}
-          </div>
         </div>
+
+        <span className="sr-only">
+          {message}
+          {description ? ` — ${description}` : ""}
+        </span>
       </div>
     ),
     // unstyled: ตัดพื้น/เส้นขอบ/เงาเริ่มต้นของ Sonner ออก ให้เหลือแต่ภาพกับข้อความ
