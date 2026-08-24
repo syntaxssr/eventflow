@@ -1,12 +1,6 @@
 /**
- * ชุดสี Avatar — ใช้ 8 สีสถานะชุดเดียวกับ Design System (เฉด Version 3)
- * ไม่รวม Default และ Gray เพราะความต่างจากพื้นผิวน้อยเกินไปจนแยกคนไม่ออก
- * (เหตุผลเดียวกับสีประจำกิจกรรมใน event-colors.ts)
- *
- * ตัวอักษรย่อบน avatar ใช้ "สีคู่ของสีนั้น" ตามที่กำหนดไว้ในระบบสถานะ
- * ไม่ใช่ดำ/ขาวกลางๆ — ดู AVATAR_TEXT_COLOR
- *
- * มี 8 สี ทีมเกิน 8 คนเมื่อไหร่จะเริ่มวนซ้ำ
+ * สีพื้นของมาสคอตประจำผู้ใช้ และสีตัวอักษรสำรองกรณีภาพโหลดไม่สำเร็จ
+ * แต่ละคู่ผ่าน WCAG AA เพื่อให้ fallback ยังอ่านได้ชัดเจน
  */
 export interface AvatarColor {
   name: string
@@ -17,14 +11,20 @@ export interface AvatarColor {
 }
 
 export const AVATAR_PALETTE_ITEMS: AvatarColor[] = [
-  { name: "Brown", hex: "#B68A49", foreground: "#332714" },
-  { name: "Orange", hex: "#FFB78F", foreground: "#702D00" },
-  { name: "Yellow", hex: "#FFD67B", foreground: "#6B4900" },
-  { name: "Green", hex: "#67C567", foreground: "#143414" },
-  { name: "Blue", hex: "#95C1FF", foreground: "#00337C" },
-  { name: "Purple", hex: "#CB9EFF", foreground: "#490080" },
-  { name: "Pink", hex: "#FF9CC0", foreground: "#7A003D" },
-  { name: "Red", hex: "#FF9DA1", foreground: "#7E0500" },
+  { name: "Terracotta", hex: "#C96852", foreground: "#1C1C1C" },
+  { name: "Cobalt", hex: "#2457E6", foreground: "#F2F2F0" },
+  { name: "Lilac", hex: "#B8AEF1", foreground: "#1C1C1C" },
+  { name: "Midnight Indigo", hex: "#1E2E68", foreground: "#F2F2F0" },
+  { name: "Teal", hex: "#3D918B", foreground: "#1C1C1C" },
+  { name: "Mustard", hex: "#C49A34", foreground: "#1C1C1C" },
+  { name: "Sapphire", hex: "#477BC2", foreground: "#000000" },
+  { name: "Periwinkle", hex: "#6477C8", foreground: "#000000" },
+  { name: "Steel Blue", hex: "#617B9B", foreground: "#000000" },
+  { name: "Violet", hex: "#6A5BA8", foreground: "#F2F2F0" },
+  { name: "Grape", hex: "#7442DE", foreground: "#F2F2F0" },
+  { name: "Coral", hex: "#F06A4F", foreground: "#1C1C1C" },
+  { name: "Sage", hex: "#6E8878", foreground: "#000000" },
+  { name: "Plum", hex: "#75507E", foreground: "#F2F2F0" },
 ]
 
 /** รายการ hex ล้วน (ใช้วนกำหนดให้ user) */

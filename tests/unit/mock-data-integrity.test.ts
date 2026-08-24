@@ -29,23 +29,35 @@ describe("ความสมบูรณ์ของ Mock Data", () => {
     )
   })
 
-  it("ทะเบียนพนักงานไม่มีรหัสหรืออีเมลซ้ำ และทุกคนเริ่มงานก่อนวันนี้", () => {
+  it("ทะเบียนพนักงานจาก CSV มีลำดับไม่ซ้ำและข้อมูลสำหรับแสดงผลครบ", () => {
     const codes = state.employees.map((e) => e.employeeCode)
-    const emails = state.employees.map((e) => e.email.toLowerCase())
     expect(new Set(codes).size).toBe(codes.length)
-    expect(new Set(emails).size).toBe(emails.length)
+    expect(state.employees).toHaveLength(117)
 
+    const employeeEmails = new Set<string>()
+    const employeesWithoutDepartment = new Set([
+      "emp-contact-1",
+      "emp-contact-2",
+    ])
     for (const employee of state.employees) {
-      expect(employee.startDate <= MOCK_TODAY_ISO, employee.id).toBe(true)
+      if (employee.startDate) {
+        expect(employee.startDate <= MOCK_TODAY_ISO, employee.id).toBe(true)
+      }
       expect(employee.firstName.th, employee.id).not.toBe("")
       expect(employee.firstName.en, employee.id).not.toBe("")
-    }
-  })
-
-  it("ทีมจัดงานทุกคนอยู่ในทะเบียนพนักงานด้วยอีเมลเดียวกัน", () => {
-    const employeeEmails = new Set(state.employees.map((e) => e.email))
-    for (const user of state.users) {
-      expect(employeeEmails.has(user.email), user.id).toBe(true)
+      expect(employee.position.th, employee.id).not.toBe("")
+      if (employeesWithoutDepartment.has(employee.id)) {
+        expect(employee.department.th, employee.id).toBe("")
+        expect(employee.department.en, employee.id).toBe("")
+      } else {
+        expect(employee.department.th, employee.id).not.toBe("")
+      }
+      expect(employee.email, employee.id).toMatch(
+        /^[a-z0-9]+\.[a-z0-9]+@company\.co\.th$|^employee\d+@company\.co\.th$/
+      )
+      expect(employeeEmails.has(employee.email), employee.id).toBe(false)
+      employeeEmails.add(employee.email)
+      expect(employee.phone, employee.id).toBe("0912345678")
     }
   })
 

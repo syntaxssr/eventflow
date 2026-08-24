@@ -62,7 +62,7 @@ const SIDEBAR_LINKS: Partial<Record<AppRoute, string>> = {
 
 /** เมนูย่อยใต้กลุ่ม "เบ็ดเตล็ด" บน Sidebar — ต้องคลี่กลุ่มก่อนถ้ายังพับอยู่ */
 const MISC_LINKS: Partial<Record<AppRoute, string>> = {
-  employees: "รายชื่อ-ข้อมูลพนักงาน",
+  employees: "HR Section",
   spinWheel: "เกมส์วงล้อ",
   rsvpForm: "แบบฟอร์ม RSVP",
 }

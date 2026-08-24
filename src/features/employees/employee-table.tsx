@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -10,7 +9,6 @@ import {
   Trash2Icon,
 } from "lucide-react"
 
-import { StatusBadge } from "@/components/common/status-badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -27,16 +25,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { getToday, toDateKey } from "@/constants/mock-date"
-import { EMPLOYEE_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
 import {
+  formatDepartmentName,
   getEmployeeFullName,
-  yearsOfService,
+  getEmployeeName,
   type EmployeeSortKey,
   type SortDirection,
 } from "@/lib/employee"
-import { formatDate } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import type { Employee } from "@/types/employee"
 
@@ -55,19 +51,17 @@ interface EmployeeTableProps {
 const SORTABLE_COLUMNS: {
   key: EmployeeSortKey
   labelKey:
-    | "employee.employeeCode"
+    | "employee.sequence"
     | "employee.name"
-    | "employee.department"
+    | "employee.nickname"
     | "employee.position"
-    | "employee.startDate"
-    | "employee.status"
+    | "employee.department"
 }[] = [
-  { key: "employeeCode", labelKey: "employee.employeeCode" },
+  { key: "employeeCode", labelKey: "employee.sequence" },
   { key: "name", labelKey: "employee.name" },
-  { key: "department", labelKey: "employee.department" },
+  { key: "nickname", labelKey: "employee.nickname" },
   { key: "position", labelKey: "employee.position" },
-  { key: "startDate", labelKey: "employee.startDate" },
-  { key: "status", labelKey: "employee.status" },
+  { key: "department", labelKey: "employee.department" },
 ]
 
 /** ตารางทะเบียน (desktop) + card view (mobile) — เลือกหลายรายการและจัดเรียงได้ */
@@ -83,7 +77,6 @@ export function EmployeeTable({
   onDelete,
 }: EmployeeTableProps) {
   const { t, tl, locale } = useLocale()
-  const todayKey = React.useMemo(() => toDateKey(getToday()), [])
 
   const allSelected =
     employees.length > 0 &&
@@ -99,14 +92,6 @@ export function EmployeeTable({
       <ArrowDownIcon className="size-3.5" aria-hidden="true" />
     )
   }
-
-  // อายุงานนับถึงวันนี้เสมอ — คนที่ลาออกแล้วจึงไม่แสดง (ข้อมูลไม่มีวันที่ลาออก)
-  const serviceHint = (employee: Employee) =>
-    employee.status === "resigned"
-      ? null
-      : t("employee.yearsOfService", {
-          years: yearsOfService(employee.startDate, todayKey),
-        })
 
   const rowActions = (employee: Employee) => (
     <DropdownMenu>
@@ -185,7 +170,9 @@ export function EmployeeTable({
           </TableHeader>
           <TableBody>
             {employees.map((employee) => {
-              const hint = serviceHint(employee)
+              const thaiName = getEmployeeName(employee, "th")
+              const englishName = getEmployeeName(employee, "en")
+              const departmentName = tl(employee.department)
               return (
                 <TableRow
                   key={employee.id}
@@ -203,42 +190,34 @@ export function EmployeeTable({
                       })}
                     />
                   </TableCell>
-                  <TableCell className="font-mono text-xs whitespace-nowrap">
+                  <TableCell className="w-16 text-center font-mono text-xs tabular-nums">
                     {employee.employeeCode}
                   </TableCell>
                   <TableCell>
                     <div className="flex min-w-0 flex-col">
                       <span className="font-medium whitespace-nowrap">
-                        {getEmployeeFullName(employee, locale)}
+                        {thaiName}
                       </span>
-                      <span className="text-muted-foreground text-xs">
-                        {employee.email}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm whitespace-nowrap">
-                    {tl(employee.department) || "—"}
-                  </TableCell>
-                  <TableCell className="text-sm whitespace-nowrap">
-                    {tl(employee.position) || "—"}
-                  </TableCell>
-                  <TableCell className="whitespace-nowrap">
-                    <div className="flex flex-col">
-                      <span className="text-sm">
-                        {formatDate(employee.startDate, locale)}
-                      </span>
-                      {hint ? (
+                      {englishName && englishName !== thaiName ? (
                         <span className="text-muted-foreground text-xs">
-                          {hint}
+                          {englishName}
                         </span>
                       ) : null}
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <StatusBadge
-                      style={EMPLOYEE_STATUS_STYLE[employee.status]}
-                      size="sm"
-                    />
+                  <TableCell className="text-sm whitespace-nowrap">
+                    {tl(employee.nickname) || "—"}
+                  </TableCell>
+                  <TableCell className="text-sm whitespace-nowrap">
+                    {tl(employee.position) || "—"}
+                  </TableCell>
+                  <TableCell
+                    className="text-sm"
+                    title={departmentName || undefined}
+                  >
+                    {departmentName
+                      ? formatDepartmentName(departmentName)
+                      : null}
                   </TableCell>
                   <TableCell>{rowActions(employee)}</TableCell>
                 </TableRow>
@@ -250,65 +229,56 @@ export function EmployeeTable({
 
       {/* Mobile — card view */}
       <ul className="space-y-2 md:hidden" data-testid="employee-cards">
-        {employees.map((employee) => (
-          <li
-            key={employee.id}
-            className={cn(
-              "rounded-lg border p-3",
-              selectedIds.has(employee.id) && "border-brand-400 bg-brand-50/50"
-            )}
-            data-testid="employee-row"
-          >
-            <div className="flex items-start gap-3">
-              <Checkbox
-                className="mt-0.5"
-                checked={selectedIds.has(employee.id)}
-                onCheckedChange={() => onToggleRow(employee.id)}
-                aria-label={t("employee.selectRow", {
-                  name: getEmployeeFullName(employee, locale),
-                })}
-              />
-              <div className="min-w-0 flex-1 space-y-1">
-                <p className="text-muted-foreground font-mono text-xs">
-                  {employee.employeeCode}
-                </p>
-                <p className="text-sm font-medium">
-                  {getEmployeeFullName(employee, locale)}
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  {[tl(employee.position), tl(employee.department)]
-                    .filter(Boolean)
-                    .join(" · ") || "—"}
-                </p>
-                <p className="text-muted-foreground truncate text-xs">
-                  {[employee.email, employee.phone].filter(Boolean).join(" · ")}
-                </p>
-                <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  <StatusBadge
-                    style={EMPLOYEE_STATUS_STYLE[employee.status]}
-                    size="sm"
-                  />
-                  <span className="text-muted-foreground text-xs">
+        {employees.map((employee) => {
+          const departmentName = tl(employee.department)
+          return (
+            <li
+              key={employee.id}
+              className={cn(
+                "rounded-lg border p-3",
+                selectedIds.has(employee.id) && "border-brand-400 bg-brand-50/50"
+              )}
+              data-testid="employee-row"
+            >
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  className="mt-0.5"
+                  checked={selectedIds.has(employee.id)}
+                  onCheckedChange={() => onToggleRow(employee.id)}
+                  aria-label={t("employee.selectRow", {
+                    name: getEmployeeFullName(employee, locale),
+                  })}
+                />
+                <div className="min-w-0 flex-1 space-y-1">
+                  <p className="text-muted-foreground font-mono text-xs">
+                    {t("employee.sequence")} {employee.employeeCode}
+                  </p>
+                  <p className="text-sm font-medium">
+                    {getEmployeeName(employee, "th")}
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    {getEmployeeName(employee, "en")}
+                  </p>
+                  <p className="text-sm">
+                    {t("employee.nickname")}: {tl(employee.nickname) || "—"}
+                  </p>
+                  <p
+                    className="text-muted-foreground text-xs"
+                    title={departmentName || undefined}
+                  >
                     {[
-                      t("employee.startedOn", {
-                        date: formatDate(employee.startDate, locale),
-                      }),
-                      serviceHint(employee),
+                      tl(employee.position),
+                      formatDepartmentName(departmentName),
                     ]
                       .filter(Boolean)
-                      .join(" · ")}
-                  </span>
-                </div>
-                {tl(employee.note) ? (
-                  <p className="text-muted-foreground text-xs">
-                    {t("employee.note")}: {tl(employee.note)}
+                      .join(" · ") || "—"}
                   </p>
-                ) : null}
+                </div>
+                {rowActions(employee)}
               </div>
-              {rowActions(employee)}
-            </div>
-          </li>
-        ))}
+            </li>
+          )
+        })}
       </ul>
     </>
   )

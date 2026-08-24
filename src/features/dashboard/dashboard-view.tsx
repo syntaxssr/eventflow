@@ -37,6 +37,7 @@ import {
 } from "@/store/selectors"
 import { isDueSoon, isIncomplete, isOverdue } from "@/lib/due-date"
 import { getEventColor } from "@/lib/event"
+import { appToast } from "@/lib/gif-toast"
 import { DashboardCalendarCard } from "./dashboard-calendar-card"
 import { DashboardSkeleton } from "./dashboard-skeleton"
 import { FeaturedEventCard } from "./featured-event-card"
@@ -47,11 +48,23 @@ import { StatCard } from "./stat-card"
 import { TaskStatusChart } from "./task-status-chart"
 import { UrgentTasksCard } from "./urgent-tasks-card"
 
+/** กัน welcome GIF เด้งซ้ำเมื่อกลับมาที่ Dashboard ภายใน session เดิม */
+let welcomedSession: string | null = null
+
 export function DashboardView() {
   const { t } = useLocale()
   const state = useAppState()
   const currentUser = useCurrentUser()
   const today = React.useMemo(() => getToday(), [])
+  const signedInAt = state.session?.signedInAt
+
+  React.useEffect(() => {
+    if (!signedInAt || welcomedSession === signedInAt) return
+
+    welcomedSession = signedInAt
+    // Effect ทำงานหลัง Dashboard commit รอบแรก ซึ่งเป็นจังหวะเดียวกับที่ skeleton แสดง
+    appToast.welcome("WELCOME")
+  }, [signedInAt])
 
   const data = React.useMemo(() => {
     const upcomingEvents = selectUpcomingEvents(state, today)

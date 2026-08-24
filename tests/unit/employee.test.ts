@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest"
 import {
   EMPTY_EMPLOYEE_FILTERS,
   filterEmployees,
+  formatDepartmentName,
   getEmployeeFullName,
   getEmployeeLocalizedName,
   listDepartments,
@@ -58,6 +59,17 @@ const EMPLOYEES: Employee[] = [
     status: "resigned",
   }),
 ]
+
+describe("formatDepartmentName", () => {
+  it("คงชื่อที่ยาวไม่เกิน 30 ตัวอักษร", () => {
+    const name = "A".repeat(30)
+    expect(formatDepartmentName(name)).toBe(name)
+  })
+
+  it("ตัดชื่อที่ยาวเกิน 30 ตัวอักษรแล้วเติมจุดสามจุด", () => {
+    expect(formatDepartmentName("A".repeat(31))).toBe(`${"A".repeat(30)}...`)
+  })
+})
 
 describe("getEmployeeFullName", () => {
   it("ต่อชื่อ-นามสกุลและชื่อเล่นในวงเล็บตามภาษา", () => {

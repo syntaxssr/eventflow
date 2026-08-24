@@ -1,0 +1,119 @@
+﻿No.,Name-Surname,NickName,Name-Surname(Thai),NickName (Thai),Gender,Position,Company Section,Email,Tel No.
+1,Koji NAKAMURA,Nakamura-san,โคจิ นาคามูระ,นาคามูระซัง,M,President,,koji.n@company.co.th,0912345678
+2,Parkpoom Sinitwarakul,Num,ภาคภูมิ สินิทธ์วรากุล,พี่หนุ่ม,M,"System Engineer Director
+",,parkpoom.s@company.co.th,0912345678
+3,Yoshinori SAKURAI,Sakurai san,โยชิโนริ ซากุระอิ,ซากุระอิซัง,M,General Affairs Director,"Accounting & Administration Section, Human Resources Section",yoshinori.s@company.co.th,0912345678
+4,Alisa Leelayuwattanakul,Nun,อลิสา ลีลายุวัฒนกุล,นุ่น,F,Assistant Section Manager,Accounting & Administration Section,alisa.l@company.co.th,0912345678
+5,Arrerat Prasongjaroen,Arrat,อารีรัตน์ ประสงค์เจริญ,อารัตน์,F,Assistant Team Leader,System Consultant Section,arrerat.p@company.co.th,0912345678
+6,Ploypapas Jaiboon,Oat,พลอยปภัสร์ ใจบุญ,โอ๊ต,F,Team Leader,Engineering Administration & Sales Support Section,ploypapas.j@company.co.th,0912345678
+7,Saowalak Nakanun,Hong,เสาวลักษณ์ นาคะนันต์,หง,F,Team Leader,"Java Platform Section, Outsourcing Business Section",saowalak.n@company.co.th,0912345678
+8,Sansanee Kaew-in,Aom,ศันสนีย์ แก้วอินทร์,ออม,F,Senior Technical Specialist,Rapid Development Section,sansanee.k@company.co.th,0912345678
+9,Weerachai Wongthongserm,Tung,วีระชัย วงศ์ทองเสริม,ตุ้ง,M,Team Leader,"AEON Section, Infrastructure Engineer Section",weerachai.w@company.co.th,0912345678
+10,Bunyapat Limrangsan,Yo,บุณยพัต ลิ้มรังสรรค์,โย,M,Business Unit Leader,"JP Software Development & Consultant Section, Rapid Development Section",bunyapat.l@company.co.th,0912345678
+11,Wariyaphorn Nantasawat,Nan,วริยาภรณ์ นันทสวัสดิ์,แนน,F,Team Leader,"Automobile Section, Lenovation Solution Section",wariyaphorn.n@company.co.th,0912345678
+12,Haruthai Tipprapai,Bua,หฤทัย ทิพยประไพ,บัว,F,Assistant Team Leader,AEON Section,haruthai.t@company.co.th,0912345678
+13,Chanade Siriburaparat,Nex,ชเนษฎ์ ศิริบูรพารัตน์,เหน็ก,M,Team Leader,JP Software Development & Consultant Section,chanade.s@company.co.th,0912345678
+14,Kittikoon Charoenphanich,Kero,กิตติคุณ เจริญพานิช,กบ,M,Assistant Team Leader,"Research & Development Section, Worldwide Innovative  Section",kittikoon.c@company.co.th,0912345678
+15,Warayut Kwanjaroen,Yut,วรายุทธ ขวัญเจริญ,ยุทธ,M,Team Leader,Software Package Solution Section,warayut.k@company.co.th,0912345678
+16,Montree Boripan,Nut,มนตรี บริพันธ์,นัท,M,Assistant Team Leader,Outsourcing Business Section,montree.b@company.co.th,0912345678
+17,Tataran Thowpet,Bank,ทัชธรัญ เถาว์เพ็ชร,แบงค์,M,Assistant Leader,Java Platform Section,tataran.t@company.co.th,0912345678
+18,Wachirawit Chankaew,Toom,วชิรวิทย์ จันทร์แก้ว,ตูม,M,Technical Specialist,Research & Development Section,wachirawit.c@company.co.th,0912345678
+19,Nattapong Namwat,Ball,ณัฐพงษ์ นามวัฒน์,บอล,M,Senior Technical Specialist,AEON Section,nattapong.n@company.co.th,0912345678
+20,Surachai Numprasong,Golf,สุรชัย นุ่มประสงค์,กอล์ฟ,M,Leader,Java Platform Section,surachai.n@company.co.th,0912345678
+21,Sujin Tantapong,Ma-meaw,สุจินต์ ตันทพงษ์,มะเหมี่ยว,F,Assistant Leader,Java Platform Section,sujin.t@company.co.th,0912345678
+22,Teerada Sirisumphandh,Jaja,ธีรดา ศิริสัมพันธ์,จ๊ะจ๋า,F,HR Officer,Human Resources Section,teerada.s@company.co.th,0912345678
+23,Oraphan Rakamma,Khing,อรพรรณ ระคำมา,ขิง,F,Technical Specialist,JP Software Development & Consultant Section,oraphan.r@company.co.th,0912345678
+24,Rungsiwut Udom,Bay,รังสิวุฒิ อุดม,เบ,M,Assistant Team Leader,Java Platform Section,rungsiwut.u@company.co.th,0912345678
+25,Pattaraporn Tepboon,Ying,ภัทรพร เทพบุญ,หญิง,F,Group Manager,Human Resources Section,pattaraporn.t@company.co.th,0912345678
+26,Manita Muangmud,Sulma,มานิตา เมืองหมุด,ชัลมา,F,Senior Sales Administrator,Accounting & Administration Section,manita.m@company.co.th,0912345678
+27,Pawin Makmoungkaew,Pai,ภวิน เมฆม่วงแก้ว,ไผ่,M,Assistant Leader,AEON Section,pawin.m@company.co.th,0912345678
+28,Kittikun Kasamsuttikun,Boat,กิตติคุณ เกษมสุทธิคุณ,โบ๊ท,M,Assistant Leader,Automobile Section,kittikun.k@company.co.th,0912345678
+29,Patthama Matang,Na,ปัทมา มะตัง,นา,F,Senior Application Support Officer,Rapid Development Section,patthama.m@company.co.th,0912345678
+30,Sippavit Saewang,Chen,สิปปวิชญ์ แซ่หวาง,เฉิน,M,Senior Software Developer,Automobile Section,sippavit.s@company.co.th,0912345678
+31,Anupun Suwankornkij,Bank,อนุพันธุ์ สุวรรณกรกิจ,แบงค์,M,Senior Software Developer,AEON Section,anupun.s@company.co.th,0912345678
+32,Somyot Phorat,Boy,สมยศ โพธิ์รัตน์,บอย,M,Leader,AEON Section,somyot.p@company.co.th,0912345678
+33,Yutthana Singthong,Ake,ยุทธนา สิงห์ทอง,เอก,M,Technical Specialist,JP Software Development & Consultant Section,yutthana.s@company.co.th,0912345678
+34,Nopporn Khosee,Bank,ณพพร โคสี,แบงค์,M,Senior System Analyst,Automobile Section,nopporn.k@company.co.th,0912345678
+35,Patinya Sumalee,Keng,ปติญญา สุมาลี,เก๋ง,M,Technical Specialist,Mainframe Specialist Section,patinya.s@company.co.th,0912345678
+36,Alisa Lertdisayawan,Li,อลิสา เลิศดิษยวรรณ,ลิ,F,Assistant Leader,JP Software Development & Consultant Section,alisa.le@company.co.th,0912345678
+37,Aunchawis Parmwong,Ice,อัณชวิศศ์ ปาร์มวงศ์,ไอซ์,F,Leader,Mainframe Specialist Section,aunchawis.p@company.co.th,0912345678
+38,Pattarawadee Nimsongprasert,Yok,ภัทรวดี นิ่มทรงประเสริฐ,หยก,F,Senior System Analyst,Rapid Development Section,pattarawadee.n@company.co.th,0912345678
+39,Peerapon Chanthachaem,Bas,พีรพล จันทะแจ่ม,บาส,M,Senior Software Developer,Java Platform Section,peerapon.c@company.co.th,0912345678
+40,Jatupong Sangphetcharat,Name,จตุพงษ์ สังข์เพ็ชรรัตน์,เนม,M,Senior Software Developer,Java Platform Section,jatupong.s@company.co.th,0912345678
+41,Sirirak Thongthae,Pluk,ศิริรักษ์ ทองแท้,ปลั๊ก,F,Technical Specialist,AEON Section,sirirak.t@company.co.th,0912345678
+42,Peeranat Apitanapaksamuch,Keng,พีรณัฐ อภิธนภัคสมัชญ์,เก่ง,M,Senior Application Support Officer,JP Software Development & Consultant Section,peeranat.a@company.co.th,0912345678
+43,Khanittha Pueng-ar-rom,Pat,ขนิษฐา พึ่งอารมณ์,แพท,F,Quality Assurance Officer,Rapid Development Section,khanittha.p@company.co.th,0912345678
+44,Chakrit Teanturn,Plu,ชาคริต เทียนเถื่อน,พลุ,M,Senior Technical Engineer,Infrastructure Engineer Section,chakrit.t@company.co.th,0912345678
+45,Kaiwan Hiangha,Guy,ไกวัล เฮียงฮะ,กาย,M,Senior Quality Assurance Officer,Automobile Section,kaiwan.h@company.co.th,0912345678
+46,Chanita Leelasupakorn,Faeng,ชณิตา ลีลาศุภกร,แฟง,F,System Analyst,AEON Section,chanita.l@company.co.th,0912345678
+47,Nannaphat Bundon,Earn,นันท์นภัส บุญดล,เอิน,F,Technical Specialist,Automobile Section,nannaphat.b@company.co.th,0912345678
+48,Teeruch Sankan,Ball,ธีรัช แสนคาร,บอล,M,Senior Software Developer,AEON Section,teeruch.s@company.co.th,0912345678
+49,Sompot Iamworakul,Ka-nun,สมโพธิ เอี่ยมวรกุล,ขนุน,M,Senior Software Developer,JP Software Development & Consultant Section,sompot.i@company.co.th,0912345678
+50,Puttanone Supphanit,Ohm,พัทธนันท์ ทรัพย์พานิช,โอม,M,System Analyst,AEON Section,puttanone.s@company.co.th,0912345678
+51,Jirawan Prakobkit,Nang,จิรวรรณ ประกอบกิจ,นาง,F,Senior System Analyst,Java Platform Section,jirawan.p@company.co.th,0912345678
+52,Nurdin Sengsa,Din,นูรดิน เซ็งสะ,ดิน,M,Technical Engineer,Infrastructure Engineer Section,nurdin.s@company.co.th,0912345678
+53,Kharuwan Chaiyotha,Wan,ครุวาร ไชโยธา,ว่าน,F,Software Developer,Java Platform Section,kharuwan.c@company.co.th,0912345678
+54,Pornthep Detsomboonrat,Gob,พรเทพ เดชสมบูรณ์รัตน์,ก็อบ,M,Technical Specialist,AEON Section,pornthep.d@company.co.th,0912345678
+55,Sareepap Intajai,Nice,เสรีภาพ อินต๊ะใจ,ไนซ์,M,Senior Software Developer,AEON Section,sareepap.i@company.co.th,0912345678
+56,Sirichai Sayphoklang,Boy,สิริชัย ซ้ายโพธิ์กลาง,บอย,M,Quality Assurance Officer,Java Platform Section,sirichai.s@company.co.th,0912345678
+57,Pannipa Chotdilok,Ni,พรรณิภา โชติดิลก,นิ,F,Senior Quality Assurance Officer,AEON Section,pannipa.c@company.co.th,0912345678
+58,Korakoch Siripatt,Por,กรกช สิริภัทท์,ปอ,M,Senior System Analyst,AEON Section,korakoch.s@company.co.th,0912345678
+59,Trisinchai Kamjamnong,Dontri,ตรีศิลป์ชัย คำจำนงค์,ดนตรี,M,Software Developer,Rapid Development Section,trisinchai.k@company.co.th,0912345678
+60,Mongkol Prasongsut,Keng,มงคล ประสงค์สุทธิ์,เก่ง,M,Senior Software Developer,Software Package Solution Section,mongkol.p@company.co.th,0912345678
+61,Kingkanok Sa-ing,Rak,กิ่งกนก สอิ้ง,รัก,F,Team Leader,Project Management Office Team,kingkanok.s@company.co.th,0912345678
+62,Warakorn Pineatchot,Keng,วรากร พิเนตรโชติ,เก่ง,F,Senior System Analyst,Automobile Section,warakorn.p@company.co.th,0912345678
+63,Tasaton Khunawutpanitiwet,Net,ทัศธร คุณวุฒิปณิธิเวช,เน็ต,M,Assistant Leader,Java Platform Section,tasaton.k@company.co.th,0912345678
+64,Chanvit Pairoj,Lek,ชาญวิทย์ ไพโรจน์,เล็ก,M,Senior Software Developer,AEON Section,chanvit.p@company.co.th,0912345678
+65,Rapa Srisuwan,Yam,รภา ศรีสุวรรณ,แยม,F,Technical Specialist,Java Platform Section,rapa.s@company.co.th,0912345678
+66,Ittipol Tiyaprawat,Bank,อิทธิพล ติยะประวัติ,แบ้งค์,M,Senior Software Developer,AEON Section,ittipol.t@company.co.th,0912345678
+67,Rattanan Tanaprakob,Earth,รัฐนันท์ ธนประกอบ,เอิร์ท,M,Senior System Analyst,AEON Section,rattanan.t@company.co.th,0912345678
+68,Sularchet Jaronesuk,Aod,สุรเชษฐ เจริญสุข,อ๊อด,M,Senior Software Developer,Java Platform Section,sularchet.j@company.co.th,0912345678
+69,Sukanya Wiriyakitcharoenchai,Oh,สุกัญญา วิริยะกิจเจริญชัย,โอ๋,F,Assistant Team Leader,AEON Section,sukanya.w@company.co.th,0912345678
+70,Sathinee Thanavutikrai,Fang,สาธินี ธนาวุธิไกร,ฟาง,F,Software Developer,AEON Section,sathinee.t@company.co.th,0912345678
+71,Nirut Khobthong,Ruj,นิรุจน์ ขอบทอง,รุจน์,M,Senior Software Developer,Research & Development Section,nirut.k@company.co.th,0912345678
+72,Anuchit Moto,Mark,อนุชิต มอโท,มาร์ค,M,Software Developer,AEON Section,anuchit.m@company.co.th,0912345678
+73,Pittaya Euawongaree,Picts,พิทยา เอื้อวงศ์อารีย์,พิคท์,M,Senior Software Developer,Software Package Solution Section,pittaya.e@company.co.th,0912345678
+74,Pattaranan Boonma,Tum,ภัทรนันท์ บุญมา,ตั้ม,M,Software Developer,Mainframe Specialist Section,pattaranan.b@company.co.th,0912345678
+75,Kejwara Suteerawut,Kej,เกศวรา สุธีรวุฒิ,เกศ,F,Team Leader,Project Management Office Team,kejwara.s@company.co.th,0912345678
+76,Wachirapron Prasert,June,วชิราพร ประเสริฐ,จูน,F,Software Developer,Worldwide Innovative  Section,wachirapron.p@company.co.th,0912345678
+77,Suphitcha Worasing,Yu,สุพิชชา วรสิงห์,ยู,F,Assistant Leader,Java Platform Section,suphitcha.w@company.co.th,0912345678
+78,Chanawee Binsun,Few,ชนาวี บินสัน,ฟิว,M,Application Support Officer,Rapid Development Section,chanawee.b@company.co.th,0912345678
+79,Niran Panpreecha,Boy,นิรันดร์ ปานปรีชา,บอย,M,Software Developer,AEON Section,niran.p@company.co.th,0912345678
+80,Toshihiko Atsumi,Atsumi san,โทชิฮิโกะ อัทซึมิ,อัทซึมิซัง,M,General Manager,Japanese Sales Section,toshihiko.a@company.co.th,0912345678
+81,Kunanon Lamysri,Copter,คุณานนต์ ละม้ายศรี,คอปเตอร์,M,Senior Software Developer,AEON Section,kunanon.l@company.co.th,0912345678
+82,Chutima Pacham,Hong,ชุติมา ประจำ,หงษ์,F,Senior Business Analyst,AEON Section,chutima.p@company.co.th,0912345678
+83,Nirynya Siranithikulporn,Jib,ณิรินทร์ญา ศิระนิธิกุลภรณ์,จิ๊บ,F,HR Officer,Human Resources Section,nirynya.s@company.co.th,0912345678
+84,Korakod Thammarat,Kaojao,กรกฎ ธรรมรัตน์,ข้าวเจ้า,M,Software Developer,Software Package Solution Section,korakod.t@company.co.th,0912345678
+85,Paramee Wongkhampan,Fluk,ปารมี วงค์คำปัน,ฟลุ๊ค,M,Software Developer,Java Platform Section,paramee.w@company.co.th,0912345678
+86,Oracha Sriboonpeng,Aom,อรชา ศรีบุญเพ็ง,อ้อม,F,Senior Business Analyst,Java Platform Section,oracha.s@company.co.th,0912345678
+87,Thanat Jumneanbun,Toey,ฐาณัส จำเนียรบุญ,เต้ย,M,System Analyst,Lenovation Solution Section,thanat.j@company.co.th,0912345678
+88,Sirinta Monpranit,Ploy,สิรินทรา มนปราณีต,พลอย,F,Application Support Officer,Outsourcing Business Section,sirinta.m@company.co.th,0912345678
+89,Prathan Phumphuang,Fluk,ประทาน พุ่มพวง,ฟลุ๊ค,M,Data Analyst,Worldwide Innovative  Section,prathan.p@company.co.th,0912345678
+90,Pinyada Thongmee,Aum,ภิญญดา ทองมี,อั้ม,F,Junior Application Support Officer,Outsourcing Business Section,pinyada.t@company.co.th,0912345678
+91,Krekkong Leepatthanakul,Mike,เกริกก้อง ลีพัฒนากุล,ไมค์,M,Application Support Officer,Outsourcing Business Section,krekkong.l@company.co.th,0912345678
+92,Phattanan Kwankitsawai,Phat,พัทธนันท์ ขวัญกิจไสว,ปัทม์,F,Senior Software Developer,Rapid Development Section,phattanan.k@company.co.th,0912345678
+93,Weeranan Pengkhiao,Jo,วีรนันท์ เป็งเขียว,โจ,M,Junior Software Developer,Java Platform Section,weeranan.p@company.co.th,0912345678
+94,Tankun Pankaew,Pang,แทนคุณ พันธ์แก้ว,แป้ง,F,Software Developer,Mainframe Specialist Section,tankun.p@company.co.th,0912345678
+95,Jirapong Wongsai,Flook,จิระพงศ์ วงษ์ใสย์,ฟลุ๊ค,M,Oracle Developer,Outsourcing Business Section,jirapong.w@company.co.th,0912345678
+96,Yuparat Panarach,Fon,ยุพารัตน์ ปาณาราช,ฝน,F,Accounting & Administrator Officer,Accounting & Administration Section,yuparat.p@company.co.th,0912345678
+97,Thipphawan Phaetkit,Aum,ทิพวัลย์ แพทย์กิจ,อุ้ม,F,Business Analyst,Java Platform Section,thipphawan.p@company.co.th,0912345678
+98,Wipha Promwan,Boom,วิภา พรหมวัลย์,บูม,F,Application Support Officer,Outsourcing Business Section,wipha.p@company.co.th,0912345678
+99,Wanchana Saelue,Raf,วรรณชนะ แซ่เหลือ,ราฟ,M,Software Developer,Java Platform Section,wanchana.s@company.co.th,0912345678
+100,Teemaporn Sornin,Mind,ธีมาพร สอนอินทร์,มายด์,F,Quality Assurance Officer,Outsourcing Business Section,teemaporn.s@company.co.th,0912345678
+101,Pattanakrit Meekiriya,Sun,พัฒน์ธนกฤต มีกิริยา,ซัน,M,Quality Assurance Officer,Outsourcing Business Section,pattanakrit.m@company.co.th,0912345678
+102,Patiphon Songkhorthum,Golf,ปฏิพล สงเคราะห์ธรรม,กอล์ฟ,M,Software Developer,Mainframe Specialist Section,patiphon.s@company.co.th,0912345678
+103,Natnapat Pichitpron,First,นัฐณภัทร พิชิตพร,เฟิร์ส,F,System Engineer,Outsourcing Business Section,natnapat.p@company.co.th,0912345678
+104,Sornwanee Tuasaket,Loogmee,ศรวณีย์ ตัวสระเกษ,ลูกหมี,F,System Engineer,Outsourcing Business Section,sornwanee.t@company.co.th,0912345678
+105,Lattapon Munpiane,Tang,ลัทธพล หมั่นเพียร,ตัง,M,System Engineer,Outsourcing Business Section,lattapon.m@company.co.th,0912345678
+106,Papitchamon Sankan,Pure,ภาพิชมนทน์ แสนกัน,เพียว,F,Assistant HR Leader,Human Resources Section,papitchamon.s@company.co.th,0912345678
+107,Taksina Malee,Jeab,ทักษิณา มาลี,เจี๊ยบ,F,Data Analyst,Worldwide Innovative  Section,taksina.m@company.co.th,0912345678
+108,Sasawat Theejanthuek,Palm,ศาศวัต ทีจันทึก,ปาล์ม,M,Junior Software Developer,JP Software Development & Consultant Section,sasawat.t@company.co.th,0912345678
+109,Methawadee Chumok,Ying,เมธาวดี ชูมก,หญิง,F,Junior Software Developer,Software Package Solution Section,methawadee.c@company.co.th,0912345678
+110,Nurin Khankaew,Rin,นูริน ขันแก้ว,ริน,F,Junior Software Developer,Rapid Development Section,nurin.k@company.co.th,0912345678
+111,Panyaphorn Phromchat,Ging,ปัญญาพร พรมชาติ,กิ่ง,F,Junior Quality Assurance Officer,Rapid Development Section,panyaphorn.p@company.co.th,0912345678
+112,Lalita Langsanam,Joy,ลลิตา แหล่งสนาม,จอย,F,Quality Assurance Officer,Outsourcing Business Section,lalita.l@company.co.th,0912345678
+113,Nattawut Rodthong,Nont,ณัฐวุฒิ รอดทอง,นนท์,M,Software Developer,Java Platform Section,nattawut.r@company.co.th,0912345678
+114,Porrarit Mahakkapong,Pay,ปรฤทธิ์ มหัคฆพงศ์,เป้,M,Senior System Analyst,Java Platform Section,porrarit.m@company.co.th,0912345678
+115,Mitsumasa Ikeda,Ikeda san,มิตสึมาสะ อิเคดะ,อิเคดะซัง,M,Project Manager,Project Management Office Team,mitsumasa.i@company.co.th,0912345678
+116,Wannipa Krungmee,Fong,วรรณิภา ครึ่งมี,ฟอง,F,Senior Quality Assurance Officer,Outsourcing Business Section,wannipa.k@company.co.th,0912345678
+117,Sarini Chanaun,Ploy,สารินี จันทร์อุ่น,พลอย,F,Senior Quality Assurance Officer,Outsourcing Business Section,sarini.c@company.co.th,0912345678

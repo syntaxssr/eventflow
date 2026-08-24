@@ -44,24 +44,42 @@ describe("appReducer — auth & system", () => {
     expect(next.session).toBeNull()
   })
 
-  it("user/setAvatarColor เปลี่ยนสีของผู้ใช้คนนั้นคนเดียว", () => {
+  it("user/setAvatar เปลี่ยนมาสคอตและสี fallback ของผู้ใช้คนนั้นคนเดียว", () => {
     const initial = createInitialState()
     const others = initial.users
       .filter((user) => user.id !== "u-1")
-      .map((user) => user.avatarColor)
+      .map((user) => [user.avatarUrl, user.avatarColor])
 
     const next = appReducer(initial, {
-      type: "user/setAvatarColor",
+      type: "user/setAvatar",
       userId: "u-1",
-      color: "#AFE1AF",
+      avatarUrl: "/avatars/ip-as-logo/options/avatar-15-capybara.png",
+      avatarColor: "#A85F57",
     })
 
-    expect(next.users.find((user) => user.id === "u-1")?.avatarColor).toBe(
-      "#AFE1AF"
-    )
+    expect(next.users.find((user) => user.id === "u-1")).toMatchObject({
+      avatarUrl: "/avatars/ip-as-logo/options/avatar-15-capybara.png",
+      avatarColor: "#A85F57",
+    })
     expect(
-      next.users.filter((user) => user.id !== "u-1").map((u) => u.avatarColor)
+      next.users
+        .filter((user) => user.id !== "u-1")
+        .map((user) => [user.avatarUrl, user.avatarColor])
     ).toEqual(others)
+  })
+
+  it("user/setAvatar ไม่อนุญาตให้เลือกมาสคอตที่ผู้ใช้อื่นใช้อยู่", () => {
+    const initial = createInitialState()
+    const occupied = initial.users.find((user) => user.id === "u-2")!
+
+    const next = appReducer(initial, {
+      type: "user/setAvatar",
+      userId: "u-1",
+      avatarUrl: occupied.avatarUrl,
+      avatarColor: occupied.avatarColor,
+    })
+
+    expect(next).toBe(initial)
   })
 
   it("auth/signOut ล้าง session", () => {

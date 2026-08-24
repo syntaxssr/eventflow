@@ -1,0 +1,28 @@
+{
+  "sourceStorage": "outside project",
+  "sheetName": "All",
+  "rowCount": 118,
+  "dataRowCount": 117,
+  "columnCount": 10,
+  "headers": [
+    "No.",
+    "Name-Surname",
+    "NickName",
+    "Name-Surname(Thai)",
+    "NickName (Thai)",
+    "Gender",
+    "Position",
+    "Company Section",
+    "Email",
+    "Tel No."
+  ],
+  "sanitized": true,
+  "syntheticEmailPattern": "firstname.lastname-initial@company.co.th",
+  "phonePlaceholder": "0912345678",
+  "blankDepartmentEmployees": [
+    "Koji NAKAMURA",
+    "Parkpoom Sinitwarakul"
+  ],
+  "csvEncoding": "UTF-8 with BOM",
+  "csvLineEnding": "CRLF"
+}

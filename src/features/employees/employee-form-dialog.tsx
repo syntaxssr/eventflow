@@ -32,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
 import { EMPLOYEE_STATUS_STYLE } from "@/constants/status"
 import { useLocale } from "@/i18n"
 import type { TranslationKey } from "@/i18n/types"
@@ -50,7 +49,7 @@ const employeeSchema = z.object({
   firstName: z.string().trim().min(1, "employee.firstNameRequired"),
   lastName: z.string().trim().min(1, "employee.lastNameRequired"),
   nickname: z.string().trim(),
-  department: z.string().trim().min(1, "employee.departmentRequired"),
+  department: z.string().trim(),
   position: z.string().trim().min(1, "employee.positionRequired"),
   email: z
     .string()
@@ -170,27 +169,30 @@ export function EmployeeFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="max-h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] max-w-none grid-rows-[auto_1fr] overflow-hidden sm:min-h-[min(40rem,calc(100dvh-2rem))] sm:max-w-5xl sm:p-6">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? t("employee.editTitle") : t("employee.addTitle")}
           </DialogTitle>
-          <DialogDescription>{t("employee.subtitle")}</DialogDescription>
+          <DialogDescription className="truncate">
+            {t("employee.subtitle")}
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4"
+            className="flex min-h-0 flex-col gap-4 [&_[data-slot=form-item]]:min-w-0 [&_[data-slot=form-label]]:block [&_[data-slot=form-label]]:truncate [&_[data-slot=form-message]]:truncate"
             noValidate
             data-testid="employee-form"
           >
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid min-h-0 gap-x-4 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="contents">
               <FormField
                 control={form.control}
                 name="employeeCode"
                 render={({ field, fieldState }) => (
-                  <FormItem>
+                  <FormItem className="order-1">
                     <FormLabel>{t("employee.employeeCode")}</FormLabel>
                     <FormControl>
                       <Input
@@ -207,7 +209,7 @@ export function EmployeeFormDialog({
                 control={form.control}
                 name="status"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="order-2">
                     <FormLabel>{t("employeeStatus.label")}</FormLabel>
                     <Select
                       value={field.value}
@@ -237,12 +239,12 @@ export function EmployeeFormDialog({
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="contents">
               <FormField
                 control={form.control}
                 name="firstName"
                 render={({ field, fieldState }) => (
-                  <FormItem>
+                  <FormItem className="order-4">
                     <FormLabel>{t("employee.firstName")}</FormLabel>
                     <FormControl>
                       <Input
@@ -259,7 +261,7 @@ export function EmployeeFormDialog({
                 control={form.control}
                 name="lastName"
                 render={({ field, fieldState }) => (
-                  <FormItem>
+                  <FormItem className="order-5">
                     <FormLabel>{t("employee.lastName")}</FormLabel>
                     <FormControl>
                       <Input
@@ -274,12 +276,12 @@ export function EmployeeFormDialog({
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="contents">
               <FormField
                 control={form.control}
                 name="nickname"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="order-6">
                     <FormLabel>{t("employee.nickname")}</FormLabel>
                     <FormControl>
                       <Input
@@ -295,7 +297,7 @@ export function EmployeeFormDialog({
                 control={form.control}
                 name="startDate"
                 render={({ field, fieldState }) => (
-                  <FormItem>
+                  <FormItem className="order-3">
                     <FormLabel>{t("employee.startDate")}</FormLabel>
                     <DatePickerField
                       label={t("employee.startDate")}
@@ -309,12 +311,12 @@ export function EmployeeFormDialog({
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="contents">
               <FormField
                 control={form.control}
                 name="department"
                 render={({ field, fieldState }) => (
-                  <FormItem>
+                  <FormItem className="order-7">
                     <FormLabel>{t("employee.department")}</FormLabel>
                     <FormControl>
                       <Input
@@ -331,7 +333,7 @@ export function EmployeeFormDialog({
                 control={form.control}
                 name="position"
                 render={({ field, fieldState }) => (
-                  <FormItem>
+                  <FormItem className="order-8">
                     <FormLabel>{t("employee.position")}</FormLabel>
                     <FormControl>
                       <Input
@@ -346,12 +348,12 @@ export function EmployeeFormDialog({
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="contents">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field, fieldState }) => (
-                  <FormItem>
+                  <FormItem className="order-9">
                     <FormLabel>{t("employee.email")}</FormLabel>
                     <FormControl>
                       <Input
@@ -369,7 +371,7 @@ export function EmployeeFormDialog({
                 control={form.control}
                 name="phone"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="order-10">
                     <FormLabel>{t("employee.phone")}</FormLabel>
                     <FormControl>
                       <Input
@@ -388,12 +390,11 @@ export function EmployeeFormDialog({
               control={form.control}
               name="note"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="order-11">
                   <FormLabel>{t("employee.note")}</FormLabel>
                   <FormControl>
-                    <Textarea
+                    <Input
                       {...field}
-                      rows={2}
                       placeholder={t("employee.notePlaceholder")}
                       disabled={isSubmitting}
                     />
@@ -401,8 +402,9 @@ export function EmployeeFormDialog({
                 </FormItem>
               )}
             />
+            </div>
 
-            <DialogFooter>
+            <DialogFooter className="mt-auto sm:-mx-6 sm:-mb-6 sm:p-6">
               <Button
                 type="button"
                 variant="outline"

@@ -53,12 +53,24 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         : state
 
     /* ---- User ---- */
-    case "user/setAvatarColor":
+    case "user/setAvatar":
+      if (
+        state.users.some(
+          (user) =>
+            user.id !== action.userId && user.avatarUrl === action.avatarUrl
+        )
+      ) {
+        return state
+      }
       return {
         ...state,
         users: state.users.map((user) =>
           user.id === action.userId
-            ? { ...user, avatarColor: action.color }
+            ? {
+                ...user,
+                avatarUrl: action.avatarUrl,
+                avatarColor: action.avatarColor,
+              }
             : user
         ),
       }

@@ -31,7 +31,7 @@ import { getToday } from "@/constants/mock-date"
 import { TASK_STATUS_STYLE } from "@/constants/status"
 import { RecentActivityCard } from "@/features/dashboard/recent-activity-card"
 import { NotificationSettingsDialog } from "@/features/notifications/notification-settings-dialog"
-import { AvatarColorPicker } from "./avatar-color-picker"
+import { AvatarPicker } from "./avatar-picker"
 import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
 import { isDueSoon, isIncomplete } from "@/lib/due-date"
@@ -85,7 +85,7 @@ export function ProfilePageView() {
             </p>
           </div>
           <div className="flex items-center gap-1.5">
-            <AvatarColorPicker />
+            <AvatarPicker />
             <LanguageToggle />
             <ThemeToggle />
             <NotificationSettingsDialog>

@@ -79,10 +79,6 @@ export function LoginForm() {
       at: MOCK_NOW_ISO,
     })
 
-    // Toast ต้อนรับใช้ภาพเคลื่อนไหวหมวด welcome ซึ่งสลับภาพใหม่ทุกครั้งที่เข้าสู่ระบบ
-    // ข้อความเหลือคำเดียวเพราะภาพเป็นตัวสื่อสารหลัก และชื่อผู้ใช้อยู่บน Topbar อยู่แล้ว
-    appToast.welcome("WELCOME")
-
     router.replace(ROUTES.dashboard)
   }
 

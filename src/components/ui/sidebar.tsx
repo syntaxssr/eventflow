@@ -24,8 +24,9 @@ import {
 } from "@/components/ui/tooltip"
 import { PanelLeftIcon } from "lucide-react"
 
-// ปรับให้พอดีกับ label ที่ยาวที่สุด ("ตั้งค่าการแจ้งเตือน" ต้องการ ~201px รวม padding ที่ font-size ปัจจุบัน) + 10px
-const SIDEBAR_WIDTH = "211px"
+// พอดีกับเมนูย่อยที่ยาวที่สุด ("แบบฟอร์ม RSVP")
+// โดยรวมระยะเยื้อง เส้นนำทาง ไอคอน gap และ padding ของปุ่มแล้ว
+const SIDEBAR_WIDTH = "253px"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
 const SIDEBAR_WIDTH_ICON = "3rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"

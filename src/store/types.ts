@@ -59,10 +59,11 @@ export type AuthAction =
   | { type: "auth/hydrate"; session: AuthSession | null }
 
 export type UserAction = {
-  /** เปลี่ยนสี avatar ของผู้ใช้เอง — เลือกได้เฉพาะสีในพาเลต avatar */
-  type: "user/setAvatarColor"
+  /** เลือกมาสคอตของตัวเอง — URL เดียวกันใช้กับผู้ใช้ได้เพียงคนเดียว */
+  type: "user/setAvatar"
   userId: Id
-  color: string
+  avatarUrl: string
+  avatarColor: string
 }
 
 export type EventAction =

@@ -14,8 +14,9 @@
     "e2e:ui": "playwright test --ui",
     "e2e:install": "playwright install chromium",
     "toast-gifs": "node scripts/generate-toast-gif-manifest.mjs",
-    "predev": "npm run toast-gifs",
-    "prebuild": "npm run toast-gifs",
+    "employee-data": "node scripts/generate-employee-data.mjs",
+    "predev": "npm run employee-data && npm run toast-gifs",
+    "prebuild": "npm run employee-data && npm run toast-gifs",
     "toast-gifs:webp": "node scripts/convert-toast-gifs.mjs"
   },
   "dependencies": {

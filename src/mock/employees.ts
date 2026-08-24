@@ -1,5 +1,6 @@
 import type { LocalizedText } from "@/types/common"
 import type { Employee, EmployeeStatus } from "@/types/employee"
+import { IMPORTED_EMPLOYEES } from "./employees.generated"
 import {
   DEPARTMENTS,
   FIRST_NAMES,
@@ -185,4 +186,5 @@ function buildEmployees(generatedCount: number): Employee[] {
   return employees
 }
 
-export const MOCK_EMPLOYEES: Employee[] = buildEmployees(34)
+export const MOCK_EMPLOYEES: Employee[] =
+  IMPORTED_EMPLOYEES.length > 0 ? IMPORTED_EMPLOYEES : buildEmployees(34)

@@ -163,7 +163,7 @@ test.describe("Phase 1 — Application Shell", () => {
     await expect(group).toHaveAttribute("aria-expanded", "true")
 
     const links = [
-      { name: "รายชื่อ-ข้อมูลพนักงาน", url: /\/employees$/ },
+      { name: "HR Section", url: /\/employees$/ },
       { name: "เกมส์วงล้อ", url: /\/spin-wheel$/ },
       { name: "แบบฟอร์ม RSVP", url: /\/rsvp-form$/ },
     ]

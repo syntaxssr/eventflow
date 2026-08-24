@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/.pnpm-store/
 /.pnp
 .pnp.*
 .yarn/*
@@ -27,6 +28,9 @@
 # misc
 .DS_Store
 *.pem
+
+# local image-generation drafts
+/public/avatars/ip-as-logo/a[1-6]-*.png
 
 # debug
 npm-debug.log*

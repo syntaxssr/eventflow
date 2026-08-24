@@ -4,6 +4,11 @@ import type { Employee, EmployeeStatus } from "@/types/employee"
 
 export type { SortDirection }
 
+/** ชื่อ-นามสกุลโดยไม่รวมชื่อเล่น ใช้ในตารางที่แยกชื่อเล่นเป็นอีกคอลัมน์ */
+export function getEmployeeName(employee: Employee, locale: Locale): string {
+  return `${employee.firstName[locale]} ${employee.lastName[locale]}`.trim()
+}
+
 /**
  * ชื่อเต็มพร้อมชื่อเล่นในวงเล็บ เช่น "สมชาย ใจดี (ต้น)"
  * ละวงเล็บเมื่อไม่มีชื่อเล่น — รูปแบบเดียวกับ getFullName ของ User
@@ -12,7 +17,7 @@ export function getEmployeeFullName(
   employee: Employee,
   locale: Locale
 ): string {
-  const full = `${employee.firstName[locale]} ${employee.lastName[locale]}`.trim()
+  const full = getEmployeeName(employee, locale)
   const nickname = employee.nickname[locale].trim()
   return nickname ? `${full} (${nickname})` : full
 }
@@ -23,6 +28,14 @@ export function getEmployeeLocalizedName(employee: Employee): LocalizedText {
     th: getEmployeeFullName(employee, "th"),
     en: getEmployeeFullName(employee, "en"),
   }
+}
+
+/** จำกัดชื่อแผนกบนหน้าจอ โดยไม่เปลี่ยนค่าจริงที่ใช้ค้นหาและเรียงลำดับ */
+export function formatDepartmentName(name: string, maxLength = 30): string {
+  const characters = Array.from(name)
+  return characters.length > maxLength
+    ? `${characters.slice(0, maxLength).join("")}...`
+    : name
 }
 
 export interface EmployeeFilters {
@@ -93,6 +106,7 @@ export function filterEmployees(
 
 export const EMPLOYEE_SORT_KEYS = [
   "name",
+  "nickname",
   "employeeCode",
   "department",
   "position",
@@ -116,8 +130,8 @@ export function sortEmployees(
 ): Employee[] {
   const factor = direction === "asc" ? 1 : -1
   const byName = (a: Employee, b: Employee) =>
-    getEmployeeFullName(a, locale).localeCompare(
-      getEmployeeFullName(b, locale),
+    getEmployeeName(a, locale).localeCompare(
+      getEmployeeName(b, locale),
       locale
     )
 
@@ -126,6 +140,9 @@ export function sortEmployees(
     switch (key) {
       case "name":
         result = byName(a, b)
+        break
+      case "nickname":
+        result = a.nickname[locale].localeCompare(b.nickname[locale], locale)
         break
       case "employeeCode":
         // numeric เพื่อให้ EMP-0002 มาก่อน EMP-0010 แม้รหัสที่ผู้ใช้กรอกจะไม่เติมศูนย์
