@@ -154,6 +154,8 @@ export const en: Dictionary = {
   games: {
     subtitle: "Games and fun activities for events",
     spinWheelDescription: "Draw lucky winners or prizes with a spinning wheel",
+    bingoTitle: "Bingo",
+    bingoDescription: "Help attendees meet people and complete each square's prompt",
     comingSoon: "Coming soon",
   },
   employeeLocker: {

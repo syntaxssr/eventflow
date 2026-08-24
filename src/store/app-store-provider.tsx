@@ -29,7 +29,7 @@ export function AppStoreProvider({
   const session = state.session
 
   /**
-   * อ่าน sessionStorage ได้เฉพาะหลัง mount เท่านั้น ถ้าอ่านตอน init ของ
+   * อ่าน Web Storage ได้เฉพาะหลัง mount เท่านั้น ถ้าอ่านตอน init ของ
    * useReducer จะทำให้ HTML ฝั่ง server กับ client ไม่ตรงกัน
    */
   React.useEffect(() => {
@@ -57,7 +57,7 @@ export function AppStoreProvider({
   )
 }
 
-/** true เมื่อพยายามกู้ session จาก sessionStorage เสร็จแล้ว (สำเร็จหรือไม่ก็ตาม) */
+/** true เมื่อพยายามกู้ session ที่จดจำไว้เสร็จแล้ว (สำเร็จหรือไม่ก็ตาม) */
 export function useSessionHydrated(): boolean {
   return useAppState().sessionHydrated
 }

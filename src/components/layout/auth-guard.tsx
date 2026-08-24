@@ -12,7 +12,7 @@ import { useAppState, useSessionHydrated } from "@/store"
  * ป้องกันหน้าภายในระบบ
  *
  * Session อยู่ใน memory เป็นหลัก ยกเว้นผู้ที่ติ๊ก "จดจำฉันไว้" ซึ่งจะถูกกู้กลับมา
- * จาก sessionStorage ตอนเปิดหน้า จึง refresh ได้โดยไม่หลุด (ดู store/session-storage)
+ * จาก localStorage ตอนเปิดหน้า จึงปิดแล้วเปิดเบราว์เซอร์ใหม่ได้โดยไม่หลุด
  *
  * ต้องรอ `hydrated` ก่อนเสมอ ไม่งั้นจะเด้งไปหน้า Login ตั้งแต่จังหวะแรกที่ session
  * ยังเป็น null ทั้งที่กำลังจะกู้กลับมาได้

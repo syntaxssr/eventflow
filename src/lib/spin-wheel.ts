@@ -16,7 +16,7 @@ export const MIN_WHEEL_ENTRIES = 2
 /** จำนวนรอบเต็มขั้นต่ำต่อการหมุนหนึ่งครั้ง — น้อยกว่านี้วงล้อดูเหมือนสะดุดมากกว่าหมุน */
 export const WHEEL_EXTRA_TURNS = 5
 
-export const WHEEL_SPIN_DURATION_MS = 5200
+export const WHEEL_SPIN_DURATION_MS = 5800
 
 /** เกินจำนวนนี้ตัวอักษรเล็กจนอ่านไม่ออก วงล้อจะแสดงเลขลำดับแทนชื่อ */
 export const WHEEL_MAX_LABELED_ENTRIES = 24
@@ -26,20 +26,18 @@ export const WHEEL_MAX_LABELED_ENTRIES = 24
    ------------------------------------------------------------------------- */
 
 /**
- * สีช่องวงล้อ — พาเลต Version 4 จำนวน 8 สี วนใช้ตามลำดับช่อง
- * ทุกสีมีคู่ foreground ที่ผ่าน WCAG AA ใน Design System อยู่แล้ว
- * และค่าคงที่ทั้งสองธีม วงล้อจึงหน้าตาเหมือนกันบนธีมสว่างและมืด
- * Brown ไม่มีค่า V4 จึง fallback เป็น V3 ตามกติกาของ Design System
+ * สีช่องวงล้อแบบ carnival จำนวน 8 สี วนใช้ตามลำดับช่อง
+ * เป็นพาเลตเฉพาะหน้าเกมส์และคงที่ทั้งสองธีม แต่ละสีมี foreground ที่อ่านได้ชัด
  */
 export const WHEEL_COLOR_OPTIONS = [
-  { name: "Blue", value: "#3E95FF", foreground: "#00244F" },
-  { name: "Yellow", value: "#FED93B", foreground: "#6A5601" },
-  { name: "Green", value: "#58D66B", foreground: "#14501D" },
-  { name: "Purple", value: "#D933F1", foreground: "#27032C" },
-  { name: "Orange", value: "#FD9851", foreground: "#662B01" },
-  { name: "Pink", value: "#FD53A8", foreground: "#500128" },
-  { name: "Brown", value: "#B68A49", foreground: "#332714" },
-  { name: "Red", value: "#FD535E", foreground: "#490106" },
+  { name: "Blue", value: "#4D96FF", foreground: "#061F3A" },
+  { name: "Yellow", value: "#FFD93D", foreground: "#4A3A00" },
+  { name: "Green", value: "#6BCB77", foreground: "#103A17" },
+  { name: "Purple", value: "#9B5DE5", foreground: "#FFFFFF" },
+  { name: "Orange", value: "#FF9F1C", foreground: "#4C2500" },
+  { name: "Pink", value: "#FF5D8F", foreground: "#4A0017" },
+  { name: "Teal", value: "#20D6BE", foreground: "#00352D" },
+  { name: "Red", value: "#FF4D6D", foreground: "#4A0010" },
 ] as const
 
 export const WHEEL_SEGMENT_COLORS = WHEEL_COLOR_OPTIONS.map(

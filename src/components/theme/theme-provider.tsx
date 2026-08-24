@@ -22,8 +22,8 @@ const DARK_QUERY = "(prefers-color-scheme: dark)"
 /**
  * ThemeProvider ของ EventFlow
  *
- * เขียนขึ้นเองแทน `next-themes` เพราะ Prototype นี้ห้ามใช้ `localStorage`
- * ธีมจึงอยู่ใน memory เท่านั้น และกลับไปเป็น "ตามระบบ" ทุกครั้งที่ refresh
+ * ธีมจงใจอยู่ใน memory และกลับไปเป็น "ตามระบบ" ทุกครั้งที่ refresh
+ * ส่วน localStorage สงวนไว้สำหรับ session ที่ผู้ใช้เลือกจดจำเท่านั้น
  */
 export function ThemeProvider({
   children,

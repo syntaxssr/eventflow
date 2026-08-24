@@ -155,6 +155,8 @@ export const th = {
   games: {
     subtitle: "รวมเกมส์และกิจกรรมสนุก ๆ สำหรับใช้ภายในงาน",
     spinWheelDescription: "สุ่มรายชื่อผู้โชคดีหรือรางวัลด้วยวงล้อ",
+    bingoTitle: "เกมส์บิงโก",
+    bingoDescription: "ชวนผู้ร่วมงานตามหาคนและทำภารกิจให้ครบช่อง",
     comingSoon: "เร็วๆ นี้",
   },
   employeeLocker: {

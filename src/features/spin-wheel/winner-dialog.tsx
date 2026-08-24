@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { PartyPopperIcon, RotateCwIcon } from "lucide-react"
+import { RotateCwIcon, StarIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,6 +13,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useLocale } from "@/i18n"
+import { cn } from "@/lib/utils"
+import styles from "./spin-wheel.module.css"
 
 /** ผลการหมุนหนึ่งรอบ — เก็บชื่อไว้เอง เพราะรายชื่ออาจถูกลบออกจากวงล้อภายหลัง */
 export interface SpinRecord {
@@ -23,60 +25,31 @@ export interface SpinRecord {
   at: string
 }
 
-/** สีชิ้นกระดาษ — เฉด Version 3 ชุดเดียวกับพลุใน Toast */
-const CONFETTI_COLORS = [
-  "var(--icon-tile-blue)",
-  "var(--icon-tile-yellow)",
-  "var(--icon-tile-green)",
-  "var(--icon-tile-purple)",
-  "var(--icon-tile-red)",
-  "var(--icon-tile-orange)",
+type MarqueePoint = { x: number; y: number }
+
+const MARQUEE_CORNERS: MarqueePoint[] = [
+  { x: 13, y: 4 },
+  { x: 87, y: 4 },
+  { x: 97, y: 50 },
+  { x: 87, y: 96 },
+  { x: 13, y: 96 },
+  { x: 3, y: 50 },
 ]
+const MARQUEE_BULBS_PER_EDGE = [12, 5, 5, 12, 5, 5]
 
-/**
- * ชิ้นกระดาษกระจายเป็นวงรอบชื่อผู้ชนะ — คำนวณครั้งเดียวตอนโหลดโมดูลจากสูตรตายตัว
- * (ไม่สุ่มตอน render) ผลลัพธ์จึงเหมือนกันทุกครั้ง
- */
-const CONFETTI = Array.from({ length: 36 }, (_, index) => {
-  const angle = (index / 36) * Math.PI * 2
-  const radius = 150 + (index % 4) * 22
-  return {
-    tx: `${Math.round(Math.sin(angle) * radius)}px`,
-    ty: `${Math.round(-Math.cos(angle) * radius)}px`,
-    delay: `${((index % 5) * 0.28).toFixed(2)}s`,
-    duration: `${(2.2 + (index % 4) * 0.35).toFixed(2)}s`,
-    color: CONFETTI_COLORS[index % CONFETTI_COLORS.length],
-    size: 6 + (index % 4),
-  }
+/** วางหลอดไฟตามขอบหกเหลี่ยม โดยไม่ซ้ำหลอดตรงมุมระหว่างแต่ละด้าน */
+const MARQUEE_BULBS = MARQUEE_CORNERS.flatMap((start, edgeIndex) => {
+  const end = MARQUEE_CORNERS[(edgeIndex + 1) % MARQUEE_CORNERS.length]
+  const count = MARQUEE_BULBS_PER_EDGE[edgeIndex]
+
+  return Array.from({ length: count }, (_, index) => {
+    const progress = index / count
+    return {
+      x: start.x + (end.x - start.x) * progress,
+      y: start.y + (end.y - start.y) * progress,
+    }
+  })
 })
-
-function Confetti() {
-  return (
-    <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-      {CONFETTI.map((piece, index) => (
-        <span
-          key={index}
-          className="toast-confetti-piece absolute top-1/2 left-1/2 block rounded-[2px]"
-          style={
-            {
-              width: piece.size,
-              height: piece.size * 1.6,
-              backgroundColor: piece.color,
-              animationDelay: piece.delay,
-              animationDuration: piece.duration,
-              // คลาสที่ยืมมาจาก Toast ตั้งค่าให้วนไม่รู้จบ (Toast ปิดตัวเอง แต่กล่องนี้เปิดค้าง)
-              // ทับเฉพาะ longhand เพื่อไม่ล้าง animation: none ของโหมดลดการเคลื่อนไหว
-              animationIterationCount: 1,
-              animationFillMode: "forwards",
-              "--tx": piece.tx,
-              "--ty": piece.ty,
-            } as React.CSSProperties
-          }
-        />
-      ))}
-    </div>
-  )
-}
 
 /**
  * กล่องประกาศผู้โชคดี — เปิดเมื่อวงล้อหยุด
@@ -96,53 +69,96 @@ export function WinnerDialog({
   onSpinAgain: () => void
 }) {
   const { t } = useLocale()
+  const winnerName = record?.label ?? ""
+  const winnerNameLength = Array.from(winnerName).length
+  const winnerDialogWidth = Math.max(
+    38,
+    Math.min(96, 28 + winnerNameLength * 1.05)
+  )
+  const winnerNameBaseSize = Math.max(
+    14,
+    Math.min(76, 1520 / Math.max(winnerNameLength, 1))
+  )
+  const winnerNameViewportSize = 120 / Math.max(winnerNameLength, 1)
+  const winnerNameMobileSize = 70 / Math.max(winnerNameLength, 1)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="overflow-hidden text-center sm:max-w-2xl"
+        showCloseButton={false}
+        className={cn(styles.winnerDialog, "text-center text-white")}
+        style={
+          {
+            "--winner-dialog-width": `${winnerDialogWidth}rem`,
+          } as React.CSSProperties
+        }
         data-testid="winner-dialog"
       >
-        <Confetti />
+        <div className={styles.winnerSign} data-testid="winner-sign">
+          <div className={styles.winnerBulbs} aria-hidden="true">
+            {MARQUEE_BULBS.map((bulb, index) => (
+              <span
+                key={index}
+                className={styles.winnerBulb}
+                style={
+                  {
+                    left: `${bulb.x}%`,
+                    top: `${bulb.y}%`,
+                    "--winner-bulb-index": index,
+                  } as React.CSSProperties
+                }
+              />
+            ))}
+          </div>
 
-        <DialogHeader className="relative items-center pt-2">
-          <span
-            className="bg-success text-success-foreground flex size-12 items-center justify-center rounded-full"
-            aria-hidden="true"
-          >
-            <PartyPopperIcon className="size-6" />
-          </span>
-          <DialogTitle className="text-muted-foreground text-sm font-medium">
-            {t("spinWheel.winnerTitle")}
-          </DialogTitle>
-          <p
-            className="text-4xl leading-tight font-bold break-words text-balance sm:text-5xl md:text-6xl"
-            data-testid="winner-name"
-          >
-            {record?.label}
-          </p>
-          <DialogDescription>
-            {record ? t("spinWheel.winnerAnnounce") : ""}
-          </DialogDescription>
-        </DialogHeader>
+          <div className={styles.winnerSignInner}>
+            <div className={styles.winnerStars} aria-hidden="true">
+              <StarIcon />
+              <StarIcon />
+              <StarIcon />
+            </div>
+            <DialogHeader className="min-w-0 items-center gap-1.5">
+              <DialogTitle className={styles.winnerEyebrow}>
+                {t("spinWheel.winnerTitle")}
+              </DialogTitle>
+              <div className={styles.winnerNameViewport}>
+                <p
+                  className={styles.winnerName}
+                  style={
+                    {
+                      "--winner-name-base-size": `${winnerNameBaseSize}px`,
+                      "--winner-name-viewport-size": `${winnerNameViewportSize}vw`,
+                      "--winner-name-mobile-size": `${winnerNameMobileSize}vw`,
+                    } as React.CSSProperties
+                  }
+                  data-testid="winner-name"
+                >
+                  {winnerName}
+                </p>
+              </div>
+              <DialogDescription className={styles.winnerCongratulations}>
+                {record ? t("spinWheel.winnerAnnounce") : ""}
+              </DialogDescription>
+            </DialogHeader>
 
-        <div className="relative space-y-1">
-          {record?.prize ? (
-            <p className="text-base font-medium" data-testid="winner-prize">
-              {t("spinWheel.winnerPrize", { prize: record.prize })}
-            </p>
-          ) : null}
-          {record ? (
-            <p className="text-muted-foreground text-xs">
-              {t("spinWheel.round", { round: record.round })}
-            </p>
-          ) : null}
+            <div className={styles.winnerDetails}>
+              {record?.prize ? (
+                <p data-testid="winner-prize">
+                  {t("spinWheel.winnerPrize", { prize: record.prize })}
+                </p>
+              ) : null}
+              {record ? (
+                <p>{t("spinWheel.round", { round: record.round })}</p>
+              ) : null}
+            </div>
+          </div>
         </div>
 
-        <DialogFooter className="relative sm:justify-center">
+        <DialogFooter className={styles.winnerFooter}>
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
+            className="border-white/20 bg-white/10 text-white hover:bg-white/15 hover:text-white"
             data-testid="winner-close"
           >
             {t("spinWheel.close")}
@@ -150,6 +166,7 @@ export function WinnerDialog({
           <Button
             onClick={onSpinAgain}
             disabled={!canSpinAgain}
+            className="bg-gradient-to-r from-amber-300 via-orange-400 to-pink-500 font-bold text-violet-950 hover:brightness-110"
             data-testid="winner-spin-again"
           >
             <RotateCwIcon className="size-4" aria-hidden="true" />

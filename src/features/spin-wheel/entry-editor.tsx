@@ -21,6 +21,8 @@ import {
   normalizeEntryLabel,
   type WheelEntry,
 } from "@/lib/spin-wheel"
+import { cn } from "@/lib/utils"
+import styles from "./spin-wheel.module.css"
 
 type EntryError = "spinWheel.entryRequired" | "spinWheel.entryDuplicate"
 
@@ -71,10 +73,13 @@ export function EntryEditor({
   }
 
   return (
-    <Card size="sm">
+    <Card
+      size="sm"
+      className={cn(styles.controlCard, "border-0 text-white ring-0")}
+    >
       <CardHeader>
-        <CardTitle>{t("spinWheel.entries")}</CardTitle>
-        <CardDescription aria-live="polite">
+        <CardTitle className="text-white">{t("spinWheel.entries")}</CardTitle>
+        <CardDescription className="text-violet-100/65" aria-live="polite">
           {t("spinWheel.entryCount", { count: entries.length })}
         </CardDescription>
         <CardAction>
@@ -83,7 +88,10 @@ export function EntryEditor({
             size="sm"
             onClick={onClear}
             disabled={disabled || entries.length === 0}
-            className={DESTRUCTIVE_ACTION_CLASS}
+            className={cn(
+              DESTRUCTIVE_ACTION_CLASS,
+              "text-rose-300 hover:bg-rose-400/15 hover:text-rose-200"
+            )}
             data-testid="clear-entries"
           >
             <Trash2Icon className="size-3.5" aria-hidden="true" />
@@ -107,6 +115,7 @@ export function EntryEditor({
               }}
               placeholder={t("spinWheel.entryPlaceholder")}
               disabled={disabled}
+              className="h-10 border-white/20 bg-white/10 text-white placeholder:text-violet-200/55 focus-visible:border-cyan-300 focus-visible:ring-cyan-300/30 dark:bg-white/10"
               aria-invalid={activeError ? true : undefined}
               aria-describedby={activeError ? "wheel-entry-error" : undefined}
               autoComplete="off"
@@ -116,6 +125,7 @@ export function EntryEditor({
               type="submit"
               variant="outline"
               disabled={disabled}
+              className="h-10 border-cyan-300/35 bg-cyan-300/15 text-cyan-50 hover:border-cyan-200 hover:bg-cyan-300/25 hover:text-white"
               data-testid="add-entry"
             >
               <PlusIcon className="size-4" aria-hidden="true" />
@@ -126,7 +136,7 @@ export function EntryEditor({
             <p
               id="wheel-entry-error"
               role="alert"
-              className="text-destructive-message text-sm"
+              className="text-sm text-rose-300"
             >
               {t(activeError)}
             </p>
@@ -136,15 +146,15 @@ export function EntryEditor({
         {entries.length > 0 ? (
           <ol
             aria-label={t("spinWheel.entries")}
-            className="max-h-64 space-y-1 overflow-y-auto rounded-lg border p-1"
+            className="max-h-64 space-y-1 overflow-y-auto rounded-lg border border-white/12 bg-black/10 p-1"
             data-testid="wheel-entries"
           >
             {entries.map((entry, index) => (
               <li
                 key={entry.id}
-                className="hover:bg-muted flex items-center gap-2 rounded-md px-2 py-1"
+                className="flex min-h-8 items-center gap-2 rounded-md px-2 py-1 hover:bg-white/8"
               >
-                <span className="text-muted-foreground w-6 shrink-0 text-right text-xs tabular-nums">
+                <span className="w-6 shrink-0 text-right text-xs text-violet-200/60 tabular-nums">
                   {index + 1}
                 </span>
                 <span className="min-w-0 flex-1 truncate text-sm">
@@ -156,7 +166,10 @@ export function EntryEditor({
                   onClick={() => onRemove(entry)}
                   disabled={disabled}
                   aria-label={t("spinWheel.removeEntry", { name: entry.label })}
-                  className={DESTRUCTIVE_ACTION_CLASS}
+                  className={cn(
+                    DESTRUCTIVE_ACTION_CLASS,
+                    "text-rose-300 hover:bg-rose-400/15 hover:text-rose-200"
+                  )}
                 >
                   <XIcon className="size-3.5" aria-hidden="true" />
                 </Button>

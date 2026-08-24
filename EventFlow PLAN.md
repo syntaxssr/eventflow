@@ -37,9 +37,9 @@
 | Styling | Tailwind CSS | ตาม requirement |
 | UI Kit | shadcn/ui (Radix-based) | Accessible by default, ปรับแต่งได้ |
 | Icons | lucide-react | คู่มาตรฐานของ shadcn/ui |
-| State | React Context + `useReducer` (in-memory store) | ไม่มี Backend, reset เมื่อ refresh ตาม requirement |
-| Persistence | **ไม่ใช้ `localStorage` / `sessionStorage` เลย** | ตาม requirement ข้อ 3 |
-| Theme | Custom `ThemeProvider` (React state + `class` บน `<html>`) | ไม่ใช้ `next-themes` เพราะเขียน localStorage — default = System Theme |
+| State | React Context + `useReducer` (in-memory store) | ไม่มี Backend, ข้อมูลธุรกิจ reset เมื่อ refresh |
+| Persistence | เก็บเฉพาะ session ที่เลือก “จดจำฉันไว้” ใน `localStorage` | กลับมาใช้งานได้หลังปิดเบราว์เซอร์ โดยไม่เก็บอีเมลหรือรหัสผ่าน |
+| Theme | Custom `ThemeProvider` (React state + `class` บน `<html>`) | ธีมอยู่ใน memory — default = System Theme |
 | i18n | Custom `LocaleProvider` + dictionary (`th` / `en`) | เบา ควบคุมได้ ไม่ต้องมี route prefix, ครอบคลุม mock data |
 | Forms | react-hook-form + zod | Validation + error message ผูกกับ field (a11y) |
 | Toast | sonner (ผ่าน shadcn/ui) | Success / Warning / Error feedback |
@@ -195,7 +195,7 @@ tests/
 - [x] หน้า `/design-system` แสดง token, typography, status badge และ component ทั้งหมด (สำหรับ QA ภายใน)
 
 ### Interaction
-- [x] `ThemeProvider` — Light / Dark / System, ไม่ใช้ localStorage, สลับได้ทันทีทุกหน้า + init script กัน FOUC
+- [x] `ThemeProvider` — Light / Dark / System, ไม่บันทึกธีมใน storage, สลับได้ทันทีทุกหน้า + init script กัน FOUC
 - [x] `LocaleProvider` + hook `useT()` / `tl()` — TH/EN สลับได้ทันที พร้อม type-safe key
 - [x] `AppStoreProvider` (Context + useReducer) พร้อม action type ครบทุก domain (reducer ทยอย implement รายเฟส)
 - [x] helper `simulateDelay()` / `failIf()` + `DemoProvider.simulate()` สำหรับจำลอง latency/error
@@ -728,7 +728,7 @@ tests/
 
 ### Mock Data
 - [x] ข้อมูลสอดคล้องกัน — unit ชุด mock-data-integrity ตรวจ id/reference/circular/email ซ้ำ
-- [x] E2E ยืนยัน: refresh แล้วกลับ Mock เริ่มต้น + ไม่มีคีย์ `localStorage`/`sessionStorage` ของแอปเลย
+- [x] E2E ยืนยัน: session ที่เลือกจดจำคงอยู่หลัง refresh, ไม่เลือกแล้วหลุด และ logout ล้าง session
 
 ### Responsive
 - [x] ทดสอบอัตโนมัติ 360 / 414 / 768 / 1024 / 1280 / 1920 px — ไม่มี horizontal overflow (เกณฑ์ ≤ 1px)
@@ -758,7 +758,20 @@ tests/
 
 ---
 
-## E. Global Definition of Done
+## E. ไอเดียกิจกรรมในงาน — รอจัดลำดับ
+
+> **สถานะ: บันทึกไว้ก่อน** · ยังไม่ตัดสินใจนำไปทำหรือผูกกับฟีเจอร์ใน EventFlow
+
+- [~] Bingo คนในงาน — เพิ่มการ์ดในหน้าเกมส์แล้ว; รูปแบบการเล่นรอจัดลำดับ
+- [ ] Quiz Kahoot
+- [ ] ทายภาพวัยเด็กพนักงาน
+- [ ] สุ่มเพลงอินโทร
+- [ ] ล่าขุมทรัพย์ QR Code
+- [ ] แข่งแต่งตัวตามธีม
+
+---
+
+## F. Global Definition of Done
 
 ก่อนถือว่างานเสร็จสมบูรณ์ ต้องผ่านทุกข้อ: **✓ ผ่านครบทุกข้อ (1 ส.ค. 2026)**
 

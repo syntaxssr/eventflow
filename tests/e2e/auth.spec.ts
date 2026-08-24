@@ -5,10 +5,11 @@ import { gotoRoute, type AppRoute } from "./helpers"
 const DEMO_EMAIL = "alisa.l@company.co.th"
 const DEMO_PASSWORD = "eventflow"
 
-async function signIn(page: Page) {
+async function signIn(page: Page, rememberMe = true) {
   await page.goto("/login")
   await page.getByLabel("อีเมลองค์กร", { exact: true }).fill(DEMO_EMAIL)
   await page.getByLabel("รหัสผ่าน", { exact: true }).fill(DEMO_PASSWORD)
+  await page.getByLabel("จดจำฉันไว้", { exact: true }).setChecked(rememberMe)
   await page.getByRole("button", { name: "เข้าสู่ระบบ", exact: true }).click()
   await page.waitForURL("**/dashboard")
 }
@@ -103,10 +104,25 @@ test.describe("Phase 1 — Authentication", () => {
     await expect(page).toHaveURL(/\/login$/)
   })
 
-  test("refresh แล้ว session หายและกลับไปหน้า Login (ตามข้อกำหนด Prototype)", async ({
+  test("จดจำฉันไว้เป็นค่าเริ่มต้นและ refresh แล้วยังคงเข้าสู่ระบบ", async ({
     page,
   }) => {
+    await page.goto("/login")
+    await expect(page.getByLabel("จดจำฉันไว้", { exact: true })).toBeChecked()
+
     await signIn(page)
+    await expect
+      .poll(() => page.evaluate(() => localStorage.getItem("eventflow.session")))
+      .not.toBeNull()
+    await page.reload()
+    await expect(page).toHaveURL(/\/dashboard$/)
+    await expect(page.getByTestId("user-menu")).toContainText(
+      "อลิสา ลีลายุวัฒนกุล"
+    )
+  })
+
+  test("ไม่เลือกจดจำฉันไว้แล้ว refresh จะกลับหน้า Login", async ({ page }) => {
+    await signIn(page, false)
     await page.reload()
     await expect(page).toHaveURL(/\/login$/)
   })
@@ -116,6 +132,9 @@ test.describe("Phase 1 — Authentication", () => {
     await page.getByTestId("user-menu").click()
     await page.getByTestId("sign-out").click()
     await expect(page).toHaveURL(/\/login$/)
+    await expect
+      .poll(() => page.evaluate(() => localStorage.getItem("eventflow.session")))
+      .toBeNull()
   })
 })
 

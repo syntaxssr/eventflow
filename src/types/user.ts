@@ -21,7 +21,7 @@ export interface User {
   phone: string
 }
 
-/** ข้อมูล Session ปัจจุบัน (อยู่ใน memory เท่านั้น — refresh แล้วหาย) */
+/** ข้อมูล Session ปัจจุบัน — เก็บถาวรเฉพาะเมื่อผู้ใช้เลือกจดจำ */
 export interface AuthSession {
   userId: Id
   signedInAt: IsoDateTime

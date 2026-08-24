@@ -18,13 +18,13 @@ import type {
 } from "@/types"
 
 /**
- * State ทั้งหมดของ Prototype — อยู่ใน memory เท่านั้น
- * refresh หน้าเว็บเมื่อใด ข้อมูลจะกลับไปเป็น Mock Data เริ่มต้นเสมอ
+ * ข้อมูลธุรกิจของ Prototype อยู่ใน memory และกลับเป็น Mock Data เมื่อ refresh
+ * ส่วน session ที่ผู้ใช้เลือกจดจำจะถูกเก็บแยกใน localStorage
  */
 export interface AppState {
   session: AuthSession | null
   /**
-   * true เมื่อพยายามกู้ session จาก sessionStorage เสร็จแล้ว (สำเร็จหรือไม่ก็ตาม)
+   * true เมื่อพยายามกู้ session จาก localStorage เสร็จแล้ว (สำเร็จหรือไม่ก็ตาม)
    * ตัวป้องกันหน้าต้องรอค่านี้ก่อนตัดสินใจเด้งไปหน้า Login
    */
   sessionHydrated: boolean
@@ -56,7 +56,7 @@ export type AuthAction =
   | { type: "auth/signOut" }
   | { type: "auth/switchUser"; userId: Id }
   /**
-   * จบขั้นตอนกู้ session จาก sessionStorage ตอนเปิดหน้า
+   * จบขั้นตอนกู้ session จาก localStorage ตอนเปิดหน้า
    * `session` เป็น null ได้เมื่อไม่มีอะไรให้กู้ — ยังถือว่า hydrate เสร็จแล้ว
    */
   | { type: "auth/hydrate"; session: AuthSession | null }

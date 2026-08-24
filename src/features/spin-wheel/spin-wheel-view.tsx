@@ -9,12 +9,13 @@ import {
   Loader2Icon,
   Maximize2Icon,
   Minimize2Icon,
+  SparklesIcon,
 } from "lucide-react"
 
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
 import { EmptyState } from "@/components/common/empty-state"
 import { ErrorState } from "@/components/common/error-state"
-import { PageContainer, PageHeader } from "@/components/common/page-header"
+import { PageContainer } from "@/components/common/page-header"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -61,12 +62,16 @@ import { EntryEditor } from "./entry-editor"
 import { SpinHistory } from "./spin-history"
 import { Wheel } from "./wheel"
 import { WinnerDialog, type SpinRecord } from "./winner-dialog"
+import styles from "./spin-wheel.module.css"
 
 type EntrySource = "employees" | "participants" | "custom"
 
 const SOURCE_OPTIONS: {
   value: EntrySource
-  labelKey: "spinWheel.sourceEmployees" | "spinWheel.sourceParticipants" | "spinWheel.sourceCustom"
+  labelKey:
+    | "spinWheel.sourceEmployees"
+    | "spinWheel.sourceParticipants"
+    | "spinWheel.sourceCustom"
 }[] = [
   { value: "employees", labelKey: "spinWheel.sourceEmployees" },
   { value: "participants", labelKey: "spinWheel.sourceParticipants" },
@@ -74,6 +79,93 @@ const SOURCE_OPTIONS: {
 ]
 
 type LoadNotice = "spinWheel.noEmployees" | "spinWheel.noParticipants" | null
+
+const CONTROL_CARD_CLASS = cn(styles.controlCard, "border-0 ring-0")
+const CONTROL_INPUT_CLASS =
+  "h-10 border-white/20 bg-white/10 text-white placeholder:text-violet-200/55 focus-visible:border-cyan-300 focus-visible:ring-cyan-300/30 dark:bg-white/10"
+const CONTROL_BUTTON_CLASS =
+  "h-10 border-white/20 bg-white/10 text-white hover:border-cyan-300/70 hover:bg-white/15 hover:text-white"
+
+const CIRCUS_HORIZONTAL_LIGHTS = Array.from({ length: 30 }, (_, index) => index)
+const CIRCUS_VERTICAL_LIGHTS = Array.from({ length: 14 }, (_, index) => index)
+const CIRCUS_GARLAND_LIGHTS = Array.from({ length: 19 }, (_, index) => index)
+
+function CircusBackdrop() {
+  const renderLights = (lights: number[], prefix: string) =>
+    lights.map((index) => (
+      <span
+        key={`${prefix}-${index}`}
+        className={styles.circusLight}
+        style={{ "--light-index": index } as React.CSSProperties}
+      />
+    ))
+
+  return (
+    <div
+      className={styles.circusBackdrop}
+      data-testid="circus-backdrop"
+      aria-hidden="true"
+    >
+      <div className={styles.circusTent} />
+      <div className={styles.circusValance} />
+      <div className={cn(styles.circusCurtain, styles.circusCurtainLeft)} />
+      <div className={cn(styles.circusCurtain, styles.circusCurtainRight)} />
+      <div
+        className={cn(
+          styles.circusSpotlight,
+          styles.circusSpotlightLeft
+        )}
+      />
+      <div
+        className={cn(
+          styles.circusSpotlight,
+          styles.circusSpotlightRight
+        )}
+      />
+
+      <div className={styles.circusGarland}>
+        {CIRCUS_GARLAND_LIGHTS.map((index) => {
+          const center = (CIRCUS_GARLAND_LIGHTS.length - 1) / 2
+          const normalized = (index - center) / center
+          const y = 1.2 + (1 - normalized * normalized) * 5.2
+          return (
+            <span
+              key={index}
+              style={
+                {
+                  left: `${(index / (CIRCUS_GARLAND_LIGHTS.length - 1)) * 100}%`,
+                  top: `${y}rem`,
+                  "--light-index": index,
+                } as React.CSSProperties
+              }
+            />
+          )
+        })}
+      </div>
+
+      <div className={styles.circusSign}>
+        <span className={styles.circusSignKicker}>The Grand</span>
+        <span className={styles.circusSignTitle}>Lucky Circus</span>
+      </div>
+
+      <div className={cn(styles.lightRail, styles.lightRailTop)}>
+        {renderLights(CIRCUS_HORIZONTAL_LIGHTS, "top")}
+      </div>
+      <div className={cn(styles.lightRail, styles.lightRailRight)}>
+        {renderLights(CIRCUS_VERTICAL_LIGHTS, "right")}
+      </div>
+      <div className={cn(styles.lightRail, styles.lightRailBottom)}>
+        {renderLights(CIRCUS_HORIZONTAL_LIGHTS, "bottom")}
+      </div>
+      <div className={cn(styles.lightRail, styles.lightRailLeft)}>
+        {renderLights(CIRCUS_VERTICAL_LIGHTS, "left")}
+      </div>
+
+      <div className={styles.circusFloor} />
+      <div className={styles.circusFootlights} />
+    </div>
+  )
+}
 
 /**
  * เกมส์วงล้อ — สุ่มรายชื่อจากทะเบียนพนักงาน / ผู้ตอบรับกิจกรรม / พิมพ์เอง
@@ -129,6 +221,26 @@ export function SpinWheelView() {
     return () => {
       document.removeEventListener("fullscreenchange", handleFullscreenChange)
       window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [presentationMode])
+
+  React.useEffect(() => {
+    if (!presentationMode) return
+
+    const root = document.documentElement
+    const body = document.body
+    const previousRootOverflow = root.style.overflow
+    const previousBodyOverflow = body.style.overflow
+    const previousOverscrollBehavior = root.style.overscrollBehavior
+
+    root.style.overflow = "hidden"
+    body.style.overflow = "hidden"
+    root.style.overscrollBehavior = "none"
+
+    return () => {
+      root.style.overflow = previousRootOverflow
+      body.style.overflow = previousBodyOverflow
+      root.style.overscrollBehavior = previousOverscrollBehavior
     }
   }, [presentationMode])
 
@@ -262,29 +374,34 @@ export function SpinWheelView() {
 
   if (pageState === "error") {
     return (
-      <PageContainer>
-        <PageHeader
-          title={t("spinWheel.title")}
-          description={t("spinWheel.subtitle")}
-        />
-        <ErrorState onRetry={retry} />
+      <PageContainer
+        className={cn(styles.page, "!space-y-0 px-3 sm:px-5 lg:px-6")}
+      >
+        <h1 className="sr-only">{t("spinWheel.title")}</h1>
+        <div
+          className={cn(
+            styles.controlCard,
+            "mx-auto max-w-2xl rounded-2xl p-6"
+          )}
+        >
+          <ErrorState onRetry={retry} />
+        </div>
       </PageContainer>
     )
   }
 
   if (pageState === "loading") {
     return (
-      <PageContainer>
-        <PageHeader
-          title={t("spinWheel.title")}
-          description={t("spinWheel.subtitle")}
-        />
-        <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
-          <Skeleton className="aspect-square w-full max-w-[480px] justify-self-center rounded-full" />
+      <PageContainer
+        className={cn(styles.page, "!space-y-0 px-3 sm:px-5 lg:px-6")}
+      >
+        <h1 className="sr-only">{t("spinWheel.title")}</h1>
+        <div className="grid gap-5 min-[1180px]:grid-cols-[minmax(0,1fr)_360px]">
+          <Skeleton className="aspect-square w-full max-w-[540px] justify-self-center rounded-full bg-white/15" />
           <div className="space-y-4">
-            <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-64 w-full" />
-            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-48 w-full bg-white/15" />
+            <Skeleton className="h-64 w-full bg-white/15" />
+            <Skeleton className="h-40 w-full bg-white/15" />
           </div>
         </div>
       </PageContainer>
@@ -297,6 +414,7 @@ export function SpinWheelView() {
       variant="outline"
       onClick={loadNames}
       disabled={spinning || !canLoad}
+      className={CONTROL_BUTTON_CLASS}
       data-testid={testId}
     >
       <ListPlusIcon className="size-4" aria-hidden="true" />
@@ -305,36 +423,64 @@ export function SpinWheelView() {
   )
 
   return (
-    <PageContainer>
-      <PageHeader
-        title={t("spinWheel.title")}
-        description={t("spinWheel.subtitle")}
-      />
+    <PageContainer
+      className={cn(
+        styles.page,
+        "!space-y-0 px-3 pt-4 pb-6 sm:px-5 sm:pt-5 lg:px-6 lg:pb-8",
+        presentationMode && "z-50"
+      )}
+    >
+      <h1 className="sr-only">{t("spinWheel.title")}</h1>
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_380px] lg:items-start">
+      <div
+        className="relative grid gap-5 min-[1180px]:grid-cols-[minmax(0,1fr)_360px] min-[1180px]:items-start"
+        data-testid="spin-wheel-page"
+      >
         <div
           className={cn(
+            presentationMode && styles.presentationOverlay,
             presentationMode &&
-              "bg-background fixed inset-0 z-60 flex items-center justify-center p-4"
+              "fixed inset-0 z-60 flex h-dvh w-screen items-center justify-center overflow-hidden"
           )}
           data-testid="wheel-stage"
         >
-        <Card
-          data-testid="wheel-card"
-          className={cn(
-            presentationMode &&
-              "h-full w-full max-w-[1600px] border-0 bg-transparent shadow-none"
-          )}
-        >
-          <CardContent
+          {presentationMode ? <CircusBackdrop /> : null}
+          <Card
+            data-testid="wheel-card"
             className={cn(
-              "flex flex-col items-center gap-5",
-              presentationMode && "h-full justify-center"
+              styles.stageCard,
+              "relative border-0 py-0 ring-0",
+              presentationMode &&
+                cn(
+                  styles.presentationCard,
+                  "z-10 h-full w-full bg-transparent shadow-none"
+                )
             )}
           >
+            <CardContent
+              className={cn(
+                "relative z-10 flex min-h-[620px] flex-col items-center justify-center gap-4 px-4 py-5 sm:px-6 sm:py-6",
+                presentationMode &&
+                  cn(styles.presentationContent, "h-full justify-center")
+              )}
+            >
+            <SparklesIcon
+              className={cn(
+                "absolute top-[9%] left-[8%] size-8 rotate-[-14deg] text-cyan-300/70",
+                presentationMode && "hidden"
+              )}
+              aria-hidden="true"
+            />
+            <SparklesIcon
+              className={cn(
+                "absolute right-[9%] bottom-[15%] size-6 rotate-12 text-amber-300/80",
+                presentationMode && "hidden"
+              )}
+              aria-hidden="true"
+            />
             <div
               className={cn(
-                "flex w-full justify-end",
+                "absolute top-4 right-4 z-20 flex justify-end",
                 presentationMode && "absolute top-4 right-4 z-10 w-auto"
               )}
             >
@@ -342,6 +488,10 @@ export function SpinWheelView() {
                 type="button"
                 variant="outline"
                 size={presentationMode ? "lg" : "sm"}
+                className={cn(
+                  "border-white/25 bg-violet-950/35 text-white shadow-lg backdrop-blur-sm hover:border-amber-300/70 hover:bg-white/15 hover:text-white",
+                  presentationMode && styles.circusExitButton
+                )}
                 onClick={
                   presentationMode ? closePresentationMode : openPresentationMode
                 }
@@ -362,10 +512,12 @@ export function SpinWheelView() {
                 icon={FerrisWheelIcon}
                 title={t("spinWheel.empty")}
                 description={t("spinWheel.emptyDescription")}
+                className="relative z-10 min-h-[390px] text-white [&>div:first-child]:bg-white/12 [&>div:first-child]:text-amber-300 [&_.text-muted-foreground]:text-violet-100/70"
                 action={
                   source === "custom" ? (
                     <Button
                       variant="outline"
+                      className={CONTROL_BUTTON_CLASS}
                       onClick={() => entryInputRef.current?.focus()}
                     >
                       {t("spinWheel.addEntry")}
@@ -383,8 +535,8 @@ export function SpinWheelView() {
                 onSpinEnd={handleSpinEnd}
                 className={
                   presentationMode
-                    ? "max-w-[min(72vh,72vw)]"
-                    : undefined
+                    ? styles.presentationWheel
+                    : "max-w-[34rem]"
                 }
               />
             )}
@@ -397,7 +549,7 @@ export function SpinWheelView() {
                 aria-describedby={
                   entries.length < MIN_WHEEL_ENTRIES ? "wheel-min-entries" : undefined
                 }
-                className="w-full sm:w-auto sm:min-w-56"
+                className="h-12 w-full rounded-full bg-gradient-to-r from-amber-300 via-orange-400 to-pink-500 px-8 text-base font-extrabold text-violet-950 shadow-[0_8px_0_#9d174d,0_14px_30px_rgba(15,2,28,0.34)] transition-[transform,filter,box-shadow] hover:brightness-110 active:translate-y-1 active:shadow-[0_4px_0_#9d174d,0_8px_20px_rgba(15,2,28,0.32)] sm:w-auto sm:min-w-64"
                 data-testid="spin-button"
               >
                 {spinning ? (
@@ -410,7 +562,7 @@ export function SpinWheelView() {
               {entries.length < MIN_WHEEL_ENTRIES ? (
                 <p
                   id="wheel-min-entries"
-                  className="text-muted-foreground text-center text-sm"
+                  className="text-center text-sm text-violet-100/70"
                 >
                   {t("spinWheel.minEntries")}
                 </p>
@@ -418,7 +570,7 @@ export function SpinWheelView() {
               {reducedMotion ? (
                 <p
                   role="note"
-                  className="text-muted-foreground flex items-start gap-2 text-center text-xs"
+                  className="flex items-start gap-2 text-center text-xs text-violet-100/70"
                 >
                   <AccessibilityIcon
                     className="mt-0.5 size-3.5 shrink-0"
@@ -432,14 +584,18 @@ export function SpinWheelView() {
             <p className="sr-only" role="status" aria-live="polite">
               {announcement}
             </p>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="space-y-4">
-          <Card size="sm" data-testid="source-card">
+          <Card
+            size="sm"
+            data-testid="source-card"
+            className={CONTROL_CARD_CLASS}
+          >
             <CardHeader>
-              <CardTitle>{t("spinWheel.source")}</CardTitle>
+              <CardTitle className="text-white">{t("spinWheel.source")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <fieldset>
@@ -454,15 +610,19 @@ export function SpinWheelView() {
                   className="gap-2"
                 >
                   {SOURCE_OPTIONS.map((option) => (
-                    <div key={option.value} className="flex items-center gap-2">
+                    <div
+                      key={option.value}
+                      className="flex min-h-9 items-center gap-2 rounded-lg px-2 transition-colors hover:bg-white/8"
+                    >
                       <RadioGroupItem
                         value={option.value}
                         id={`wheel-source-${option.value}`}
+                        className="border-white/45 data-checked:border-cyan-300 data-checked:bg-cyan-400"
                         data-testid={`wheel-source-${option.value}`}
                       />
                       <Label
                         htmlFor={`wheel-source-${option.value}`}
-                        className="font-normal"
+                        className="font-normal text-violet-50"
                       >
                         {t(option.labelKey)}
                       </Label>
@@ -474,11 +634,11 @@ export function SpinWheelView() {
               {source === "participants" ? (
                 <div className="space-y-3">
                   <div className="space-y-1.5">
-                    <Label htmlFor="wheel-event-select">
+                    <Label htmlFor="wheel-event-select" className="text-violet-50">
                       {t("spinWheel.selectEvent")}
                     </Label>
                     {events.length === 0 ? (
-                      <p className="text-muted-foreground text-sm">
+                      <p className="text-sm text-violet-100/65">
                         {t("spinWheel.noEvents")}
                       </p>
                     ) : (
@@ -492,7 +652,7 @@ export function SpinWheelView() {
                       >
                         <SelectTrigger
                           id="wheel-event-select"
-                          className="w-full"
+                          className={cn(CONTROL_INPUT_CLASS, "w-full")}
                           data-testid="wheel-event-select"
                         >
                           <SelectValue placeholder={t("spinWheel.selectEvent")} />
@@ -515,9 +675,13 @@ export function SpinWheelView() {
                         setOnlyAttending(checked === true)
                       }
                       disabled={spinning}
+                      className="border-white/45 data-checked:border-cyan-300 data-checked:bg-cyan-400"
                       data-testid="wheel-only-attending"
                     />
-                    <Label htmlFor="wheel-only-attending" className="font-normal">
+                    <Label
+                      htmlFor="wheel-only-attending"
+                      className="font-normal text-violet-50"
+                    >
                       {t("spinWheel.onlyAttending")}
                     </Label>
                   </div>
@@ -533,9 +697,13 @@ export function SpinWheelView() {
                       setOnlyActiveEmployees(checked === true)
                     }
                     disabled={spinning}
+                    className="border-white/45 data-checked:border-cyan-300 data-checked:bg-cyan-400"
                     data-testid="wheel-only-active"
                   />
-                  <Label htmlFor="wheel-only-active" className="font-normal">
+                  <Label
+                    htmlFor="wheel-only-active"
+                    className="font-normal text-violet-50"
+                  >
                     {t("spinWheel.onlyActiveEmployees")}
                   </Label>
                 </div>
@@ -547,7 +715,7 @@ export function SpinWheelView() {
                   {loadNotice ? (
                     <p
                       role="status"
-                      className="text-muted-foreground text-sm"
+                      className="text-sm text-violet-100/65"
                       data-testid="load-notice"
                     >
                       {t(loadNotice)}
@@ -567,9 +735,11 @@ export function SpinWheelView() {
             inputRef={entryInputRef}
           />
 
-          <Card size="sm">
+          <Card size="sm" className={CONTROL_CARD_CLASS}>
             <CardHeader>
-              <CardTitle>{t("spinWheel.prizeLabel")}</CardTitle>
+              <CardTitle className="text-white">
+                {t("spinWheel.prizeLabel")}
+              </CardTitle>
               <CardDescription className="sr-only">
                 {t("spinWheel.prizePlaceholder")}
               </CardDescription>
@@ -584,18 +754,23 @@ export function SpinWheelView() {
                   value={prize}
                   onChange={(event) => setPrize(event.target.value)}
                   placeholder={t("spinWheel.prizePlaceholder")}
+                  className={CONTROL_INPUT_CLASS}
                   autoComplete="off"
                   data-testid="wheel-prize"
                 />
               </div>
               <div className="flex items-center justify-between gap-3">
-                <Label htmlFor="wheel-remove-winner" className="font-normal">
+                <Label
+                  htmlFor="wheel-remove-winner"
+                  className="font-normal text-violet-50"
+                >
                   {t("spinWheel.removeWinner")}
                 </Label>
                 <Switch
                   id="wheel-remove-winner"
                   checked={removeWinner}
                   onCheckedChange={setRemoveWinner}
+                  className="data-checked:bg-pink-500 data-unchecked:bg-white/20"
                   data-testid="wheel-remove-winner"
                 />
               </div>

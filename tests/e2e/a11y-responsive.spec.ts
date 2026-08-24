@@ -191,27 +191,33 @@ test.describe("Phase 10 — Responsive & no horizontal overflow", () => {
     })
   }
 
-  test("ไม่มีการใช้ localStorage / sessionStorage เลย", async ({ page }) => {
+  test("เก็บเฉพาะ session ที่จดจำไว้ใน localStorage", async ({ page }) => {
     await signIn(page)
     await gotoRoute(page, "events")
 
     const storage = await page.evaluate(() => ({
-      local: Object.keys(window.localStorage),
-      session: Object.keys(window.sessionStorage),
+      session: JSON.parse(
+        window.localStorage.getItem("eventflow.session") ?? "null"
+      ),
+      localKeys: Object.keys(window.localStorage),
+      sessionKeys: Object.keys(window.sessionStorage),
     }))
-    expect(storage.local).toEqual([])
+    expect(storage.localKeys).toEqual(["eventflow.session"])
+    expect(storage.session).toMatchObject({ userId: "u-1", rememberMe: true })
+    expect(storage.session).not.toHaveProperty("email")
+    expect(storage.session).not.toHaveProperty("password")
     // dev server ของ Next เขียน `__next_*` เอง (ไม่มีใน production) — แอปต้องไม่เขียนคีย์ของตัวเอง
     expect(
-      storage.session.filter((key) => !key.startsWith("__next"))
+      storage.sessionKeys.filter((key) => !key.startsWith("__next"))
     ).toEqual([])
   })
 
-  test("refresh แล้วข้อมูลกลับเป็น Mock เริ่มต้นและต้อง login ใหม่", async ({
+  test("refresh แล้วยังคงเข้าสู่ระบบเมื่อเลือกจดจำฉัน", async ({
     page,
   }) => {
     await signIn(page)
     await page.reload()
-    await page.waitForURL("**/login")
-    await expect(page.getByLabel("อีเมลองค์กร", { exact: true })).toBeVisible()
+    await expect(page).toHaveURL(/\/dashboard$/)
+    await expect(page.getByTestId("user-menu")).toBeVisible()
   })
 })

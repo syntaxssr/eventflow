@@ -5,6 +5,7 @@ import {
   ArrowRightIcon,
   Clock3Icon,
   FerrisWheelIcon,
+  TicketCheckIcon,
 } from "lucide-react"
 
 import { PageContainer, PageHeader } from "@/components/common/page-header"
@@ -13,7 +14,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { ROUTES } from "@/constants/app"
 import { useT } from "@/i18n"
 
-const COMING_SOON_CARD_COUNT = 7
+const COMING_SOON_CARD_COUNT = 6
 
 export function GamesPageView() {
   const t = useT()
@@ -49,6 +50,25 @@ export function GamesPageView() {
             </CardContent>
           </Card>
         </Link>
+
+        <Card className="min-h-44 ring-brand-500/20">
+          <CardContent className="relative flex h-full flex-col justify-between gap-6">
+            <span className="bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-200 flex size-11 items-center justify-center rounded-xl">
+              <TicketCheckIcon className="size-6" aria-hidden="true" />
+            </span>
+            <Badge variant="secondary" className="absolute top-4 right-4">
+              {t("games.comingSoon")}
+            </Badge>
+            <span>
+              <span className="block text-lg font-semibold">
+                {t("games.bingoTitle")}
+              </span>
+              <span className="text-muted-foreground mt-1 block text-sm">
+                {t("games.bingoDescription")}
+              </span>
+            </span>
+          </CardContent>
+        </Card>
 
         {Array.from({ length: COMING_SOON_CARD_COUNT }, (_, index) => (
           <Card
