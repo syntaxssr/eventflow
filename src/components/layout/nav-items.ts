@@ -37,7 +37,7 @@ export function isNavGroup(entry: NavEntry): entry is NavGroup {
 /** เมนูย่อยใต้ "เบ็ดเตล็ด" — เครื่องมือเสริมที่ไม่ผูกกับกิจกรรมใดกิจกรรมหนึ่ง */
 export const MISC_NAV: NavItem[] = [
   { href: ROUTES.employees, labelKey: "nav.employees", icon: ContactIcon },
-  { href: ROUTES.spinWheel, labelKey: "nav.spinWheel", icon: FerrisWheelIcon },
+  { href: ROUTES.games, labelKey: "nav.games", icon: FerrisWheelIcon },
   { href: ROUTES.rsvpForm, labelKey: "nav.rsvpForm", icon: MailCheckIcon },
 ]
 

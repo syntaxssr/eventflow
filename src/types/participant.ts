@@ -19,6 +19,8 @@ export interface Participant {
   eventId: Id
   firstName: LocalizedText
   lastName: LocalizedText
+  /** ชื่อเล่น (ถ้ามี) — ใช้แสดงในวงเล็บบนวงล้อและหน้าประกาศผู้ชนะ */
+  nickname?: LocalizedText
   email: string
   department: LocalizedText
   phone: string

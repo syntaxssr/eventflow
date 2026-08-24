@@ -64,6 +64,24 @@ export const LAST_NAMES: NamePair[] = [
   ["ครองทรัพย์", "Krongsap"],
 ]
 
+/** ชื่อเล่นของรายชื่อพนักงานจำลอง ตำแหน่งตรงกับ FIRST_NAMES */
+const NICKNAMES: NamePair[] = [
+  ["วัฒน์", "Wat"], ["นัท", "Nat"], ["ภู", "Phu"], ["ดา", "Da"],
+  ["ก้อง", "Kong"], ["ปิ๊ง", "Ping"], ["เดช", "Dech"], ["อร", "Or"],
+  ["วิน", "Win"], ["เกล", "Kale"], ["กร", "Korn"], ["นัน", "Nan"],
+  ["เจ", "Jay"], ["แพท", "Pat"], ["ฤทธิ์", "Rit"], ["กานต์", "Kan"],
+  ["วัฒน์", "Wat"], ["นุช", "Nuch"], ["เดช", "Dech"], ["ญา", "Ya"],
+  ["ปอง", "Pong"], ["วิ", "Wi"], ["เจษ", "Jade"], ["ทิพย์", "Tip"],
+]
+
+/** ชื่อเล่นสำรองของผู้บริหาร/วิทยากร/แขก ตำแหน่งตรงกับ SPECIAL */
+const SPECIAL_NICKNAMES: NamePair[] = [
+  ["ชาย", "Chai"], ["วรรณ", "Wan"], ["ชา", "Cha"], ["ยา", "Ya"],
+  ["กร", "Korn"], ["พร", "Porn"], ["กฤษ", "Krit"], ["นุ่น", "Nun"],
+  ["เอก", "Ek"], ["จัน", "Jan"], ["โรจน์", "Roj"], ["ใจ", "Jai"],
+  ["วุธ", "Wut"], ["พิม", "Pim"],
+]
+
 export const DEPARTMENTS: LocalizedText[] = [
   { th: "ฝ่ายขายและการตลาด", en: "Sales & Marketing" },
   { th: "ฝ่ายปฏิบัติการ", en: "Operations" },
@@ -118,6 +136,7 @@ const NOTES: LocalizedText[] = [
 interface SpecialParticipant {
   first: NamePair
   last: NamePair
+  nickname?: NamePair
   type: ParticipantType
   department: LocalizedText
   rsvpStatus: RsvpStatus
@@ -202,6 +221,7 @@ const SPECIAL: SpecialParticipant[] = [
   {
     first: ["ไพโรจน์", "Pairoj"],
     last: ["สุวรรณภูมิ", "Suwannaphum"],
+    nickname: ["โรจน์", "Roj"],
     type: "external_guest",
     department: { th: "บริษัทคู่ค้า", en: "Partner Company" },
     rsvpStatus: "attending",
@@ -265,7 +285,8 @@ function buildEventParticipants(
     type: ParticipantType,
     department: LocalizedText,
     rsvpStatus: RsvpStatus,
-    note: LocalizedText
+    note: LocalizedText,
+    nickname?: NamePair
   ) => {
     index += 1
     participants.push({
@@ -273,6 +294,9 @@ function buildEventParticipants(
       eventId,
       firstName: { th: first[0], en: first[1] },
       lastName: { th: last[0], en: last[1] },
+      ...(nickname
+        ? { nickname: { th: nickname[0], en: nickname[1] } }
+        : {}),
       email: nextEmail(first[1], last[1]),
       department,
       phone: makePhone(index),
@@ -290,20 +314,22 @@ function buildEventParticipants(
         "organizer",
         user.team,
         "attending",
-        { th: "", en: "" }
+        { th: "", en: "" },
+        [user.nickname.th, user.nickname.en]
       )
     }
   }
 
   if (options.includeSpecial) {
-    for (const person of SPECIAL) {
+    for (const [specialIndex, person] of SPECIAL.entries()) {
       push(
         person.first,
         person.last,
         person.type,
         person.department,
         person.rsvpStatus,
-        person.note ?? { th: "", en: "" }
+        person.note ?? { th: "", en: "" },
+        person.nickname ?? SPECIAL_NICKNAMES[specialIndex]
       )
     }
   }
@@ -315,7 +341,8 @@ function buildEventParticipants(
       "employee",
       DEPARTMENTS[i % DEPARTMENTS.length],
       RSVP_PATTERN[i % RSVP_PATTERN.length],
-      NOTES[i % NOTES.length]
+      NOTES[i % NOTES.length],
+      NICKNAMES[i % NICKNAMES.length]
     )
   }
 

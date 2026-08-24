@@ -9,7 +9,7 @@ import {
   polarToCartesian,
   segmentAngle,
   segmentColorIndex,
-  truncateLabel,
+  truncateWheelLabel,
   WHEEL_CENTER,
   WHEEL_HUB_RADIUS,
   WHEEL_RADIUS,
@@ -138,7 +138,7 @@ export function Wheel({
             const mid = (index + 0.5) * angle
             const point = polarToCartesian(LABEL_RADIUS, mid)
             const text = layout.showLabels
-              ? truncateLabel(entry.label, layout.maxChars)
+              ? truncateWheelLabel(entry.label, layout.maxChars)
               : String(index + 1)
             return (
               <text

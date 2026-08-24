@@ -1,11 +1,7 @@
-import type { Metadata } from "next"
+import { permanentRedirect } from "next/navigation"
 
-import { SpinWheelView } from "@/features/spin-wheel/spin-wheel-view"
+import { ROUTES } from "@/constants/app"
 
-export const metadata: Metadata = {
-  title: "เกมส์วงล้อ",
-}
-
-export default function SpinWheelPage() {
-  return <SpinWheelView />
+export default function LegacySpinWheelPage() {
+  permanentRedirect(ROUTES.spinWheel)
 }

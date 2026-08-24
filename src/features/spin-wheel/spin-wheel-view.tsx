@@ -7,6 +7,8 @@ import {
   FerrisWheelIcon,
   ListPlusIcon,
   Loader2Icon,
+  Maximize2Icon,
+  Minimize2Icon,
 } from "lucide-react"
 
 import { ConfirmDialog } from "@/components/common/confirm-dialog"
@@ -38,8 +40,8 @@ import { usePageState } from "@/hooks/use-page-state"
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
 import { useLocale } from "@/i18n"
 import { nowIso } from "@/lib/clock"
-import { appToast } from "@/lib/gif-toast"
 import { newId } from "@/lib/id"
+import { cn } from "@/lib/utils"
 import {
   computeSpinTarget,
   entriesFromEmployees,
@@ -105,12 +107,42 @@ export function SpinWheelView() {
   const [announcement, setAnnouncement] = React.useState("")
   const [clearEntriesOpen, setClearEntriesOpen] = React.useState(false)
   const [clearHistoryOpen, setClearHistoryOpen] = React.useState(false)
+  const [presentationMode, setPresentationMode] = React.useState(false)
 
   /** ผู้ชนะที่สุ่มไว้ตอนเริ่มหมุน — รอประกาศเมื่อวงล้อหยุด */
   const pendingWinnerRef = React.useRef<WheelEntry | null>(null)
   /** ข้อความผลรอบล่าสุดที่รอประกาศ — ดูเงื่อนไขเวลาประกาศใน useEffect ด้านล่าง */
   const pendingAnnouncementRef = React.useRef("")
   const entryInputRef = React.useRef<HTMLInputElement>(null)
+
+  React.useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) setPresentationMode(false)
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && presentationMode && !document.fullscreenElement) {
+        setPresentationMode(false)
+      }
+    }
+    document.addEventListener("fullscreenchange", handleFullscreenChange)
+    window.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange)
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [presentationMode])
+
+  const openPresentationMode = () => {
+    setPresentationMode(true)
+    document.documentElement.requestFullscreen?.().catch(() => {
+      // overlay เต็ม viewport ยังทำงานต่อได้เมื่อเบราว์เซอร์ไม่อนุญาต Fullscreen API
+    })
+  }
+
+  const closePresentationMode = () => {
+    setPresentationMode(false)
+    if (document.fullscreenElement) void document.exitFullscreen()
+  }
 
   const { state: pageState, retry } = usePageState(entries.length === 0)
 
@@ -145,7 +177,6 @@ export function SpinWheelView() {
     }
     setLoadNotice(null)
     setEntries(loaded)
-    appToast.success(t("spinWheel.loaded", { count: loaded.length }))
   }
 
   const addEntry = (label: string) => {
@@ -218,7 +249,6 @@ export function SpinWheelView() {
     const next = entries.filter((entry) => entry.id !== current.entryId)
     if (next.length === entries.length) return entries
     setEntries(next)
-    appToast.delete(t("spinWheel.winnerRemoved", { name: current.label }))
     return next
   }
 
@@ -282,8 +312,51 @@ export function SpinWheelView() {
       />
 
       <div className="grid gap-4 lg:grid-cols-[1fr_380px] lg:items-start">
-        <Card data-testid="wheel-card">
-          <CardContent className="flex flex-col items-center gap-5">
+        <div
+          className={cn(
+            presentationMode &&
+              "bg-background fixed inset-0 z-60 flex items-center justify-center p-4"
+          )}
+          data-testid="wheel-stage"
+        >
+        <Card
+          data-testid="wheel-card"
+          className={cn(
+            presentationMode &&
+              "h-full w-full max-w-[1600px] border-0 bg-transparent shadow-none"
+          )}
+        >
+          <CardContent
+            className={cn(
+              "flex flex-col items-center gap-5",
+              presentationMode && "h-full justify-center"
+            )}
+          >
+            <div
+              className={cn(
+                "flex w-full justify-end",
+                presentationMode && "absolute top-4 right-4 z-10 w-auto"
+              )}
+            >
+              <Button
+                type="button"
+                variant="outline"
+                size={presentationMode ? "lg" : "sm"}
+                onClick={
+                  presentationMode ? closePresentationMode : openPresentationMode
+                }
+                data-testid="wheel-fullscreen"
+              >
+                {presentationMode ? (
+                  <Minimize2Icon className="size-4" aria-hidden="true" />
+                ) : (
+                  <Maximize2Icon className="size-4" aria-hidden="true" />
+                )}
+                {presentationMode
+                  ? t("spinWheel.exitFullscreen")
+                  : t("spinWheel.fullscreen")}
+              </Button>
+            </div>
             {pageState === "empty" ? (
               <EmptyState
                 icon={FerrisWheelIcon}
@@ -308,6 +381,11 @@ export function SpinWheelView() {
                 rotation={rotation}
                 spinning={spinning}
                 onSpinEnd={handleSpinEnd}
+                className={
+                  presentationMode
+                    ? "max-w-[min(72vh,72vw)]"
+                    : undefined
+                }
               />
             )}
 
@@ -356,6 +434,7 @@ export function SpinWheelView() {
             </p>
           </CardContent>
         </Card>
+        </div>
 
         <div className="space-y-4">
           <Card size="sm" data-testid="source-card">

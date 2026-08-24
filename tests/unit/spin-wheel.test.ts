@@ -8,12 +8,15 @@ import {
   entriesFromParticipants,
   isDuplicateLabel,
   normalizeEntryLabel,
+  participantEntryLabel,
   pickWinnerIndex,
   polarToCartesian,
   segmentAngle,
   segmentColorIndex,
   truncateLabel,
+  truncateWheelLabel,
   WHEEL_MAX_LABELED_ENTRIES,
+  WHEEL_COLOR_OPTIONS,
   WHEEL_SEGMENT_COLORS,
   WHEEL_SEGMENT_TEXT_COLORS,
   wheelLabelLayout,
@@ -222,6 +225,15 @@ describe("isDuplicateLabel", () => {
 })
 
 describe("ป้ายชื่อจากแหล่งข้อมูล", () => {
+  it("ตัดชื่อจริงยาวบนวงล้อโดยยังเก็บชื่อเล่นในวงเล็บ", () => {
+    expect(truncateWheelLabel("อลิสา ลีลายุวัฒนกุล (นุ่น)", 16)).toBe(
+      "อลิสา ลี… (นุ่น)"
+    )
+    expect(truncateWheelLabel("อลิสา ลีลายุวัฒนกุล", 10)).toBe(
+      truncateLabel("อลิสา ลีลายุวัฒนกุล", 10)
+    )
+  })
+
   it("พนักงาน: ชื่อ นามสกุล (ชื่อเล่น) ตามภาษา", () => {
     const employee = makeEmployee()
     expect(employeeEntryLabel(employee, "th")).toBe("สมชาย ใจดี (ต้น)")
@@ -232,6 +244,18 @@ describe("ป้ายชื่อจากแหล่งข้อมูล", (
     const employee = makeEmployee({ nickname: { th: "", en: " " } })
     expect(employeeEntryLabel(employee, "th")).toBe("สมชาย ใจดี")
     expect(employeeEntryLabel(employee, "en")).toBe("Somchai Jaidee")
+  })
+
+  it("ผู้เข้าร่วมที่มีชื่อเล่นแสดงชื่อเล่นในวงเล็บ", () => {
+    const participant = makeParticipant({
+      nickname: { th: "โรจน์", en: "Roj" },
+    })
+    expect(participantEntryLabel(participant, "th")).toBe(
+      "อารยา เก่งมาก (โรจน์)"
+    )
+    expect(participantEntryLabel(participant, "en")).toBe(
+      "Araya Kengmak (Roj)"
+    )
   })
 
   it("โหลดพนักงานเฉพาะที่ทำงานอยู่ได้ และผูก sourceId กลับไปหาต้นทาง", () => {
@@ -265,9 +289,12 @@ describe("สีของช่อง", () => {
   it("พาเลตสีพื้นและสีตัวอักษรมี 8 คู่เท่ากัน", () => {
     expect(WHEEL_SEGMENT_COLORS).toHaveLength(8)
     expect(WHEEL_SEGMENT_TEXT_COLORS).toHaveLength(WHEEL_SEGMENT_COLORS.length)
-    for (const colour of WHEEL_SEGMENT_COLORS) {
-      expect(colour).toMatch(/^var\(--/)
-    }
+    expect(WHEEL_SEGMENT_COLORS).toEqual(
+      WHEEL_COLOR_OPTIONS.map((option) => option.value)
+    )
+    expect(WHEEL_SEGMENT_TEXT_COLORS).toEqual(
+      WHEEL_COLOR_OPTIONS.map((option) => option.foreground)
+    )
   })
 
   it("ช่องสุดท้ายไม่ซ้ำสีกับช่องแรกและช่องก่อนหน้า", () => {

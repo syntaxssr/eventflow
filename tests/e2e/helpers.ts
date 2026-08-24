@@ -50,7 +50,7 @@ export type AppRoute =
   | "participants"
   | "timeline"
   | "employees"
-  | "spinWheel"
+  | "games"
   | "rsvpForm"
 
 /** เมนูที่เหลืออยู่บน Sidebar จริง ๆ (ที่เหลือถูกย้ายไปจุดอื่นแล้ว) */
@@ -63,7 +63,7 @@ const SIDEBAR_LINKS: Partial<Record<AppRoute, string>> = {
 /** เมนูย่อยใต้กลุ่ม "เบ็ดเตล็ด" บน Sidebar — ต้องคลี่กลุ่มก่อนถ้ายังพับอยู่ */
 const MISC_LINKS: Partial<Record<AppRoute, string>> = {
   employees: "HR Section",
-  spinWheel: "เกมส์วงล้อ",
+  games: "เกมส์",
   rsvpForm: "แบบฟอร์ม RSVP",
 }
 
@@ -79,7 +79,7 @@ const ROUTE_PATH: Record<AppRoute, string> = {
   participants: "/participants",
   timeline: "/timeline",
   employees: "/hr-section",
-  spinWheel: "/spin-wheel",
+  games: "/games",
   rsvpForm: "/rsvp-form",
 }
 

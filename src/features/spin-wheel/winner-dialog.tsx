@@ -100,7 +100,7 @@ export function WinnerDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="overflow-hidden text-center sm:max-w-md"
+        className="overflow-hidden text-center sm:max-w-2xl"
         data-testid="winner-dialog"
       >
         <Confetti />
@@ -116,13 +116,13 @@ export function WinnerDialog({
             {t("spinWheel.winnerTitle")}
           </DialogTitle>
           <p
-            className="text-3xl font-bold break-words text-balance"
+            className="text-4xl leading-tight font-bold break-words text-balance sm:text-5xl md:text-6xl"
             data-testid="winner-name"
           >
             {record?.label}
           </p>
           <DialogDescription>
-            {record ? t("spinWheel.winnerAnnounce", { name: record.label }) : ""}
+            {record ? t("spinWheel.winnerAnnounce") : ""}
           </DialogDescription>
         </DialogHeader>
 

@@ -24,7 +24,7 @@ describe("nav-items — โครงเมนูหลัก", () => {
   it("เบ็ดเตล็ดมีเมนูย่อยครบ 3 หน้า", () => {
     expect(MISC_NAV.map((item) => item.href)).toEqual([
       ROUTES.employees,
-      ROUTES.spinWheel,
+      ROUTES.games,
       ROUTES.rsvpForm,
     ])
   })
@@ -45,7 +45,7 @@ describe("isNavGroupActive", () => {
     expect(isNavGroupActive(ROUTES.employees, MISC_NAV_GROUP)).toBe(true)
     expect(isNavGroupActive(ROUTES.employeeDirectory, MISC_NAV_GROUP)).toBe(true)
     expect(isNavGroupActive(ROUTES.employeeLockers, MISC_NAV_GROUP)).toBe(true)
-    expect(isNavGroupActive(`${ROUTES.spinWheel}/anything`, MISC_NAV_GROUP)).toBe(
+    expect(isNavGroupActive(ROUTES.spinWheel, MISC_NAV_GROUP)).toBe(
       true
     )
   })

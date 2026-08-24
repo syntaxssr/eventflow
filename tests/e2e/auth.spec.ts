@@ -83,7 +83,10 @@ test.describe("Phase 1 — Authentication", () => {
   test("บัญชีทดลองกรอกฟอร์มให้อัตโนมัติแล้วเข้าสู่ระบบได้", async ({ page }) => {
     await page.goto("/login")
     await page.getByRole("button", { name: /บัญชีทดลองใช้งาน/ }).click()
-    await page.getByRole("button", { name: "ใช้บัญชีนี้" }).first().click()
+    const accountDialog = page.getByRole("dialog", { name: "บัญชีทดลองใช้งาน" })
+    await expect(accountDialog).toBeVisible()
+    await expect(accountDialog.getByRole("button", { name: /ใช้บัญชีนี้: นุ่น/ })).toBeVisible()
+    await accountDialog.getByRole("button", { name: /ใช้บัญชีนี้: นุ่น/ }).click()
 
     await expect(page.getByLabel("อีเมลองค์กร", { exact: true })).toHaveValue(DEMO_EMAIL)
     await expect(page.getByLabel("รหัสผ่าน", { exact: true })).toHaveValue(DEMO_PASSWORD)
@@ -164,7 +167,7 @@ test.describe("Phase 1 — Application Shell", () => {
 
     const links = [
       { name: "HR Section", url: /\/hr-section$/ },
-      { name: "เกมส์วงล้อ", url: /\/spin-wheel$/ },
+      { name: "เกมส์", url: /\/games$/ },
       { name: "แบบฟอร์ม RSVP", url: /\/rsvp-form$/ },
     ]
 
@@ -197,7 +200,7 @@ test.describe("Phase 1 — Application Shell", () => {
       { route: "activity", url: /\/activity$/ },
       { route: "trash", url: /\/trash$/ },
       { route: "employees", url: /\/hr-section$/ },
-      { route: "spinWheel", url: /\/spin-wheel$/ },
+      { route: "games", url: /\/games$/ },
       { route: "rsvpForm", url: /\/rsvp-form$/ },
       { route: "profile", url: /\/profile$/ },
       { route: "dashboard", url: /\/dashboard$/ },

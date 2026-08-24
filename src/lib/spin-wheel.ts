@@ -26,32 +26,30 @@ export const WHEEL_MAX_LABELED_ENTRIES = 24
    ------------------------------------------------------------------------- */
 
 /**
- * สีช่องวงล้อ — โทเคนสถานะกลาง 8 สี วนใช้ตามลำดับช่อง
+ * สีช่องวงล้อ — พาเลต Version 4 จำนวน 8 สี วนใช้ตามลำดับช่อง
  * ทุกสีมีคู่ foreground ที่ผ่าน WCAG AA ใน Design System อยู่แล้ว
  * และค่าคงที่ทั้งสองธีม วงล้อจึงหน้าตาเหมือนกันบนธีมสว่างและมืด
+ * Brown ไม่มีค่า V4 จึง fallback เป็น V3 ตามกติกาของ Design System
  */
-export const WHEEL_SEGMENT_COLORS = [
-  "var(--status-blue)",
-  "var(--status-yellow)",
-  "var(--status-green)",
-  "var(--status-purple)",
-  "var(--status-orange)",
-  "var(--status-pink)",
-  "var(--status-brown)",
-  "var(--status-red)",
+export const WHEEL_COLOR_OPTIONS = [
+  { name: "Blue", value: "#3E95FF", foreground: "#00244F" },
+  { name: "Yellow", value: "#FED93B", foreground: "#6A5601" },
+  { name: "Green", value: "#58D66B", foreground: "#14501D" },
+  { name: "Purple", value: "#D933F1", foreground: "#27032C" },
+  { name: "Orange", value: "#FD9851", foreground: "#662B01" },
+  { name: "Pink", value: "#FD53A8", foreground: "#500128" },
+  { name: "Brown", value: "#B68A49", foreground: "#332714" },
+  { name: "Red", value: "#FD535E", foreground: "#490106" },
 ] as const
 
+export const WHEEL_SEGMENT_COLORS = WHEEL_COLOR_OPTIONS.map(
+  (option) => option.value
+)
+
 /** สีตัวอักษรคู่กับ WHEEL_SEGMENT_COLORS ตำแหน่งต่อตำแหน่ง */
-export const WHEEL_SEGMENT_TEXT_COLORS = [
-  "var(--status-blue-foreground)",
-  "var(--status-yellow-foreground)",
-  "var(--status-green-foreground)",
-  "var(--status-purple-foreground)",
-  "var(--status-orange-foreground)",
-  "var(--status-pink-foreground)",
-  "var(--status-brown-foreground)",
-  "var(--status-red-foreground)",
-] as const
+export const WHEEL_SEGMENT_TEXT_COLORS = WHEEL_COLOR_OPTIONS.map(
+  (option) => option.foreground
+)
 
 /**
  * ลำดับสีของช่องที่ `index`
@@ -192,6 +190,28 @@ export function truncateLabel(label: string, maxChars: number): string {
   return `${characters.slice(0, Math.max(1, maxChars - 1)).join("")}…`
 }
 
+/**
+ * ตัดชื่อบนวงล้อโดยสงวน "(ชื่อเล่น)" ที่ท้ายข้อความไว้เสมอ
+ * เพื่อให้ยังจำพนักงานได้แม้ชื่อจริงยาวเกินพื้นที่ของช่อง
+ */
+export function truncateWheelLabel(label: string, maxChars: number): string {
+  const nicknameMatch = label.match(/\s(\([^()]+\))$/u)
+  if (!nicknameMatch) return truncateLabel(label, maxChars)
+
+  const nickname = nicknameMatch[1]
+  const nicknameLength = Array.from(nickname).length
+  const fullLength = Array.from(label).length
+  if (maxChars <= 0 || fullLength <= maxChars) return label
+
+  // พื้นที่แคบมากให้แสดงชื่อเล่นอย่างเดียว ดีกว่าตัดชื่อเล่นกลางคำ
+  if (nicknameLength >= maxChars) return nickname
+
+  const fullName = label.slice(0, nicknameMatch.index).trim()
+  const availableNameChars = maxChars - nicknameLength - 1
+  const shortName = truncateLabel(fullName, availableNameChars)
+  return `${shortName} ${nickname}`
+}
+
 /* -------------------------------------------------------------------------
    รายชื่อ
    ------------------------------------------------------------------------- */
@@ -223,7 +243,9 @@ export function participantEntryLabel(
   participant: Participant,
   locale: Locale
 ): string {
-  return getParticipantFullName(participant, locale)
+  const fullName = getParticipantFullName(participant, locale)
+  const nickname = participant.nickname?.[locale].trim()
+  return nickname ? `${fullName} (${nickname})` : fullName
 }
 
 export function entriesFromEmployees(
