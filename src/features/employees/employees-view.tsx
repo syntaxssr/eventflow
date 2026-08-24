@@ -7,6 +7,7 @@ import { ConfirmDialog } from "@/components/common/confirm-dialog"
 import { EmptyState } from "@/components/common/empty-state"
 import { ErrorState } from "@/components/common/error-state"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { usePageState } from "@/hooks/use-page-state"
 import { useLocale } from "@/i18n"
@@ -138,67 +139,68 @@ export function EmployeesView() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          <Button size="sm" onClick={openAdd} data-testid="add-employee">
-            <UserPlusIcon className="size-4" aria-hidden="true" />
-            {t("employee.add")}
-          </Button>
-        </div>
-      </div>
-
       <EmployeeSummaryCards summary={summary} />
 
-      <EmployeeFiltersBar
-        filters={activeFilters}
-        onChange={setFilters}
-        departments={departments}
-        resultCount={filtered.length}
-      />
+      <Card>
+        <CardContent className="space-y-4">
+          <EmployeeFiltersBar
+            filters={activeFilters}
+            onChange={setFilters}
+            departments={departments}
+            resultCount={filtered.length}
+            actions={
+              <Button size="sm" onClick={openAdd} data-testid="add-employee">
+                <UserPlusIcon className="size-4" aria-hidden="true" />
+                {t("employee.add")}
+              </Button>
+            }
+          />
 
-      <EmployeeBulkBar
-        count={selectedEmployees.length}
-        onDelete={() => setDeleteTargets(selectedEmployees)}
-        onClear={() => setSelectedIds(new Set())}
-      />
+          <EmployeeBulkBar
+            count={selectedEmployees.length}
+            onDelete={() => setDeleteTargets(selectedEmployees)}
+            onClear={() => setSelectedIds(new Set())}
+          />
 
-      {pageState === "empty" || employees.length === 0 ? (
-        <EmptyState
-          icon={UsersIcon}
-          title={t("employee.noEmployees")}
-          description={t("employee.noEmployeesDescription")}
-          action={<Button onClick={openAdd}>{t("employee.add")}</Button>}
-        />
-      ) : filtered.length === 0 ? (
-        <EmptyState
-          icon={FilterIcon}
-          title={t("employee.noEmployeesMatch")}
-          description={t("employee.noEmployeesMatchDescription")}
-          action={
-            <Button
-              variant="outline"
-              onClick={() => setFilters(EMPTY_EMPLOYEE_FILTERS)}
-            >
-              {t("common.clearAll")}
-            </Button>
-          }
-        />
-      ) : (
-        <EmployeeTable
-          employees={sorted}
-          selectedIds={selectedIds}
-          onToggleRow={toggleRow}
-          onToggleAll={toggleAll}
-          sortKey={sortKey}
-          sortDirection={sortDirection}
-          onSortChange={onSortChange}
-          onEdit={(employee) => {
-            setEditing(employee)
-            setFormOpen(true)
-          }}
-          onDelete={(employee) => setDeleteTargets([employee])}
-        />
-      )}
+          {pageState === "empty" || employees.length === 0 ? (
+            <EmptyState
+              icon={UsersIcon}
+              title={t("employee.noEmployees")}
+              description={t("employee.noEmployeesDescription")}
+              action={<Button onClick={openAdd}>{t("employee.add")}</Button>}
+            />
+          ) : filtered.length === 0 ? (
+            <EmptyState
+              icon={FilterIcon}
+              title={t("employee.noEmployeesMatch")}
+              description={t("employee.noEmployeesMatchDescription")}
+              action={
+                <Button
+                  variant="outline"
+                  onClick={() => setFilters(EMPTY_EMPLOYEE_FILTERS)}
+                >
+                  {t("common.clearAll")}
+                </Button>
+              }
+            />
+          ) : (
+            <EmployeeTable
+              employees={sorted}
+              selectedIds={selectedIds}
+              onToggleRow={toggleRow}
+              onToggleAll={toggleAll}
+              sortKey={sortKey}
+              sortDirection={sortDirection}
+              onSortChange={onSortChange}
+              onEdit={(employee) => {
+                setEditing(employee)
+                setFormOpen(true)
+              }}
+              onDelete={(employee) => setDeleteTargets([employee])}
+            />
+          )}
+        </CardContent>
+      </Card>
 
       <EmployeeFormDialog
         open={formOpen}

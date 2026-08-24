@@ -43,6 +43,8 @@ describe("nav-items — โครงเมนูหลัก", () => {
 describe("isNavGroupActive", () => {
   it("active เมื่อ pathname อยู่ใต้เมนูย่อยตัวใดตัวหนึ่ง", () => {
     expect(isNavGroupActive(ROUTES.employees, MISC_NAV_GROUP)).toBe(true)
+    expect(isNavGroupActive(ROUTES.employeeDirectory, MISC_NAV_GROUP)).toBe(true)
+    expect(isNavGroupActive(ROUTES.employeeLockers, MISC_NAV_GROUP)).toBe(true)
     expect(isNavGroupActive(`${ROUTES.spinWheel}/anything`, MISC_NAV_GROUP)).toBe(
       true
     )
@@ -54,6 +56,6 @@ describe("isNavGroupActive", () => {
   })
 
   it("ไม่จับ prefix ที่บังเอิญขึ้นต้นเหมือนกัน", () => {
-    expect(isNavItemActive("/employees-archive", ROUTES.employees)).toBe(false)
+    expect(isNavItemActive("/hr-section-archive", ROUTES.employees)).toBe(false)
   })
 })

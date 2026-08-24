@@ -47,6 +47,7 @@ import {
 const NAV_BUTTON_CLASS = [
   "data-[active=true]:bg-primary",
   "data-[active=true]:text-primary-foreground",
+  "data-[active=true]:[&_svg]:text-primary-foreground",
   "data-[active=true]:font-semibold",
   "data-[active=true]:hover:bg-primary",
   "data-[active=true]:hover:text-primary-foreground",

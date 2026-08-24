@@ -163,7 +163,7 @@ test.describe("Phase 1 — Application Shell", () => {
     await expect(group).toHaveAttribute("aria-expanded", "true")
 
     const links = [
-      { name: "HR Section", url: /\/employees$/ },
+      { name: "HR Section", url: /\/hr-section$/ },
       { name: "เกมส์วงล้อ", url: /\/spin-wheel$/ },
       { name: "แบบฟอร์ม RSVP", url: /\/rsvp-form$/ },
     ]
@@ -196,7 +196,7 @@ test.describe("Phase 1 — Application Shell", () => {
       { route: "notifications", url: /\/notifications$/ },
       { route: "activity", url: /\/activity$/ },
       { route: "trash", url: /\/trash$/ },
-      { route: "employees", url: /\/employees$/ },
+      { route: "employees", url: /\/hr-section$/ },
       { route: "spinWheel", url: /\/spin-wheel$/ },
       { route: "rsvpForm", url: /\/rsvp-form$/ },
       { route: "profile", url: /\/profile$/ },

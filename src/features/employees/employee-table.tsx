@@ -129,7 +129,7 @@ export function EmployeeTable({
       >
         <Table>
           <caption className="sr-only">{t("employee.subtitle")}</caption>
-          <TableHeader>
+          <TableHeader className="bg-status-gray [&_th]:text-status-gray-foreground">
             <TableRow>
               <TableHead className="w-10">
                 <Checkbox

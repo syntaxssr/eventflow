@@ -45,6 +45,7 @@ import { MOCK_USERS } from "@/mock"
 import {
   DESTRUCTIVE_ACTION_CLASS,
   DUE_SOON_STYLE,
+  EMPLOYEE_STATUS_STYLE,
   EVENT_STATUS_STYLE,
   OVERDUE_STYLE,
   PARTICIPANT_TYPE_STYLE,
@@ -752,6 +753,10 @@ export function DesignSystemView() {
               <BadgeRow
                 label={t("readiness.label")}
                 styles={READINESS_STYLE}
+              />
+              <BadgeRow
+                label={t("employeeStatus.label")}
+                styles={EMPLOYEE_STATUS_STYLE}
               />
               <div className="space-y-2">
                 <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">

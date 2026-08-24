@@ -78,7 +78,7 @@ const ROUTE_PATH: Record<AppRoute, string> = {
   activity: "/activity",
   participants: "/participants",
   timeline: "/timeline",
-  employees: "/employees",
+  employees: "/hr-section",
   spinWheel: "/spin-wheel",
   rsvpForm: "/rsvp-form",
 }
