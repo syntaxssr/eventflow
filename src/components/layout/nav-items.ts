@@ -1,11 +1,11 @@
 import {
   BellIcon,
   CalendarDaysIcon,
+  ClipboardListIcon,
   ContactIcon,
   FerrisWheelIcon,
   LayoutDashboardIcon,
   LayoutGridIcon,
-  MailCheckIcon,
   Trash2Icon,
   UserIcon,
   type LucideIcon,
@@ -37,8 +37,8 @@ export function isNavGroup(entry: NavEntry): entry is NavGroup {
 /** เมนูย่อยใต้ "เบ็ดเตล็ด" — เครื่องมือเสริมที่ไม่ผูกกับกิจกรรมใดกิจกรรมหนึ่ง */
 export const MISC_NAV: NavItem[] = [
   { href: ROUTES.employees, labelKey: "nav.employees", icon: ContactIcon },
+  { href: ROUTES.forms, labelKey: "nav.forms", icon: ClipboardListIcon },
   { href: ROUTES.games, labelKey: "nav.games", icon: FerrisWheelIcon },
-  { href: ROUTES.rsvpForm, labelKey: "nav.rsvpForm", icon: MailCheckIcon },
 ]
 
 export const MISC_NAV_GROUP: NavGroup = {

@@ -24,8 +24,8 @@ describe("nav-items — โครงเมนูหลัก", () => {
   it("เบ็ดเตล็ดมีเมนูย่อยครบ 3 หน้า", () => {
     expect(MISC_NAV.map((item) => item.href)).toEqual([
       ROUTES.employees,
+      ROUTES.forms,
       ROUTES.games,
-      ROUTES.rsvpForm,
     ])
   })
 
@@ -35,7 +35,7 @@ describe("nav-items — โครงเมนูหลัก", () => {
       expect(hrefs).toContain(item.href)
     }
     expect(hrefs.indexOf(ROUTES.trash)).toBeGreaterThan(
-      hrefs.indexOf(ROUTES.rsvpForm)
+      hrefs.indexOf(ROUTES.forms)
     )
   })
 })
@@ -45,9 +45,9 @@ describe("isNavGroupActive", () => {
     expect(isNavGroupActive(ROUTES.employees, MISC_NAV_GROUP)).toBe(true)
     expect(isNavGroupActive(ROUTES.employeeDirectory, MISC_NAV_GROUP)).toBe(true)
     expect(isNavGroupActive(ROUTES.employeeLockers, MISC_NAV_GROUP)).toBe(true)
-    expect(isNavGroupActive(ROUTES.spinWheel, MISC_NAV_GROUP)).toBe(
-      true
-    )
+    expect(isNavGroupActive(ROUTES.spinWheel, MISC_NAV_GROUP)).toBe(true)
+    expect(isNavGroupActive(ROUTES.forms, MISC_NAV_GROUP)).toBe(true)
+    expect(isNavGroupActive(ROUTES.eventFeedback, MISC_NAV_GROUP)).toBe(true)
   })
 
   it("ไม่ active บนหน้าที่ไม่เกี่ยวกับกลุ่ม", () => {

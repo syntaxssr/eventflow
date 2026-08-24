@@ -354,6 +354,31 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       }
     }
 
+    /* ---- Feedback ---- */
+    case "feedback/submit": {
+      const { feedback } = action
+      // ผู้ตอบที่ระบุตัวตนแก้คำตอบเดิมได้ ส่วนคำตอบแบบไม่ระบุตัวตนนับเป็นชุดใหม่เสมอ
+      const replacedIndex =
+        feedback.participantId === null
+          ? -1
+          : state.feedback.findIndex(
+              (entry) =>
+                entry.eventId === feedback.eventId &&
+                entry.participantId === feedback.participantId
+            )
+
+      if (replacedIndex === -1) {
+        return { ...state, feedback: [feedback, ...state.feedback] }
+      }
+
+      return {
+        ...state,
+        feedback: state.feedback.map((entry, index) =>
+          index === replacedIndex ? feedback : entry
+        ),
+      }
+    }
+
     /* ---- Participant ---- */
     case "participant/add":
       return {

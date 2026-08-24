@@ -24,7 +24,10 @@ export const ROUTES = {
   officeSeating: "/hr-section/office-seating",
   games: "/games",
   spinWheel: "/games/spin-wheel",
-  rsvpForm: "/rsvp-form",
+  forms: "/forms",
+  rsvpForm: "/forms/rsvp",
+  eventFeedback: "/forms/feedback",
+  formResponses: "/forms/responses",
   profile: "/profile",
   designSystem: "/design-system",
 } as const

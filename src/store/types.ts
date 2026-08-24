@@ -3,6 +3,7 @@ import type {
   AuthSession,
   Comment,
   Employee,
+  EventFeedback,
   EventItem,
   FileCategory,
   FileItem,
@@ -36,6 +37,8 @@ export interface AppState {
   participants: Participant[]
   /** ทะเบียนพนักงานทั้งบริษัท — ไม่ผูกกับกิจกรรมใด */
   employees: Employee[]
+  /** คำตอบแบบประเมินหลังจบงาน — หนึ่งคนต่อหนึ่งกิจกรรม */
+  feedback: EventFeedback[]
   comments: Comment[]
   notifications: Notification[]
   activities: Activity[]
@@ -132,6 +135,9 @@ export type ParticipantAction =
     }
   | { type: "participant/import"; created: Participant[]; updated: Participant[] }
 
+/** ส่งแบบประเมินใหม่ หรือทับคำตอบเดิมของคนเดิมในกิจกรรมเดียวกัน */
+export type FeedbackAction = { type: "feedback/submit"; feedback: EventFeedback }
+
 export type EmployeeAction =
   | { type: "employee/add"; employee: Employee }
   | { type: "employee/update"; id: Id; changes: Partial<Employee> }
@@ -165,6 +171,7 @@ export type AppAction =
   | TimelineAction
   | FileAction
   | ParticipantAction
+  | FeedbackAction
   | EmployeeAction
   | CommentAction
   | NotificationAction

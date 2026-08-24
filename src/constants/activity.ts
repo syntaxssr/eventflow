@@ -9,6 +9,7 @@ import {
   PencilIcon,
   RotateCcwIcon,
   ShuffleIcon,
+  StarIcon,
   Trash2Icon,
   UploadIcon,
   UserPlusIcon,
@@ -90,4 +91,8 @@ export const ACTIVITY_META: Record<ActivityAction, ActivityMeta> = {
   employee_updated: { labelKey: "activityAction.employeeUpdated", icon: PencilIcon },
   employee_deleted: { labelKey: "activityAction.employeeDeleted", icon: Trash2Icon },
   rsvp_submitted: { labelKey: "activityAction.rsvpSubmitted", icon: MailCheckIcon },
+  feedback_submitted: {
+    labelKey: "activityAction.feedbackSubmitted",
+    icon: StarIcon,
+  },
 }

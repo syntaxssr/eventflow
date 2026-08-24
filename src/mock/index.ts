@@ -8,6 +8,7 @@ import { MOCK_ACTIVITIES } from "./activities"
 import { MOCK_COMMENTS } from "./comments"
 import { MOCK_EMPLOYEES } from "./employees"
 import { MOCK_EVENTS } from "./events"
+import { MOCK_FEEDBACK } from "./feedback"
 import { MOCK_FILE_CATEGORIES, MOCK_FILES } from "./files"
 import { MOCK_NOTIFICATIONS } from "./notifications"
 import { MOCK_PARTICIPANTS } from "./participants"
@@ -76,6 +77,10 @@ export function createInitialState(): AppState {
     fileCategories: MOCK_FILE_CATEGORIES.map((category) => ({ ...category })),
     participants: MOCK_PARTICIPANTS.map((participant) => ({ ...participant })),
     employees: MOCK_EMPLOYEES.map((employee) => ({ ...employee })),
+    feedback: MOCK_FEEDBACK.map((entry) => ({
+      ...entry,
+      ratings: { ...entry.ratings },
+    })),
     comments: MOCK_COMMENTS.map((comment) => ({
       ...comment,
       mentionIds: [...comment.mentionIds],

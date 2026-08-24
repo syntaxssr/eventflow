@@ -1,0 +1,97 @@
+Locker no.,Status,Employee ID,Employee Name,Nickname,Department,Assigned Date,Returned Date,Key No.,Spare Key,Remarks
+L001,Occupied,1312108,Warayut Kwanjaroen,Yut,,-,,K001,Yes,1 key
+L002,Occupied,2206489,Trisinchai Kamjamnong,Dontri,,-,,K002,Yes,1 key
+L003,Occupied,2607604,Mitsumasa Ikeda,Ikeda san,,8/6/26,,K003,Yes,1 key
+L004,Occupied,2410565,Oracha Sriboonpeng,Aom,,-,,K004,Yes,1 key
+L005,Occupied,2502566,Thanat Jumneanbun,Toey,,-,,K005,Yes,1 key
+L006,Available,,,,,,,K006,Yes,2 keys
+L007,Occupied,1608231,Rungsiwut Udom,Bay,,-,,K007,Yes,2 keys
+L008,Occupied,2506579,Yuparat Panarach,Fon,,-,,K008,Yes,1 Key/Office Supply
+L009,Occupied,2506579,Yuparat Panarach,Fon,,-,,K009,Yes,1 Key/Office Supply
+L010,Occupied,2506579,Yuparat Panarach,Fon,,-,,K010,Yes,1 Key/Office Supply
+L011,Occupied,2606603,Porrarit Mahakkapong,Pay,,-,,K011,Yes,1 key
+L012,Available,,,,,,,K012,Yes,2 keys
+L013,Occupied,1306083,Kittikoon Charoenphanich,Kero,,-,,K013,Yes,1 key
+L014,Occupied,1909386,Peeranat Apitanapaksamuch,Keng,,-,,K014,Yes,1 key
+L015,Occupied,1402114,Montree Boripan,Nut,,-,,K015,Yes,2 keys
+L016,Occupied,2605598,Nurin Khankaew,Rin,,-,,K016,Yes,1 key
+L017,Occupied,2605599,Panyaphorn Phromchat,Ging,,-,,K017,Yes,1 key
+L018,Occupied,2301520,Sularchet Jaronesuk,Aod,,-,,K018,Yes,1 key
+L019,Occupied,1705261,Patthama Matang,Na,,-,,K019,Yes,1 key
+L020,Occupied,1909388,Khanittha Pueng-ar-rom,Pat,,-,,K020,Yes,1 key
+L021,Available,,,,,,,K021,Yes,2 keys
+L022,Occupied,2109459,Kharuwan Chaiyotha,Wan,,-,,K022,Yes,1 key
+L023,Available,,,,,,,K023,Yes,1 key
+L024,Occupied,2506579,Yuparat Panarach,Fon,,-,,K024,Yes,1 Key/Office Supply
+L025,Occupied,1404124,Wachirawit Chankaew,Toom,,-,,K025,Yes,1 key
+L026,Occupied,1306080,Chanade Siriburaparat,Nex,,-,,K026,Yes,1 key
+L027,Occupied,1407140,Surachai Numprasong,Golf,,-,,K027,Yes,1 key
+L028,Occupied,2605597,Methawadee Chumok,Ying,,-,,K028,Yes,1 key
+L029,Occupied,2605596,Sasawat Theejanthuek,Palm,,-,,K029,No,-
+L030,Available,,,,,,,K030,Yes,1 key
+L031,Available,,,,,,,K031,No,-
+L032,Occupied,2202471,Sirichai Sayphoklang,Boy,,-,,K032,Yes,1 key
+L033,Available,,,,,,,K033,Yes,2 keys
+L034,Available,,,,,,,K034,Yes,1 key
+L035,Occupied,2505574,Weeranan Pangkeaw,Jo,,-,,K035,Yes,1 key
+L036,Available,,,,,,,K036,Yes,2 keys
+L037,Occupied,1207053,Bunyapat Limrangsan,Yo,,-,,K037,Yes,2 keys
+L038,Occupied,1807317,Nopporn Khosee,Bank,,-,,K038,No,-
+L039,Occupied,1207052,Weerachai Wongthongserm,Tung,,-,,K039,Yes,1 key
+L040,Available,,,,,,,K040,Yes,2 keys
+L041,Occupied,1206048,Sansanee Kaew-in,Aom,,-,,K041,Yes,2 keys
+L042,Occupied,1604218,Teerada Sirisumphandh,Jaja,,-,,K042,Yes,2 keys
+L043,Occupied,2108454,Jirawan Prakobkit,Nang,,-,,K043,Yes,2 keys
+L044,Available,,,,,,,K044,Yes,2 keys
+L045,Available,,,,,,,K045,Yes,1 key
+L046,Available,,,,,,,K046,Yes,3 keys
+L047,Available,,,,,,,K047,Yes,1 key
+L048,Occupied,1811339,Alisa Lertdisayawan,Li,,-,,K048,Yes,2 keys
+L049,Available,,,,,,,K049,Yes,1 key
+L050,Available,,,,,,,K050,Yes,1 key
+L051,Available,,,,,,,K051,Yes,1 key
+L052,Occupied,2606602,Nattawut Rodthong,Nont,,7/22/26,,K052,Yes,2 keys
+L053,Occupied,1906366,Pattarawadee Nimsongprasert,Yok,,-,,K053,Yes,1 key
+L054,Available,,,,,,,K054,Yes,1 key
+L055,Occupied,1906371,Peerapon Chanthachaem,Bas,,-,,K055,Yes,1 key
+L056,Occupied,2202470,Sareepap Intajai,Nice,,-,,K056,Yes,1 key
+L057,Occupied,2106450,Sompot Iamworakul,Ka-nun,,-,,K057,Yes,1 key
+L058,Occupied,2305541,Wachirapron Prasert,June,,-,,K058,Yes,2 keys
+L059,Occupied,2302527,Nirut Khobthong,Ruj,,-,,K059,Yes,1 key
+L060,Available,,,,,,,K060,Yes,2 keys
+L061,Available,,,,,,,K061,Yes,1 key
+L062,Occupied,1101007,Arrerat Prasongjaroen,Arrat,,-,,K062,Yes,1 key
+L063,Occupied,1805310,Yutthana Singthong,Ake,,-,,K063,Yes,2 keys
+L064,Occupied,1207054,Wariyaphorn Nantasawat,Nan,,-,,K064,Yes,1 key
+L065,Available,,,,,,,K065,Yes,1 key
+L066,Occupied,1101011,Ploypapas Jaiboon,Oat,,-,,K066,Yes,1 key/Snack
+L067,Occupied,1504169,Sujin Tantapong,Ma-meaw,,-,,K067,Yes,2 keys
+L068,Occupied,1101011,Ploypapas Jaiboon,Oat,,-,,K068,Yes,1 key/Snack
+L069,Occupied,1101011,Ploypapas Jaiboon,Oat,,-,,K069,No,Snack
+L070,Available,,,,,,,K070,Yes,2 keys
+L071,Available,,,,,,,K071,Yes,3 keys
+L072,Available,,,,,,,K072,Yes,2 keys
+L073,Available,,,,,,,K073,Yes,1 key
+L074,Occupied,2307548,Chanawee Binsun,Few,,-,,K074,Yes,1 key
+L075,Available,,,,,,,K075,Yes,2 keys
+L076,Occupied,1811339,Alisa Lertdisayawan,Li,,-,,K076,Yes,1 key
+L077,Occupied,1607230,Oraphan Rakamma,Khing,,-,,K077,Yes,1 key
+L078,Available,,,,,,,K078,Yes,2 keys
+L079,Occupied,1504169,Sujin Tantapong,Ma-meaw,,8/6/26,,K079,No,-
+L080,Available,,,,,,,K080,Yes,2 keys
+L081,Occupied,1707275,Sippavit Saewang,Chen,,-,,K081,Yes,1 key
+L082,Available,,,,,,,K082,Yes,2 keys
+L083,Available,,,,,,,K083,Yes,2 keys
+L084,Available,,,,,,,K084,Yes,2 keys
+L085,Occupied,-,Network Team,,,-,,K085,Yes,2 keys
+L086,Occupied,-,Network Team,,,-,,K086,Yes,1 key
+L087,Occupied,-,Network Team,,,-,,K087,Yes,1 key
+L088,Occupied,-,Network Team,,,-,,K088,Yes,1 key
+L089,Occupied,-,Network Team,,,-,,K089,Yes,1 key
+L090,Occupied,-,Network Team,,,-,,K090,Yes,1 key
+L091,Occupied,-,Network Team,,,-,,K091,Yes,1 key
+L092,Occupied,-,Network Team,,,-,,K092,Yes,1 key
+L093,Occupied,-,Network Team,,,-,,K093,Yes,1 key
+L094,Occupied,-,Network Team,,,-,,K094,Yes,1 key
+L095,Occupied,-,Network Team,,,-,,K095,Yes,1 key
+L096,Occupied,-,Network Team,,,-,,K096,Yes,1 key

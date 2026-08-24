@@ -34,6 +34,7 @@ export const ACTIVITY_ACTIONS = [
   "employee_updated",
   "employee_deleted",
   "rsvp_submitted",
+  "feedback_submitted",
 ] as const
 
 export type ActivityAction = (typeof ACTIVITY_ACTIONS)[number]
@@ -47,6 +48,7 @@ export type ActivityTargetType =
   | "participant"
   | "comment"
   | "employee"
+  | "feedback"
 
 export interface Activity {
   id: Id
