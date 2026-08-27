@@ -126,7 +126,8 @@ export function winnerIndexFromRotation(rotation: number, count: number): number
 
 export const WHEEL_SIZE = 400
 export const WHEEL_CENTER = 200
-export const WHEEL_RADIUS = 190
+/** เว้นจากขอบ viewBox เพียง 2 หน่วย เพื่อให้หน้าวงล้อเต็มและขอบนอกบาง */
+export const WHEEL_RADIUS = 198
 export const WHEEL_HUB_RADIUS = 30
 
 function round(value: number): number {

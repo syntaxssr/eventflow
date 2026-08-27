@@ -317,8 +317,8 @@ describe("ภาพ SVG", () => {
   })
 
   it("ช่องที่กว้างเกินครึ่งวงใช้ large-arc และวาดตามเข็ม", () => {
-    expect(describeWedge(0, 4)).toBe("M 200 200 L 200 10 A 190 190 0 0 1 390 200 Z")
-    expect(describeWedge(1, 2)).toBe("M 200 200 L 200 390 A 190 190 0 0 1 200 10 Z")
+    expect(describeWedge(0, 4)).toBe("M 200 200 L 200 2 A 198 198 0 0 1 398 200 Z")
+    expect(describeWedge(1, 2)).toBe("M 200 200 L 200 398 A 198 198 0 0 1 200 2 Z")
     // ครึ่งวงพอดี (180°) ไม่ถือว่าเป็น large-arc — ช่องแรกของวงล้อสองช่อง
     expect(describeWedge(0, 2)).toContain(" 0 0 1 ")
     expect(describeWedge(0, 1).length).toBeGreaterThan(0)

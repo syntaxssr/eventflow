@@ -5,6 +5,7 @@ import {
   ArrowRightIcon,
   Clock3Icon,
   FerrisWheelIcon,
+  Music2Icon,
   TicketCheckIcon,
 } from "lucide-react"
 
@@ -40,6 +41,33 @@ export function GamesPageView() {
                   </span>
                   <span className="text-muted-foreground mt-1 block text-sm">
                     {t("games.spinWheelDescription")}
+                  </span>
+                </span>
+                <ArrowRightIcon
+                  className="size-5 shrink-0 transition-transform group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
+              </span>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link
+          href={ROUTES.musicQuiz}
+          className="focus-visible:ring-ring group rounded-xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        >
+          <Card className="h-full min-h-44 ring-general-purple/25 transition-[transform,box-shadow,--tw-ring-color] group-hover:-translate-y-0.5 group-hover:ring-general-purple/60 group-hover:shadow-md">
+            <CardContent className="flex h-full flex-col justify-between gap-6">
+              <span className="bg-general-purple text-white flex size-11 items-center justify-center rounded-xl">
+                <Music2Icon className="size-6" aria-hidden="true" />
+              </span>
+              <span className="flex items-end justify-between gap-3">
+                <span>
+                  <span className="block text-lg font-semibold">
+                    {t("games.musicQuizTitle")}
+                  </span>
+                  <span className="text-muted-foreground mt-1 block text-sm">
+                    {t("games.musicQuizDescription")}
                   </span>
                 </span>
                 <ArrowRightIcon

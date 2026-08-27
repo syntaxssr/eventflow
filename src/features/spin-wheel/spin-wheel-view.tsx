@@ -3,10 +3,8 @@
 import * as React from "react"
 import {
   AccessibilityIcon,
-  DicesIcon,
   FerrisWheelIcon,
   ListPlusIcon,
-  Loader2Icon,
   Maximize2Icon,
   Minimize2Icon,
   SparklesIcon,
@@ -433,7 +431,7 @@ export function SpinWheelView() {
       <h1 className="sr-only">{t("spinWheel.title")}</h1>
 
       <div
-        className="relative grid gap-5 min-[1180px]:grid-cols-[minmax(0,1fr)_360px] min-[1180px]:items-start"
+        className="relative grid gap-5 min-[1180px]:grid-cols-[minmax(0,1fr)_320px] min-[1180px]:items-start"
         data-testid="spin-wheel-page"
       >
         <div
@@ -459,7 +457,7 @@ export function SpinWheelView() {
           >
             <CardContent
               className={cn(
-                "relative z-10 flex min-h-[620px] flex-col items-center justify-center gap-4 px-4 py-5 sm:px-6 sm:py-6",
+                "relative z-10 flex min-h-[620px] flex-col items-center justify-center gap-4 px-2 py-4 sm:px-3 sm:py-5",
                 presentationMode &&
                   cn(styles.presentationContent, "h-full justify-center")
               )}
@@ -532,33 +530,23 @@ export function SpinWheelView() {
                 entries={entries}
                 rotation={rotation}
                 spinning={spinning}
+                canSpin={canSpin}
+                onSpin={() => startSpin(entries)}
                 onSpinEnd={handleSpinEnd}
+                spinDescriptionId={
+                  entries.length < MIN_WHEEL_ENTRIES
+                    ? "wheel-min-entries"
+                    : undefined
+                }
                 className={
                   presentationMode
                     ? styles.presentationWheel
-                    : "max-w-[34rem]"
+                    : "max-w-[44rem]"
                 }
               />
             )}
 
             <div className="flex w-full flex-col items-center gap-2">
-              <Button
-                size="lg"
-                onClick={() => startSpin(entries)}
-                disabled={!canSpin}
-                aria-describedby={
-                  entries.length < MIN_WHEEL_ENTRIES ? "wheel-min-entries" : undefined
-                }
-                className="h-12 w-full rounded-full bg-gradient-to-r from-amber-300 via-orange-400 to-pink-500 px-8 text-base font-extrabold text-violet-950 shadow-[0_8px_0_#9d174d,0_14px_30px_rgba(15,2,28,0.34)] transition-[transform,filter,box-shadow] hover:brightness-110 active:translate-y-1 active:shadow-[0_4px_0_#9d174d,0_8px_20px_rgba(15,2,28,0.32)] sm:w-auto sm:min-w-64"
-                data-testid="spin-button"
-              >
-                {spinning ? (
-                  <Loader2Icon className="size-4 animate-spin" aria-hidden="true" />
-                ) : (
-                  <DicesIcon className="size-4" aria-hidden="true" />
-                )}
-                {spinning ? t("spinWheel.spinning") : t("spinWheel.spin")}
-              </Button>
               {entries.length < MIN_WHEEL_ENTRIES ? (
                 <p
                   id="wheel-min-entries"

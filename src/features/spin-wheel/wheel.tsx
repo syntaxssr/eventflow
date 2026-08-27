@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { StarIcon } from "lucide-react"
+import { Loader2Icon, StarIcon } from "lucide-react"
 import Image from "next/image"
 
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
@@ -48,7 +48,10 @@ interface WheelProps {
   /** มุมสะสม (องศา ตามเข็ม) — เพิ่มขึ้นเรื่อย ๆ ไม่รีเซ็ต เพื่อให้หมุนต่อจากตำแหน่งเดิม */
   rotation: number
   spinning: boolean
+  canSpin: boolean
+  onSpin: () => void
   onSpinEnd: () => void
+  spinDescriptionId?: string
   className?: string
 }
 
@@ -60,7 +63,10 @@ export function Wheel({
   entries,
   rotation,
   spinning,
+  canSpin,
+  onSpin,
   onSpinEnd,
+  spinDescriptionId,
   className,
 }: WheelProps) {
   const { t } = useLocale()
@@ -143,7 +149,7 @@ export function Wheel({
 
   return (
     <div
-      role="img"
+      role="group"
       aria-label={t("spinWheel.wheelAria", { count })}
       className={cn(styles.wheelScene, "mx-auto", className)}
       data-testid="spin-wheel"
@@ -288,9 +294,31 @@ export function Wheel({
           />
         ))}
 
-        <div className={styles.hub} aria-hidden="true">
-          <StarIcon className="size-1/2 fill-current" strokeWidth={2.4} />
-        </div>
+        <button
+          type="button"
+          className={styles.hub}
+          onClick={onSpin}
+          disabled={!canSpin}
+          aria-label={spinning ? t("spinWheel.spinning") : t("spinWheel.spin")}
+          aria-describedby={spinDescriptionId}
+          data-testid="spin-button"
+        >
+          {spinning ? (
+            <Loader2Icon
+              className="size-1/2 animate-spin"
+              aria-hidden="true"
+            />
+          ) : (
+            <StarIcon
+              className="size-1/2 fill-current"
+              strokeWidth={2.4}
+              aria-hidden="true"
+            />
+          )}
+          <span className="sr-only">
+            {spinning ? t("spinWheel.spinning") : t("spinWheel.spin")}
+          </span>
+        </button>
 
         <div ref={pointerRef} className={styles.pointer} aria-hidden="true">
           <Image
@@ -305,9 +333,6 @@ export function Wheel({
           />
         </div>
       </div>
-
-      <span className={styles.standStem} aria-hidden="true" />
-      <span className={styles.standBase} aria-hidden="true" />
     </div>
   )
 }

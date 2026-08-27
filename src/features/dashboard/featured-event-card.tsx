@@ -50,7 +50,10 @@ export function FeaturedEventCard({
           href={`${ROUTES.events}?event=${event.id}`}
           className="focus-visible:outline-ring block rounded-lg p-2 transition-colors hover:bg-muted/50 focus-visible:outline-2 focus-visible:outline-offset-2"
         >
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.95fr)] lg:items-center">
+        {/* การ์ดนี้อยู่ในคอลัมน์ 2/3 ของ dashboard: ที่ viewport แบบ desktop
+            ทั่วไปความกว้างจริงยังไม่พอสำหรับสองคอลัมน์ จึงคง layout แนวตั้ง
+            จนถึงจอใหญ่ เพื่อไม่ให้ชื่อกิจกรรมถูกบีบจนอ่านยาก */}
+        <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_minmax(20rem,0.95fr)] 2xl:items-center">
           <div className="min-w-0 space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <StatusBadge style={EVENT_STATUS_STYLE[event.status]} />

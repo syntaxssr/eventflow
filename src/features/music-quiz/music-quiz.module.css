@@ -1,0 +1,103 @@
+.page {
+  position: relative;
+  isolation: isolate;
+  min-height: calc(100dvh - 4rem);
+  overflow: hidden;
+  color: #f2f2f0;
+  background:
+    radial-gradient(circle at 78% 0%, rgb(123 105 204 / 32%), transparent 28rem),
+    radial-gradient(circle at 24% 100%, rgb(115 191 163 / 17%), transparent 31rem),
+    #1c1c1c;
+}
+
+.page::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image: radial-gradient(circle, rgb(163 222 254 / 22%) 0 1px, transparent 1.5px);
+  background-size: 42px 42px;
+  content: "";
+  mask-image: linear-gradient(to bottom, #000, transparent 75%);
+  opacity: 0.38;
+}
+
+.cover {
+  position: relative;
+  display: grid;
+  aspect-ratio: 1;
+  width: 8.5rem;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgb(242 242 240 / 22%);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 76% 24%, #a3defe 0 9%, transparent 9.5%),
+    radial-gradient(circle at 27% 76%, #73bfa3 0 13%, transparent 13.5%),
+    linear-gradient(135deg, #7b69cc, #1c1c1c 72%);
+  box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 28%);
+}
+
+.cover::before,
+.cover::after {
+  position: absolute;
+  border: 1px solid rgb(242 242 240 / 38%);
+  border-radius: 50%;
+  content: "";
+}
+
+.cover::before {
+  width: 5.4rem;
+  height: 2.4rem;
+  transform: rotate(-26deg);
+}
+
+.cover::after {
+  width: 6.8rem;
+  height: 3.1rem;
+  transform: rotate(39deg);
+}
+
+.wave {
+  display: flex;
+  height: 4.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+}
+
+.waveBar {
+  width: 0.28rem;
+  border-radius: 999px;
+  background: #a3defe;
+  opacity: 0.78;
+}
+
+.waveBar:nth-child(3n) { background: #73bfa3; }
+.waveBar:nth-child(4n) { opacity: 1; }
+
+.wavePlaying .waveBar {
+  animation: beat 620ms ease-in-out infinite alternate;
+}
+
+.wavePlaying .waveBar:nth-child(2n) { animation-duration: 420ms; }
+.wavePlaying .waveBar:nth-child(3n) { animation-duration: 770ms; }
+
+.answerCorrect {
+  border-color: #73bfa3 !important;
+  background: rgb(115 191 163 / 22%) !important;
+}
+
+.answerWrong {
+  border-color: rgb(244 154 127 / 78%) !important;
+  background: rgb(244 154 127 / 14%) !important;
+  opacity: 0.7;
+}
+
+@keyframes beat {
+  from { transform: scaleY(0.45); }
+  to { transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wavePlaying .waveBar { animation: none; }
+}
