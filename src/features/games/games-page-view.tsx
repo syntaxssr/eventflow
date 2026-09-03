@@ -3,55 +3,64 @@
 import Link from "next/link"
 import {
   ArrowRightIcon,
+  ChevronLeftIcon,
   Clock3Icon,
-  FerrisWheelIcon,
+  Maximize2Icon,
+  Minimize2Icon,
   Music2Icon,
-  TicketCheckIcon,
 } from "lucide-react"
 
-import { PageContainer, PageHeader } from "@/components/common/page-header"
+import { PageContainer } from "@/components/common/page-header"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ROUTES } from "@/constants/app"
 import { useT } from "@/i18n"
+import { usePresentationMode } from "./presentation-mode-provider"
 
 const COMING_SOON_CARD_COUNT = 6
 
 export function GamesPageView() {
   const t = useT()
+  const { presentationMode, openPresentationMode, closePresentationMode } =
+    usePresentationMode()
 
   return (
-    <PageContainer>
-      <PageHeader title={t("nav.games")} description={t("games.subtitle")} />
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Link
-          href={ROUTES.spinWheel}
-          className="focus-visible:ring-ring group rounded-xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+    <PageContainer className="px-0 pt-0 pb-0 sm:px-0 sm:pb-0 lg:px-0 lg:pb-0">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Button
+          asChild
+          variant="ghost"
+          size={presentationMode ? "lg" : "default"}
+          data-testid="games-back"
         >
-          <Card className="h-full min-h-44 ring-info/25 transition-[transform,box-shadow,--tw-ring-color] group-hover:-translate-y-0.5 group-hover:ring-info/60 group-hover:shadow-md">
-            <CardContent className="flex h-full flex-col justify-between gap-6">
-              <span className="bg-info text-info-foreground flex size-11 items-center justify-center rounded-xl">
-                <FerrisWheelIcon className="size-6" aria-hidden="true" />
-              </span>
-              <span className="flex items-end justify-between gap-3">
-                <span>
-                  <span className="block text-lg font-semibold">
-                    {t("spinWheel.title")}
-                  </span>
-                  <span className="text-muted-foreground mt-1 block text-sm">
-                    {t("games.spinWheelDescription")}
-                  </span>
-                </span>
-                <ArrowRightIcon
-                  className="size-5 shrink-0 transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </span>
-            </CardContent>
-          </Card>
-        </Link>
+          <Link
+            href={ROUTES.dashboard}
+            // ยังอยู่ในเต็มจอจริงของเบราว์เซอร์อยู่ ต้องปิดก่อนออกจากหน้า ไม่งั้นค้างเต็มจอไปหน้าอื่นด้วย
+            onClick={presentationMode ? closePresentationMode : undefined}
+          >
+            <ChevronLeftIcon className="size-4" aria-hidden="true" />
+            {t("state.backToDashboard")}
+          </Link>
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size={presentationMode ? "lg" : "sm"}
+          className="ml-auto"
+          onClick={presentationMode ? closePresentationMode : openPresentationMode}
+          data-testid="games-fullscreen"
+        >
+          {presentationMode ? (
+            <Minimize2Icon className="size-4" aria-hidden="true" />
+          ) : (
+            <Maximize2Icon className="size-4" aria-hidden="true" />
+          )}
+          {presentationMode ? t("common.exitFullscreen") : t("common.fullscreen")}
+        </Button>
+      </div>
 
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <Link
           href={ROUTES.musicQuiz}
           className="focus-visible:ring-ring group rounded-xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
@@ -78,25 +87,6 @@ export function GamesPageView() {
             </CardContent>
           </Card>
         </Link>
-
-        <Card className="min-h-44 ring-brand-500/20">
-          <CardContent className="relative flex h-full flex-col justify-between gap-6">
-            <span className="bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-200 flex size-11 items-center justify-center rounded-xl">
-              <TicketCheckIcon className="size-6" aria-hidden="true" />
-            </span>
-            <Badge variant="secondary" className="absolute top-4 right-4">
-              {t("games.comingSoon")}
-            </Badge>
-            <span>
-              <span className="block text-lg font-semibold">
-                {t("games.bingoTitle")}
-              </span>
-              <span className="text-muted-foreground mt-1 block text-sm">
-                {t("games.bingoDescription")}
-              </span>
-            </span>
-          </CardContent>
-        </Card>
 
         {Array.from({ length: COMING_SOON_CARD_COUNT }, (_, index) => (
           <Card

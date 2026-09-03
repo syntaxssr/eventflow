@@ -22,6 +22,9 @@
 /.next/
 /out/
 
+# partykit (local dev room state)
+/.partykit/
+
 # production
 /build
 

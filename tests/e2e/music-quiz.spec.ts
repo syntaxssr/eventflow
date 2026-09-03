@@ -46,6 +46,41 @@ test.describe("Music quiz", () => {
     }
   })
 
+  test("โหมดเต็มจอครอบทั้ง viewport และออกได้", async ({ page }) => {
+    await openMusicQuiz(page)
+
+    const fullscreen = page.getByTestId("music-quiz-fullscreen")
+    await fullscreen.click()
+
+    await expect(fullscreen).toContainText("ออกจากเต็มจอ")
+    await expect(page.getByTestId("music-quiz-page")).toHaveCSS(
+      "position",
+      "fixed"
+    )
+
+    const fullscreenOverflow = await page.evaluate(() => ({
+      root: getComputedStyle(document.documentElement).overflow,
+      body: getComputedStyle(document.body).overflow,
+      scrollbarWidth: window.innerWidth - document.documentElement.clientWidth,
+    }))
+    expect(fullscreenOverflow).toEqual({
+      root: "hidden",
+      body: "hidden",
+      scrollbarWidth: 0,
+    })
+
+    // เล่นต่อได้ระหว่างเต็มจอ
+    await page.getByTestId("music-quiz-play").click()
+    await expect(page.getByTestId("music-quiz-answer-1")).toBeEnabled()
+
+    await fullscreen.click()
+    await expect(fullscreen).toContainText("เต็มจอ")
+    await expect(page.getByTestId("music-quiz-page")).not.toHaveCSS(
+      "position",
+      "fixed"
+    )
+  })
+
   test("หน้าเกมส์ทายเพลงไม่มีปัญหา accessibility ระดับ serious/critical", async ({
     page,
   }) => {
@@ -67,5 +102,30 @@ test.describe("Music quiz", () => {
         )
       )
     ).toEqual([])
+  })
+})
+
+test.describe("ห้องเล่นสด", () => {
+  test("การ์ด leaderboard แสดง PIN และเริ่มจากศูนย์คน", async ({ page }) => {
+    await openMusicQuiz(page)
+
+    const panel = page.getByTestId("quiz-room-panel")
+    await expect(panel).toBeVisible()
+    // PartyKit อาจไม่ได้รันตอนเทสต์ — PIN กับจำนวนคนต้องขึ้นได้โดยไม่ต้องต่อห้อง
+    await expect(page.getByTestId("quiz-room-pin")).toHaveText(/^\d{6}$/)
+    await expect(page.getByTestId("quiz-room-count")).toHaveText("0")
+    await expect(panel).toContainText("ยังไม่มีใครเข้าห้อง")
+  })
+
+  test("จอผู้เล่นขอ PIN กับชื่อก่อนเข้าห้อง", async ({ page }) => {
+    await page.goto("/play")
+    await expect(page.getByTestId("play-join-form")).toBeVisible()
+
+    await page.getByTestId("play-join").click()
+    await expect(page.getByTestId("play-error")).toContainText("PIN ต้องเป็นตัวเลข 6 หลัก")
+
+    await page.getByLabel("PIN ห้อง").fill("123456")
+    await page.getByTestId("play-join").click()
+    await expect(page.getByTestId("play-error")).toContainText("ใส่ชื่ออย่างน้อย 2 ตัวอักษร")
   })
 })

@@ -6,11 +6,12 @@ import {
   CheckCircle2Icon,
   ChevronLeftIcon,
   Clock3Icon,
+  Maximize2Icon,
+  Minimize2Icon,
   Music2Icon,
   PauseIcon,
   PlayIcon,
   RotateCcwIcon,
-  TrophyIcon,
   Volume2Icon,
   XCircleIcon,
 } from "lucide-react"
@@ -21,6 +22,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { ROUTES } from "@/constants/app"
 import { cn } from "@/lib/utils"
+import { useQuizRoom } from "@/features/games/quiz-room-provider"
 import styles from "./music-quiz.module.css"
 
 type QuizRound = {
@@ -60,13 +62,6 @@ const WAVE_HEIGHTS = [
   "h-9", "h-12", "h-7", "h-14", "h-10", "h-17", "h-6", "h-11",
 ] as const
 
-const TEAMS = [
-  { rank: 1, name: "ทีมดาวเหนือ", score: 850 },
-  { rank: 2, name: "ทีมวันศุกร์", score: 770 },
-  { rank: 3, name: "ทีมเสียงดี", score: 620 },
-  { rank: 4, name: "ทีมอินโทร", score: 540 },
-] as const
-
 function formatTime(seconds: number) {
   return `0:${String(seconds).padStart(2, "0")}`
 }
@@ -77,7 +72,10 @@ export function MusicQuizView() {
   const [isPlaying, setIsPlaying] = React.useState(false)
   const [selectedAnswer, setSelectedAnswer] = React.useState<number | null>(null)
   const [timedOut, setTimedOut] = React.useState(false)
+  const [presentationMode, setPresentationMode] = React.useState(false)
   const announcementRef = React.useRef<HTMLParagraphElement>(null)
+
+  const room = useQuizRoom()
 
   const round = QUIZ_ROUNDS[roundIndex]
   const isAnswered = selectedAnswer !== null || timedOut
@@ -101,6 +99,65 @@ export function MusicQuizView() {
 
     return () => window.clearInterval(timer)
   }, [isAnswered, isPlaying])
+
+  React.useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) setPresentationMode(false)
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && presentationMode && !document.fullscreenElement) {
+        setPresentationMode(false)
+      }
+    }
+    document.addEventListener("fullscreenchange", handleFullscreenChange)
+    window.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange)
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [presentationMode])
+
+  React.useEffect(() => {
+    if (!presentationMode) return
+
+    const root = document.documentElement
+    const body = document.body
+    const previousRootOverflow = root.style.overflow
+    const previousBodyOverflow = body.style.overflow
+    const previousOverscrollBehavior = root.style.overscrollBehavior
+
+    root.style.overflow = "hidden"
+    body.style.overflow = "hidden"
+    root.style.overscrollBehavior = "none"
+
+    return () => {
+      root.style.overflow = previousRootOverflow
+      body.style.overflow = previousBodyOverflow
+      root.style.overscrollBehavior = previousOverscrollBehavior
+    }
+  }, [presentationMode])
+
+  // ผู้เล่นบนมือถือเห็นเฉพาะช้อยส์ของรอบนี้ และกดตอบได้เฉพาะช่วงที่เปิดรับ
+  const { publishRound } = room
+  React.useEffect(() => {
+    publishRound({
+      index: roundIndex,
+      choices: [...round.choices],
+      open: isPlaying && !isAnswered,
+    })
+  }, [publishRound, roundIndex, round.choices, isPlaying, isAnswered])
+
+  const openPresentationMode = () => {
+    setPresentationMode(true)
+    document.documentElement.requestFullscreen?.().catch(() => {
+      // overlay เต็ม viewport ยังทำงานต่อได้เมื่อเบราว์เซอร์ไม่อนุญาต Fullscreen API
+    })
+  }
+
+  const closePresentationMode = () => {
+    setPresentationMode(false)
+    if (document.fullscreenElement) void document.exitFullscreen()
+  }
 
   const startOrPause = () => {
     if (isAnswered) return
@@ -139,23 +196,67 @@ export function MusicQuizView() {
         : "กดเริ่มฟังอินโทร แล้วเลือกคำตอบที่ใช่"
 
   return (
-    <section className={styles.page} data-testid="music-quiz-page">
-      <PageContainer className="relative z-10 mx-auto max-w-6xl space-y-5">
+    <section
+      className={cn(
+        styles.page,
+        presentationMode && styles.presentationPage
+      )}
+      data-testid="music-quiz-page"
+    >
+      <PageContainer
+        className={cn(
+          "relative z-10 mx-auto max-w-6xl space-y-5",
+          presentationMode &&
+            cn(
+              styles.presentationShell,
+              "flex h-full max-w-none flex-col justify-center gap-3 space-y-0"
+            )
+        )}
+      >
         <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-          <Button asChild variant="ghost" className="text-white hover:bg-white/10 hover:text-white">
+          <Button
+            asChild
+            variant="ghost"
+            className={cn(
+              "text-white hover:bg-white/10 hover:text-white",
+              presentationMode && "hidden"
+            )}
+          >
             <Link href={ROUTES.games}>
               <ChevronLeftIcon className="size-4" aria-hidden="true" />
               กลับไปหน้าเกมส์
             </Link>
           </Button>
-          <span className="bg-white/10 text-white inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm">
-            <span className="bg-general-green size-2 rounded-full" aria-hidden="true" />
-            กำลังเล่นสด
-          </span>
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            <span className="bg-white/10 text-white inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm">
+              <span className="bg-general-green size-2 rounded-full" aria-hidden="true" />
+              กำลังเล่นสด
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              size={presentationMode ? "lg" : "sm"}
+              className="border-white/25 bg-white/10 text-white hover:border-general-blue hover:bg-white/20 hover:text-white"
+              onClick={presentationMode ? closePresentationMode : openPresentationMode}
+              data-testid="music-quiz-fullscreen"
+            >
+              {presentationMode ? (
+                <Minimize2Icon className="size-4" aria-hidden="true" />
+              ) : (
+                <Maximize2Icon className="size-4" aria-hidden="true" />
+              )}
+              {presentationMode ? "ออกจากเต็มจอ" : "เต็มจอ"}
+            </Button>
+          </div>
         </div>
 
-        <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/15 pb-5">
-          <div>
+        <header
+          className={cn(
+            "flex flex-wrap items-end justify-between gap-4 border-b border-white/15 pb-5",
+            presentationMode && "border-b-0 pb-0"
+          )}
+        >
+          <div className={cn(presentationMode && "sr-only")}>
             <p className="text-general-blue mb-1 flex items-center gap-2 text-sm font-semibold tracking-wide">
               <Music2Icon className="size-4" aria-hidden="true" />
               MUSIC QUIZ · LIVE GAME
@@ -165,27 +266,80 @@ export function MusicQuizView() {
               ฟังตัวอย่างเพลงสั้น ๆ แล้วเลือกคำตอบที่ใช่ให้ทันเวลา
             </p>
           </div>
-          <div className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/75">
+          <div
+            className={cn(
+              "rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/75",
+              presentationMode && "ml-auto text-base"
+            )}
+          >
             <span className="font-semibold text-white">รอบ {String(roundIndex + 1).padStart(2, "0")}</span>
             <span aria-hidden="true"> / </span>{QUIZ_ROUNDS.length}
           </div>
         </header>
 
-        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_15rem]">
-          <Card className="border-white/15 bg-[#1c1c1c]/80 text-white shadow-2xl shadow-black/25 backdrop-blur-sm">
-            <CardContent className="space-y-6 p-5 sm:p-7">
-              <div className="grid items-center gap-5 sm:grid-cols-[auto_minmax(0,1fr)]">
-                <div className={styles.cover} aria-hidden="true"><Volume2Icon className="relative z-10 size-8 text-white" /></div>
+        <div
+          className={cn(
+            "grid items-start gap-5",
+            presentationMode && "min-h-0 flex-1 items-stretch lg:grid-cols-1"
+          )}
+        >
+          <Card
+            className={cn(
+              "border-white/15 bg-[#1c1c1c]/80 text-white shadow-2xl shadow-black/25 backdrop-blur-sm",
+              presentationMode && cn(styles.presentationCard, "min-h-0")
+            )}
+          >
+            <CardContent
+              className={cn(
+                "space-y-6 p-5 sm:p-7",
+                presentationMode &&
+                  cn(styles.presentationContent, "flex h-full flex-col justify-center")
+              )}
+            >
+              <div
+                className={cn(
+                  "grid items-center gap-5 sm:grid-cols-[auto_minmax(0,1fr)]",
+                  presentationMode && "sm:grid-cols-1 sm:text-center"
+                )}
+              >
+                <div
+                  className={cn(
+                    styles.cover,
+                    presentationMode && styles.presentationHidden
+                  )}
+                  aria-hidden="true"
+                >
+                  <Volume2Icon className="relative z-10 size-8 text-white" />
+                </div>
                 <div className="min-w-0">
                   <p className="text-sm text-white/60">กำลังฟังอินโทร</p>
-                  <h2 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
+                  <h2
+                    className={cn(
+                      "mt-1 text-2xl font-bold tracking-tight sm:text-3xl",
+                      presentationMode && styles.presentationHeading
+                    )}
+                  >
                     {isAnswered ? round.title : "เพลงนี้ชื่ออะไร?"}
                   </h2>
-                  <p className="mt-2 text-sm leading-6 text-white/70">เพลงตัวอย่างสำหรับกิจกรรมนี้</p>
+                  <p
+                    className={cn(
+                      "mt-2 text-sm leading-6 text-white/70",
+                      presentationMode && "hidden"
+                    )}
+                  >
+                    เพลงตัวอย่างสำหรับกิจกรรมนี้
+                  </p>
                 </div>
               </div>
 
-              <div className={cn(styles.wave, isPlaying && styles.wavePlaying)} aria-hidden="true">
+              <div
+                className={cn(
+                  styles.wave,
+                  isPlaying && styles.wavePlaying,
+                  presentationMode && styles.presentationWave
+                )}
+                aria-hidden="true"
+              >
                 {WAVE_HEIGHTS.map((height, index) => <span key={index} className={cn(styles.waveBar, height)} />)}
               </div>
 
@@ -209,14 +363,38 @@ export function MusicQuizView() {
                       <span>{formatTime(ROUND_DURATION_SECONDS)}</span>
                     </div>
                   </div>
-                  <span className="flex min-w-14 items-center justify-center gap-1 rounded-lg bg-white/10 px-2 py-2 text-sm font-semibold tabular-nums">
-                    <Clock3Icon className="size-4 text-general-yellow" aria-hidden="true" />{secondsLeft}
+                  <span
+                    className={cn(
+                      "flex min-w-14 items-center justify-center gap-1 rounded-lg bg-white/10 px-2 py-2 text-sm font-semibold tabular-nums",
+                      presentationMode && styles.presentationTimer
+                    )}
+                  >
+                    <Clock3Icon
+                      className={cn(
+                        "size-4 text-general-yellow",
+                        presentationMode && "size-6"
+                      )}
+                      aria-hidden="true"
+                    />
+                    {secondsLeft}
                   </span>
                 </div>
               </div>
 
-              <div className="border-t border-white/12 pt-5">
-                <p className="mb-3 text-sm font-semibold">เลือกชื่อเพลงที่ตรงกับอินโทรนี้</p>
+              <div
+                className={cn(
+                  "border-t border-white/12 pt-5",
+                  presentationMode && "border-t-0 pt-0"
+                )}
+              >
+                <p
+                  className={cn(
+                    "mb-3 text-sm font-semibold",
+                    presentationMode && "sr-only"
+                  )}
+                >
+                  เลือกชื่อเพลงที่ตรงกับอินโทรนี้
+                </p>
                 <div className="grid gap-3 sm:grid-cols-2" data-testid="music-quiz-answers">
                   {round.choices.map((choice, index) => {
                     const revealCorrect = isAnswered && index === round.answer
@@ -229,6 +407,7 @@ export function MusicQuizView() {
                         onClick={() => selectAnswer(index)}
                         className={cn(
                           "flex min-h-12 items-center gap-3 rounded-xl border border-white/15 bg-white/5 px-3 text-left text-sm font-medium text-white transition-colors duration-200 hover:border-general-blue hover:bg-white/10 disabled:cursor-not-allowed disabled:hover:border-white/15 disabled:hover:bg-white/5",
+                          presentationMode && styles.presentationAnswer,
                           revealCorrect && styles.answerCorrect,
                           revealWrong && styles.answerWrong
                         )}
@@ -259,22 +438,6 @@ export function MusicQuizView() {
             </CardContent>
           </Card>
 
-          <aside className="rounded-2xl border border-white/15 bg-black/20 p-5 shadow-xl shadow-black/10" aria-label="คะแนนทีม">
-            <div className="mb-4 flex items-center gap-2">
-              <TrophyIcon className="size-5 text-general-yellow" aria-hidden="true" />
-              <h2 className="font-bold">คะแนนทีม</h2>
-            </div>
-            <ol className="space-y-1">
-              {TEAMS.map((team) => (
-                <li key={team.name} className="grid grid-cols-[1.75rem_minmax(0,1fr)_auto] items-center gap-2 border-t border-white/10 py-3 first:border-t-0 first:pt-0">
-                  <span className="flex size-7 items-center justify-center rounded-lg bg-white/10 text-xs font-semibold text-white/70">{team.rank}</span>
-                  <span className="truncate text-sm text-white/85">{team.name}</span>
-                  <strong className="text-sm tabular-nums">{team.score}</strong>
-                </li>
-              ))}
-            </ol>
-            <p className="mt-4 border-t border-white/10 pt-4 text-xs leading-5 text-white/60">ตอบก่อน ได้คะแนนมากกว่า</p>
-          </aside>
         </div>
       </PageContainer>
     </section>

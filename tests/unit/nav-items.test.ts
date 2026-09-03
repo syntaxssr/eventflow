@@ -45,7 +45,7 @@ describe("isNavGroupActive", () => {
     expect(isNavGroupActive(ROUTES.employees, MISC_NAV_GROUP)).toBe(true)
     expect(isNavGroupActive(ROUTES.employeeDirectory, MISC_NAV_GROUP)).toBe(true)
     expect(isNavGroupActive(ROUTES.employeeLockers, MISC_NAV_GROUP)).toBe(true)
-    expect(isNavGroupActive(ROUTES.spinWheel, MISC_NAV_GROUP)).toBe(true)
+    expect(isNavGroupActive(ROUTES.musicQuiz, MISC_NAV_GROUP)).toBe(true)
     expect(isNavGroupActive(ROUTES.forms, MISC_NAV_GROUP)).toBe(true)
     expect(isNavGroupActive(ROUTES.eventFeedback, MISC_NAV_GROUP)).toBe(true)
   })
