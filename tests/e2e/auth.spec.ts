@@ -270,6 +270,23 @@ test.describe("Phase 1 — Application Shell", () => {
     await expect(page.locator("html")).toHaveAttribute("lang", "en")
   })
 
+  test("ภาษาที่เลือกจำข้ามการรีเฟรชได้", async ({ page }) => {
+    await signIn(page)
+    await page.getByTestId("language-toggle").click()
+    await page.getByRole("menuitemradio", { name: "English" }).click()
+    await expect(page.locator("html")).toHaveAttribute("lang", "en")
+
+    await page.reload()
+    await expect(page.locator("html")).toHaveAttribute("lang", "en")
+
+    await page.getByTestId("language-toggle").click()
+    await page.getByRole("menuitemradio", { name: "ไทย" }).click()
+    await expect(page.locator("html")).toHaveAttribute("lang", "th")
+
+    await page.reload()
+    await expect(page.locator("html")).toHaveAttribute("lang", "th")
+  })
+
   test("เครื่องมือทดสอบสั่งให้การกระทำถัดไปล้มเหลวได้", async ({ page }) => {
     await page.goto("/login")
 

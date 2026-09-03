@@ -2,6 +2,12 @@
 
 import * as React from "react"
 
+import {
+  getLocalePreference,
+  getLocalePreferenceOnServer,
+  setLocalePreference,
+  subscribeLocalePreference,
+} from "@/lib/locale-preference-store"
 import type { Locale, LocalizedText } from "@/types/common"
 import { en } from "./dictionaries/en"
 import { th } from "./dictionaries/th"
@@ -45,14 +51,12 @@ function interpolate(
   )
 }
 
-export function LocaleProvider({
-  children,
-  initialLocale = DEFAULT_LOCALE,
-}: {
-  children: React.ReactNode
-  initialLocale?: Locale
-}) {
-  const [locale, setLocale] = React.useState<Locale>(initialLocale)
+export function LocaleProvider({ children }: { children: React.ReactNode }) {
+  const locale = React.useSyncExternalStore(
+    subscribeLocalePreference,
+    getLocalePreference,
+    getLocalePreferenceOnServer
+  )
 
   // อัปเดต lang บน <html> เพื่อให้ screen reader อ่านออกเสียงถูกภาษา
   React.useEffect(() => {
@@ -63,8 +67,9 @@ export function LocaleProvider({
     const dictionary = DICTIONARIES[locale]
     return {
       locale,
-      setLocale,
-      toggleLocale: () => setLocale((current) => (current === "th" ? "en" : "th")),
+      setLocale: setLocalePreference,
+      toggleLocale: () =>
+        setLocalePreference(locale === "th" ? "en" : "th"),
       t: (key, params) => {
         const template = resolve(dictionary, key)
         if (template === undefined) {

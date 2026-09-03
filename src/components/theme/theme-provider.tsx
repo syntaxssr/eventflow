@@ -3,8 +3,15 @@
 import * as React from "react"
 
 import { useMediaQuery } from "@/hooks/use-media-query"
+import {
+  getThemePreference,
+  getThemePreferenceOnServer,
+  setThemePreference,
+  subscribeThemePreference,
+  type ThemePreference,
+} from "@/lib/theme-preference-store"
 
-export type ThemePreference = "light" | "dark" | "system"
+export type { ThemePreference }
 export type ResolvedTheme = "light" | "dark"
 
 interface ThemeContextValue {
@@ -22,17 +29,17 @@ const DARK_QUERY = "(prefers-color-scheme: dark)"
 /**
  * ThemeProvider ของ EventFlow
  *
- * ธีมจงใจอยู่ใน memory และกลับไปเป็น "ตามระบบ" ทุกครั้งที่ refresh
- * ส่วน localStorage สงวนไว้สำหรับ session ที่ผู้ใช้เลือกจดจำเท่านั้น
+ * ผู้ใช้ขอให้จำธีมข้าม refresh จึงเก็บไว้ใน localStorage ผ่าน
+ * `theme-preference-store` (useSyncExternalStore กัน hydration mismatch —
+ * SSR เห็น "system" เสมอ แล้วค่อยสลับเป็นค่าที่จำไว้ทันทีหลัง hydrate)
+ * ส่วนการกันจอกระพริบตอน paint แรกอยู่ที่ `themeInitScript` ด้านล่าง
  */
-export function ThemeProvider({
-  children,
-  defaultTheme = "system",
-}: {
-  children: React.ReactNode
-  defaultTheme?: ThemePreference
-}) {
-  const [theme, setTheme] = React.useState<ThemePreference>(defaultTheme)
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const theme = React.useSyncExternalStore(
+    subscribeThemePreference,
+    getThemePreference,
+    getThemePreferenceOnServer
+  )
   const prefersDark = useMediaQuery(DARK_QUERY)
 
   const resolvedTheme: ResolvedTheme =
@@ -45,7 +52,7 @@ export function ThemeProvider({
   }, [resolvedTheme])
 
   const value = React.useMemo<ThemeContextValue>(
-    () => ({ theme, resolvedTheme, setTheme }),
+    () => ({ theme, resolvedTheme, setTheme: setThemePreference }),
     [theme, resolvedTheme]
   )
 
@@ -62,8 +69,8 @@ export function useTheme(): ThemeContextValue {
 
 /**
  * สคริปต์ที่รันก่อน paint แรก เพื่อไม่ให้เห็นการกระพริบ (FOUC)
- * เมื่อระบบปฏิบัติการของผู้ใช้ตั้งค่าเป็น Dark Mode
  *
- * อ่านค่าจาก `matchMedia` เท่านั้น — ไม่มีการอ่าน/เขียน storage ใด ๆ
+ * อ่านธีมที่จำไว้ใน localStorage ก่อน (คีย์ต้องตรงกับ `theme-preference-store`)
+ * ถ้าไม่มีค่าจำไว้ค่อยถอยไปดู `matchMedia` ตามระบบ
  */
-export const themeInitScript = `(function(){try{if(window.matchMedia('${DARK_QUERY}').matches){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';}}catch(e){}})();`
+export const themeInitScript = `(function(){try{var s=window.localStorage.getItem('eventflow.theme');var d=(s==='light'||s==='dark')?s==='dark':window.matchMedia('${DARK_QUERY}').matches;if(d){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';}}catch(e){}})();`

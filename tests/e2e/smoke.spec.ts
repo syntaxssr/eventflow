@@ -26,6 +26,26 @@ test.describe("Design System", () => {
     await expect(html).not.toHaveClass(/dark/)
   })
 
+  test("ธีมที่เลือกจำข้ามการรีเฟรชได้", async ({ page }) => {
+    await page.goto("/design-system")
+
+    const html = page.locator("html")
+
+    await page.getByTestId("theme-toggle").click()
+    await page.getByRole("menuitemradio", { name: "มืด" }).click()
+    await expect(html).toHaveClass(/dark/)
+
+    await page.reload()
+    await expect(html).toHaveClass(/dark/)
+
+    await page.getByTestId("theme-toggle").click()
+    await page.getByRole("menuitemradio", { name: "สว่าง" }).click()
+    await expect(html).not.toHaveClass(/dark/)
+
+    await page.reload()
+    await expect(html).not.toHaveClass(/dark/)
+  })
+
   test("สลับภาษาไทย/อังกฤษได้จริง", async ({ page }) => {
     await page.goto("/design-system")
 
