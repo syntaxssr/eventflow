@@ -46,41 +46,6 @@ test.describe("Music quiz", () => {
     }
   })
 
-  test("โหมดเต็มจอครอบทั้ง viewport และออกได้", async ({ page }) => {
-    await openMusicQuiz(page)
-
-    const fullscreen = page.getByTestId("music-quiz-fullscreen")
-    await fullscreen.click()
-
-    await expect(fullscreen).toContainText("ออกจากเต็มจอ")
-    await expect(page.getByTestId("music-quiz-page")).toHaveCSS(
-      "position",
-      "fixed"
-    )
-
-    const fullscreenOverflow = await page.evaluate(() => ({
-      root: getComputedStyle(document.documentElement).overflow,
-      body: getComputedStyle(document.body).overflow,
-      scrollbarWidth: window.innerWidth - document.documentElement.clientWidth,
-    }))
-    expect(fullscreenOverflow).toEqual({
-      root: "hidden",
-      body: "hidden",
-      scrollbarWidth: 0,
-    })
-
-    // เล่นต่อได้ระหว่างเต็มจอ
-    await page.getByTestId("music-quiz-play").click()
-    await expect(page.getByTestId("music-quiz-answer-1")).toBeEnabled()
-
-    await fullscreen.click()
-    await expect(fullscreen).toContainText("เต็มจอ")
-    await expect(page.getByTestId("music-quiz-page")).not.toHaveCSS(
-      "position",
-      "fixed"
-    )
-  })
-
   test("หน้าเกมส์ทายเพลงไม่มีปัญหา accessibility ระดับ serious/critical", async ({
     page,
   }) => {
@@ -102,6 +67,106 @@ test.describe("Music quiz", () => {
         )
       )
     ).toEqual([])
+  })
+})
+
+test.describe("โซนเกมส์ — 3 การ์ดตายตัว", () => {
+  test("เลือกเกมแล้วกลับไปเลือกใหม่ได้ โดยห้องกับ PIN ไม่รีเซ็ต", async ({
+    page,
+  }) => {
+    await signIn(page)
+    await page.goto("/games")
+
+    await expect(page.getByTestId("games-picker")).toBeVisible()
+    const pin = await page.getByTestId("quiz-room-pin").textContent()
+
+    await page.getByRole("link", { name: /เกมส์ทายเพลง/ }).click()
+    await expect(page.getByTestId("music-quiz-page")).toBeVisible()
+    await expect(page.getByTestId("games-picker")).toBeHidden()
+    await expect(page.getByTestId("quiz-room-pin")).toHaveText(pin ?? "")
+
+    await page.getByRole("link", { name: "กลับไปเลือกเกมส์" }).click()
+    await expect(page.getByTestId("games-picker")).toBeVisible()
+    await expect(page.getByTestId("music-quiz-page")).toBeHidden()
+    await expect(page.getByTestId("quiz-room-pin")).toHaveText(pin ?? "")
+  })
+
+  test("โหมดเต็มจอซ่อนแถบควบคุม ออกได้ด้วย Esc เท่านั้น", async ({ page }) => {
+    await openMusicQuiz(page)
+
+    const fullscreen = page.getByTestId("games-fullscreen")
+    await expect(fullscreen).toBeVisible()
+    await fullscreen.click()
+
+    // แถบควบคุม (ย้อนกลับ + เต็มจอ) ต้องหายไปทั้งหมด ไม่มีปุ่มให้กดออก
+    await expect(page.getByTestId("games-back")).toBeHidden()
+    await expect(page.getByTestId("games-fullscreen")).toBeHidden()
+    await expect(page.getByTestId("music-quiz-page")).toBeVisible()
+    await expect(page.getByTestId("quiz-room-panel")).toBeVisible()
+
+    const fullscreenOverflow = await page.evaluate(() => ({
+      root: getComputedStyle(document.documentElement).overflow,
+      body: getComputedStyle(document.body).overflow,
+      scrollbarWidth: window.innerWidth - document.documentElement.clientWidth,
+    }))
+    expect(fullscreenOverflow).toEqual({
+      root: "hidden",
+      body: "hidden",
+      scrollbarWidth: 0,
+    })
+
+    // เล่นต่อได้ระหว่างเต็มจอ
+    await page.getByTestId("music-quiz-play").click()
+    await expect(page.getByTestId("music-quiz-answer-1")).toBeEnabled()
+
+    // ออกจากเต็มจอได้ทางเดียวคือกด Esc
+    await page.keyboard.press("Escape")
+    await expect(page.getByTestId("games-back")).toBeVisible()
+    await expect(page.getByTestId("games-fullscreen")).toBeVisible()
+    await expect(page.getByTestId("music-quiz-page")).toBeVisible()
+    await expect(page.getByTestId("quiz-room-panel")).toBeVisible()
+  })
+
+  test("ระยะขอบซ้ายขวาของ 3 การ์ดเท่ากันเสมอ ไม่ว่าเนื้อหาการ์ดเกมจะสูงแค่ไหน", async ({
+    page,
+  }) => {
+    await signIn(page)
+    await page.goto("/games")
+    await page.getByTestId("games-fullscreen").click()
+
+    // เนื้อหาสั้น (รายการเกม) ต้องไม่มี scrollbar มาแย่งพื้นที่ฝั่งขวา
+    const pickerGutters = await page.evaluate(() => {
+      const left = document
+        .querySelector('[data-testid="games-picker"]')!
+        .getBoundingClientRect()
+      const right = document
+        .querySelector('[data-testid="quiz-room-panel"]')!
+        .getBoundingClientRect()
+      return {
+        left: Math.round(left.left),
+        right: Math.round(window.innerWidth - right.right),
+      }
+    })
+    expect(pickerGutters.left).toBe(pickerGutters.right)
+
+    // เนื้อหายาว (การ์ดเกมทายเพลง) ต้องได้ระยะขอบเท่าเดิม แม้เนื้อหาจะสูงจน scroll
+    await page.getByRole("link", { name: /เกมส์ทายเพลง/ }).click()
+    await expect(page.getByTestId("music-quiz-page")).toBeVisible()
+
+    const quizGutters = await page.evaluate(() => {
+      const left = document
+        .querySelector('[data-testid="music-quiz-page"]')!
+        .getBoundingClientRect()
+      const right = document
+        .querySelector('[data-testid="quiz-room-panel"]')!
+        .getBoundingClientRect()
+      return {
+        left: Math.round(left.left),
+        right: Math.round(window.innerWidth - right.right),
+      }
+    })
+    expect(quizGutters.left).toBe(quizGutters.right)
+    expect(quizGutters.left).toBe(pickerGutters.left)
   })
 })
 

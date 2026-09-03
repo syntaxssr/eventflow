@@ -1,7 +1,6 @@
-.page {
+.card {
   position: relative;
   isolation: isolate;
-  min-height: calc(100dvh - 4rem);
   overflow: hidden;
   color: #f2f2f0;
   background:
@@ -10,7 +9,7 @@
     #1c1c1c;
 }
 
-.page::before {
+.card::before {
   position: absolute;
   z-index: -1;
   inset: 0;
@@ -100,72 +99,4 @@
 
 @media (prefers-reduced-motion: reduce) {
   .wavePlaying .waveBar { animation: none; }
-}
-
-.presentationPage {
-  position: fixed;
-  z-index: 60;
-  inset: 0;
-  width: 100vw;
-  height: 100dvh;
-  min-height: 100dvh;
-  overflow: hidden;
-}
-
-.presentationShell {
-  width: min(100%, 1500px);
-  margin-inline: auto;
-  padding-block: clamp(0.5rem, 2vh, 1.25rem);
-}
-
-.presentationCard {
-  height: 100%;
-  overflow: hidden;
-  border: 0;
-  background: transparent !important;
-  box-shadow: none;
-}
-
-/* CSS Module ชนะ utility ของ Tailwind — ซ่อนปกหน้าเพลงจากที่นี่เท่านั้น */
-.presentationHidden {
-  display: none !important;
-}
-
-.presentationContent {
-  height: 100%;
-  overflow: hidden;
-  gap: clamp(0.5rem, 1.5vh, 1.15rem) !important;
-  padding: clamp(0.5rem, 1.8vh, 1.25rem) clamp(1rem, 4vw, 4rem) !important;
-}
-
-.presentationContent > * + * {
-  margin-top: 0 !important;
-}
-
-.presentationHeading {
-  font-size: clamp(1.75rem, 5.4vh, 3.5rem) !important;
-  line-height: 1.12;
-}
-
-.presentationWave {
-  height: clamp(3.5rem, 11vh, 8rem);
-  flex: none;
-  overflow: hidden;
-  gap: clamp(0.3rem, 0.7vw, 0.6rem);
-}
-
-.presentationWave .waveBar {
-  width: clamp(0.3rem, 0.6vw, 0.6rem);
-  scale: 1 1.6;
-}
-
-.presentationTimer {
-  min-width: clamp(4.5rem, 8vw, 7rem);
-  font-size: clamp(1.25rem, 3.2vh, 2rem);
-}
-
-.presentationAnswer {
-  min-height: clamp(3.25rem, 8vh, 5.25rem);
-  padding-inline: clamp(0.9rem, 1.8vw, 1.75rem);
-  font-size: clamp(1.125rem, 2.6vh, 1.75rem);
 }

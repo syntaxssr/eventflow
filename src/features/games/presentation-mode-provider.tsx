@@ -29,9 +29,12 @@ export function PresentationModeProvider({
       if (!document.fullscreenElement) setPresentationMode(false)
     }
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && presentationMode && !document.fullscreenElement) {
-        setPresentationMode(false)
-      }
+      if (event.key !== "Escape" || !presentationMode) return
+      // ปิดเองแทนที่จะรอ fullscreenchange — เบราว์เซอร์บางตัว (เช่น Chromium
+      // ที่ควบคุมด้วยอัตโนมัติ) ให้ requestFullscreen() ผ่านแต่ไม่ผูก Esc
+      // เข้ากับ native fullscreen จริง ๆ ปุ่ม Esc จึงต้องปิดได้เองเสมอ
+      setPresentationMode(false)
+      if (document.fullscreenElement) void document.exitFullscreen()
     }
     document.addEventListener("fullscreenchange", handleFullscreenChange)
     window.addEventListener("keydown", handleKeyDown)

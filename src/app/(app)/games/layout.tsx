@@ -1,12 +1,12 @@
-import { GamesLayoutGrid } from "@/features/games/games-layout-grid"
+import { GamesShell } from "@/features/games/games-shell"
 import { PresentationModeProvider } from "@/features/games/presentation-mode-provider"
 import { QuizRoomProvider } from "@/features/games/quiz-room-provider"
 
 /**
- * โซนเกมส์ = 2 การ์ดเสมอ — เกมที่กำลังเล่นทางซ้าย คนในห้องทางขวา
+ * โซนเกมส์ = 3 การ์ดตายตัวเสมอ — แถบควบคุมบนสุด, เกมที่กำลังเล่นซ้าย, คนในห้องขวา
  *
- * ห้องอยู่บน layout จึงไม่หลุดเวลาเปลี่ยนหน้าเกม รายชื่อผู้เล่นคงอยู่ตลอดงาน
- * โหมดเต็มจอก็อยู่บนนี้เช่นกัน เพื่อให้ครอบทั้งสองการ์ดพร้อมกันได้
+ * ห้องกับโหมดเต็มจออยู่บน layout จึงไม่หลุดเวลาเปลี่ยนหน้าเกม — สลับเกม
+ * ในหน้า /games/* คือการเปลี่ยนแค่เนื้อหาในการ์ดเกม โครง 3 การ์ดไม่ขยับ
  */
 export default function GamesLayout({
   children,
@@ -16,7 +16,7 @@ export default function GamesLayout({
   return (
     <QuizRoomProvider>
       <PresentationModeProvider>
-        <GamesLayoutGrid>{children}</GamesLayoutGrid>
+        <GamesShell>{children}</GamesShell>
       </PresentationModeProvider>
     </QuizRoomProvider>
   )
