@@ -19,29 +19,33 @@ type Player = {
   joinedAt: number
 }
 
-/** รอบที่กำลังเล่น — โฮสต์เป็นคนกำหนด ผู้เล่นเห็นแค่ช้อยส์ */
+/** รอบที่กำลังเล่น — เฉลยอยู่ในห้องเท่านั้น ไม่ถูกส่งกลับไปให้ผู้เล่น */
 type Round = {
   index: number
-  choices: string[]
+  durationSeconds: number
   /** true = ยังกดตอบได้ */
   open: boolean
+  answer: string
 }
+
+type PublicRound = Omit<Round, "answer">
 
 type ClientMessage =
   | { type: "join"; role: "host" }
   | { type: "join"; role: "player"; playerId: string; name: string }
   | { type: "kick"; playerId: string }
   | { type: "round"; round: Round }
-  | { type: "answer"; choiceIndex: number }
+  | { type: "answer"; answer: string }
 
 type ServerMessage =
   | {
       type: "state"
       players: Player[]
       hostOnline: boolean
-      round: Round | null
+      round: PublicRound | null
       answeredPlayerIds: string[]
-      myAnswer: number | null
+      myAnswer: string | null
+      myAnswerCorrect: boolean | null
     }
   | { type: "rejected"; reason: "full" | "duplicate-name" | "bad-name" }
   | { type: "kicked" }
@@ -54,13 +58,21 @@ function cleanName(raw: string) {
   return raw.trim().replace(/\s+/g, " ").slice(0, 20)
 }
 
+function cleanAnswer(raw: string) {
+  return raw.trim().replace(/\s+/g, " ").slice(0, 120)
+}
+
+function normalizeAnswer(raw: string) {
+  return cleanAnswer(raw).toLocaleLowerCase("th")
+}
+
 export default class QuizRoom implements Party.Server {
   constructor(readonly room: Party.Room) {}
 
   private players = new Map<string, Player>()
   private round: Round | null = null
-  /** playerId → ช้อยส์ที่เลือกในรอบปัจจุบัน */
-  private answers = new Map<string, number>()
+  /** playerId → ชื่อเพลงที่พิมพ์ในรอบปัจจุบัน */
+  private answers = new Map<string, string>()
 
   onMessage(raw: string, sender: Connection) {
     let message: ClientMessage
@@ -107,15 +119,11 @@ export default class QuizRoom implements Party.Server {
       case "answer": {
         const state = sender.state
         if (state?.role !== "player" || !this.round?.open) return
-        if (
-          message.choiceIndex < 0 ||
-          message.choiceIndex >= this.round.choices.length
-        ) {
-          return
-        }
+        const answer = cleanAnswer(message.answer)
+        if (!answer) return
         // ตอบได้ครั้งเดียวต่อรอบ
         if (this.answers.has(state.playerId)) return
-        this.answers.set(state.playerId, message.choiceIndex)
+        this.answers.set(state.playerId, answer)
         this.broadcastState()
         return
       }
@@ -174,8 +182,10 @@ export default class QuizRoom implements Party.Server {
 
   private stateFor(connection: Connection): ServerMessage {
     const state = connection.state
-    const myAnswer =
-      state?.role === "player" ? (this.answers.get(state.playerId) ?? null) : null
+    const myAnswer = state?.role === "player" ? (this.answers.get(state.playerId) ?? null) : null
+    const myAnswerCorrect = myAnswer && this.round
+      ? normalizeAnswer(myAnswer) === normalizeAnswer(this.round.answer)
+      : null
 
     return {
       type: "state",
@@ -183,9 +193,16 @@ export default class QuizRoom implements Party.Server {
         (a, b) => a.joinedAt - b.joinedAt
       ),
       hostOnline: this.hostOnline(),
-      round: this.round,
+      round: this.round
+        ? {
+            index: this.round.index,
+            durationSeconds: this.round.durationSeconds,
+            open: this.round.open,
+          }
+        : null,
       answeredPlayerIds: [...this.answers.keys()],
       myAnswer,
+      myAnswerCorrect,
     }
   }
 

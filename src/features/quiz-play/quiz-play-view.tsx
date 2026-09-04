@@ -6,6 +6,7 @@ import {
   CheckCircle2Icon,
   LoaderCircleIcon,
   Music2Icon,
+  SendIcon,
   UsersRoundIcon,
   WifiOffIcon,
 } from "lucide-react"
@@ -35,7 +36,7 @@ const REJECT_MESSAGE: Record<string, string> = {
 /**
  * จอผู้เข้าร่วม — ออกแบบสำหรับมือถือ
  *
- * จอนี้ไม่แสดงเนื้อเกม มีแค่ช้อยส์ให้กด ส่วนเพลง คำถาม และเฉลยอยู่บนจอโฮสต์
+ * จอนี้ไม่แสดงเฉลย ผู้เล่นพิมพ์ชื่อเพลงขณะโฮสต์เปิดช่วงอินโทร
  */
 export function QuizPlayView() {
   const searchParams = useSearchParams()
@@ -49,11 +50,14 @@ export function QuizPlayView() {
   const [playerCount, setPlayerCount] = React.useState(0)
   const [hostOnline, setHostOnline] = React.useState(false)
   const [round, setRound] = React.useState<QuizRoomRound | null>(null)
-  const [myAnswer, setMyAnswer] = React.useState<number | null>(null)
+  const [myAnswer, setMyAnswer] = React.useState<string | null>(null)
+  const [myAnswerCorrect, setMyAnswerCorrect] = React.useState<boolean | null>(null)
+  const [answerText, setAnswerText] = React.useState("")
   const [online, setOnline] = React.useState(false)
 
   const playerIdRef = React.useRef("")
   const nameRef = React.useRef("")
+  const roundIndexRef = React.useRef<number | null>(null)
 
   const socket = usePartySocket({
     host: PARTYKIT_HOST,
@@ -78,10 +82,16 @@ export function QuizPlayView() {
       if (!message) return
 
       if (message.type === "state") {
+        const nextRoundIndex = message.round?.index ?? null
+        if (nextRoundIndex !== roundIndexRef.current) {
+          roundIndexRef.current = nextRoundIndex
+          setAnswerText("")
+        }
         setPlayerCount(message.players.filter((player) => player.connected).length)
         setHostOnline(message.hostOnline)
         setRound(message.round)
         setMyAnswer(message.myAnswer)
+        setMyAnswerCorrect(message.myAnswerCorrect)
         setJoinedName(nameRef.current)
         setPhase("playing")
         setError("")
@@ -118,11 +128,13 @@ export function QuizPlayView() {
     socket.reconnect()
   }
 
-  const answer = (choiceIndex: number) => {
-    if (!round?.open || myAnswer !== null) return
+  const answer = (event: React.FormEvent) => {
+    event.preventDefault()
+    if (!round?.open || myAnswer !== null || !answerText.trim()) return
     // อัปเดตทันทีไม่รอ server ตอบกลับ ผู้เล่นจะได้เห็นว่ากดติดแล้ว
-    setMyAnswer(choiceIndex)
-    socket.send(JSON.stringify({ type: "answer", choiceIndex }))
+    const value = answerText.trim()
+    setMyAnswer(value)
+    socket.send(JSON.stringify({ type: "answer", answer: value }))
   }
 
   const leave = () => {
@@ -130,6 +142,8 @@ export function QuizPlayView() {
     setPhase("form")
     setRound(null)
     setMyAnswer(null)
+    setMyAnswerCorrect(null)
+    setAnswerText("")
   }
 
   if (phase === "playing") {
@@ -161,41 +175,52 @@ export function QuizPlayView() {
         )}
 
         {round ? (
-          <div className="flex flex-1 flex-col gap-3" data-testid="play-choices">
-            <p className="text-muted-foreground text-center text-sm" aria-live="polite">
-              {canAnswer
-                ? "เลือกคำตอบของคุณ"
-                : myAnswer !== null
-                  ? "ส่งคำตอบแล้ว รอผลบนจอใหญ่"
-                  : "รอผู้ดำเนินรายการเปิดรอบถัดไป"}
-            </p>
-            {round.choices.map((choice, index) => (
-              <button
-                key={`${round.index}-${choice}`}
-                type="button"
-                disabled={!canAnswer}
-                onClick={() => answer(index)}
-                className={cn(
-                  "flex min-h-16 items-center gap-3 rounded-2xl border px-4 text-left text-base font-medium transition-colors",
-                  "disabled:cursor-not-allowed disabled:opacity-60",
-                  myAnswer === index
-                    ? "border-general-green bg-general-green/15"
-                    : "bg-card hover:border-general-blue"
-                )}
-                data-testid={`play-choice-${index}`}
-              >
-                <span className="bg-muted flex size-8 shrink-0 items-center justify-center rounded-lg text-sm font-semibold">
-                  {String.fromCharCode(65 + index)}
-                </span>
-                <span className="min-w-0 flex-1">{choice}</span>
-                {myAnswer === index ? (
-                  <CheckCircle2Icon
-                    className="text-general-green size-5 shrink-0"
-                    aria-label="คำตอบที่ส่งแล้ว"
-                  />
-                ) : null}
-              </button>
-            ))}
+          <div className="flex flex-1 flex-col justify-center gap-4" data-testid="play-song-answer">
+            <div className="rounded-3xl border border-general-blue/20 bg-general-blue/8 p-5 text-center">
+              <Music2Icon className="text-general-blue mx-auto size-8" aria-hidden="true" />
+              <p className="mt-3 text-lg font-bold">ทายชื่อเพลง</p>
+              <p className="text-muted-foreground mt-1 text-sm" aria-live="polite">
+                {canAnswer
+                  ? `อินโทรกำลังเล่น ${round.durationSeconds} วินาที · พิมพ์คำตอบของคุณ`
+                  : myAnswer !== null
+                    ? myAnswerCorrect
+                      ? "ตอบถูกแล้ว! รอเฉลยบนจอใหญ่"
+                      : "ส่งคำตอบแล้ว รอเฉลยบนจอใหญ่"
+                    : "รอผู้ดำเนินรายการเปิดรอบถัดไป"}
+              </p>
+            </div>
+
+            <form className="space-y-2" onSubmit={answer}>
+              <Label htmlFor="play-song-title">ชื่อเพลงที่คุณได้ยิน</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="play-song-title"
+                  value={answerText}
+                  onChange={(event) => setAnswerText(event.target.value)}
+                  disabled={!canAnswer}
+                  autoComplete="off"
+                  maxLength={120}
+                  placeholder="พิมพ์ชื่อเพลง"
+                  className="h-12 min-w-0 flex-1"
+                />
+                <Button
+                  type="submit"
+                  disabled={!canAnswer || !answerText.trim()}
+                  className="h-12 shrink-0"
+                  data-testid="play-answer-submit"
+                >
+                  <SendIcon className="size-4" aria-hidden="true" />
+                  ส่ง
+                </Button>
+              </div>
+            </form>
+
+            {myAnswer !== null ? (
+              <p className={cn("flex items-center justify-center gap-2 text-sm", myAnswerCorrect ? "text-general-green" : "text-muted-foreground")}>
+                <CheckCircle2Icon className="size-4" aria-hidden="true" />
+                ส่งคำตอบ “{myAnswer}” แล้ว
+              </p>
+            ) : null}
           </div>
         ) : (
           <p className="text-muted-foreground flex-1 py-16 text-center text-sm">

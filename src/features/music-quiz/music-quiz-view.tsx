@@ -3,15 +3,14 @@
 import * as React from "react"
 import Link from "next/link"
 import {
-  CheckCircle2Icon,
   ChevronLeftIcon,
   Clock3Icon,
+  FlameIcon,
   Music2Icon,
-  PauseIcon,
   PlayIcon,
-  RotateCcwIcon,
+  SparklesIcon,
   Volume2Icon,
-  XCircleIcon,
+  ZapIcon,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -22,35 +21,28 @@ import { useQuizRoom } from "@/features/games/quiz-room-provider"
 import { cn } from "@/lib/utils"
 import styles from "./music-quiz.module.css"
 
-type QuizRound = {
-  title: string
-  choices: readonly string[]
-  answer: number
+type QuizSong = { title: string }
+
+type Difficulty = {
+  id: "very-hard" | "hard" | "normal" | "easy"
+  label: string
+  thaiLabel: string
+  seconds: number
+  icon: typeof ZapIcon
 }
 
-const ROUND_DURATION_SECONDS = 12
+const QUIZ_SONGS: readonly QuizSong[] = [
+  { title: "แสงแรกของวัน" },
+  { title: "ปลายทางของเรา" },
+  { title: "หัวใจสีฟ้า" },
+  { title: "คืนที่เราร้องเพลง" },
+]
 
-const QUIZ_ROUNDS: readonly QuizRound[] = [
-  {
-    title: "แสงแรกของวัน",
-    choices: ["คืนที่ดาวเต็มฟ้า", "แสงแรกของวัน", "เราในวันวาน", "ทางที่ไม่มีเธอ"],
-    answer: 1,
-  },
-  {
-    title: "ปลายทางของเรา",
-    choices: ["ปลายทางของเรา", "ลมที่พัดผ่าน", "ฝากดาวไว้กับเธอ", "วันธรรมดาที่พิเศษ"],
-    answer: 0,
-  },
-  {
-    title: "หัวใจสีฟ้า",
-    choices: ["กลับมาได้ไหม", "หัวใจสีฟ้า", "เธอในความทรงจำ", "เรื่องเล่าคืนนี้"],
-    answer: 1,
-  },
-  {
-    title: "คืนที่เราร้องเพลง",
-    choices: ["คืนที่เราร้องเพลง", "ไกลแค่ไหน", "สิ่งดี ๆ", "เริ่มต้นใหม่"],
-    answer: 0,
-  },
+const DIFFICULTIES: readonly Difficulty[] = [
+  { id: "very-hard", label: "VERY HARD", thaiLabel: "ฟัง 1 วินาที", seconds: 1, icon: ZapIcon },
+  { id: "hard", label: "HARD", thaiLabel: "ฟัง 3 วินาที", seconds: 3, icon: FlameIcon },
+  { id: "normal", label: "NORMAL", thaiLabel: "ฟัง 10 วินาที", seconds: 10, icon: Music2Icon },
+  { id: "easy", label: "EASY", thaiLabel: "ฟัง 15 วินาที", seconds: 15, icon: SparklesIcon },
 ]
 
 const WAVE_HEIGHTS = [
@@ -63,36 +55,28 @@ function formatTime(seconds: number) {
   return `0:${String(seconds).padStart(2, "0")}`
 }
 
-/**
- * เนื้อหาการ์ดเกมเมื่อเลือกเกมส์ทายเพลง — เรนเดอร์อยู่ในการ์ดเกมของ GamesShell
- *
- * ไม่มีแถบควบคุมหรือโหมดเต็มจอของตัวเอง — ของพวกนั้นอยู่ที่ GamesShell
- * ที่นี่มีแค่ปุ่มเล็ก ๆ "กลับไปเลือกเกมส์" สลับเนื้อหาการ์ดกลับไปที่รายการเกม
- */
+/** การ์ดโฮสต์: เลือกเวลาของอินโทร แล้วผู้เล่นพิมพ์ชื่อเพลงจากมือถือ */
 export function MusicQuizView() {
   const [roundIndex, setRoundIndex] = React.useState(0)
-  const [secondsLeft, setSecondsLeft] = React.useState(ROUND_DURATION_SECONDS)
+  const [difficulty, setDifficulty] = React.useState<Difficulty | null>(null)
+  const [secondsLeft, setSecondsLeft] = React.useState(0)
   const [isPlaying, setIsPlaying] = React.useState(false)
-  const [selectedAnswer, setSelectedAnswer] = React.useState<number | null>(null)
-  const [timedOut, setTimedOut] = React.useState(false)
-  const announcementRef = React.useRef<HTMLParagraphElement>(null)
+  const [hasFinished, setHasFinished] = React.useState(false)
 
-  const { publishRound } = useQuizRoom()
-
-  const round = QUIZ_ROUNDS[roundIndex]
-  const isAnswered = selectedAnswer !== null || timedOut
-  const isCorrect = selectedAnswer === round.answer
-  const progress = ((ROUND_DURATION_SECONDS - secondsLeft) / ROUND_DURATION_SECONDS) * 100
+  const { answeredPlayerIds, publishRound } = useQuizRoom()
+  const song = QUIZ_SONGS[roundIndex % QUIZ_SONGS.length]
+  const duration = difficulty?.seconds ?? 0
+  const progress = duration > 0 ? ((duration - secondsLeft) / duration) * 100 : 0
 
   React.useEffect(() => {
-    if (!isPlaying || isAnswered) return
+    if (!isPlaying) return
 
     const timer = window.setInterval(() => {
       setSecondsLeft((current) => {
         if (current <= 1) {
           window.clearInterval(timer)
           setIsPlaying(false)
-          setTimedOut(true)
+          setHasFinished(true)
           return 0
         }
         return current - 1
@@ -100,181 +84,122 @@ export function MusicQuizView() {
     }, 1000)
 
     return () => window.clearInterval(timer)
-  }, [isAnswered, isPlaying])
+  }, [isPlaying])
 
-  // ผู้เล่นบนมือถือเห็นเฉพาะช้อยส์ของรอบนี้ และกดตอบได้เฉพาะช่วงที่เปิดรับ
   React.useEffect(() => {
     publishRound({
       index: roundIndex,
-      choices: [...round.choices],
-      open: isPlaying && !isAnswered,
+      durationSeconds: duration,
+      open: isPlaying,
+      answer: song.title,
     })
-  }, [publishRound, roundIndex, round.choices, isPlaying, isAnswered])
+  }, [duration, isPlaying, publishRound, roundIndex, song.title])
 
-  const startOrPause = () => {
-    if (isAnswered) return
-    setIsPlaying((current) => !current)
-  }
-
-  const selectAnswer = (answerIndex: number) => {
-    if (!isPlaying || isAnswered) return
-    setSelectedAnswer(answerIndex)
-    setIsPlaying(false)
+  const startRound = (nextDifficulty: Difficulty) => {
+    if (isPlaying || hasFinished) return
+    setDifficulty(nextDifficulty)
+    setSecondsLeft(nextDifficulty.seconds)
+    setIsPlaying(true)
   }
 
   const nextRound = () => {
-    setRoundIndex((current) => (current + 1) % QUIZ_ROUNDS.length)
-    setSecondsLeft(ROUND_DURATION_SECONDS)
-    setSelectedAnswer(null)
-    setTimedOut(false)
+    setRoundIndex((current) => current + 1)
+    setDifficulty(null)
+    setSecondsLeft(0)
     setIsPlaying(false)
+    setHasFinished(false)
   }
 
-  const resetRound = () => {
-    setSecondsLeft(ROUND_DURATION_SECONDS)
-    setSelectedAnswer(null)
-    setTimedOut(false)
-    setIsPlaying(false)
-  }
-
-  const status = timedOut
-    ? `หมดเวลา — เฉลยคือ “${round.title}”`
-    : selectedAnswer !== null
-      ? isCorrect
-        ? "ตอบถูก! ทีมของคุณได้รับ 100 คะแนน"
-        : `เฉลย: “${round.title}”`
-      : isPlaying
-        ? "กำลังเล่นอินโทร เลือกคำตอบก่อนเวลาหมด"
-        : "กดเริ่มฟังอินโทร แล้วเลือกคำตอบที่ใช่"
+  const status = isPlaying
+    ? `กำลังเล่นตัวอย่าง ${duration} วินาที — ผู้เล่นพิมพ์ชื่อเพลงจากมือถือได้เลย`
+    : hasFinished
+      ? `หมดเวลา · เฉลยคือ “${song.title}”`
+      : "เลือกเวลาของอินโทรเพื่อเริ่มรอบ"
 
   return (
-    <Card
-      className={cn(
-        styles.card,
-        "h-full border-white/15 text-white shadow-2xl shadow-black/25"
-      )}
-      data-testid="music-quiz-page"
-    >
-      <CardContent className="relative z-10 h-full space-y-5 overflow-y-auto p-5 sm:p-7">
+    <Card className={cn(styles.card, "h-full border-white/15 text-white shadow-2xl shadow-black/25")} data-testid="music-quiz-page">
+      <CardContent className="relative z-10 flex h-full min-h-0 flex-col overflow-y-auto p-5 sm:p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="-ml-2 text-white hover:bg-white/10 hover:text-white"
-          >
+          <Button asChild variant="ghost" size="sm" className="-ml-2 text-white hover:bg-white/10 hover:text-white">
             <Link href={ROUTES.games}>
               <ChevronLeftIcon className="size-4" aria-hidden="true" />
               กลับไปเลือกเกมส์
             </Link>
           </Button>
-          <span className="bg-white/10 text-white inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-sm text-white/80">
             <span className="bg-general-green size-2 rounded-full" aria-hidden="true" />
-            กำลังเล่นสด
+            รอบ {String(roundIndex + 1).padStart(2, "0")}
           </span>
         </div>
 
-        <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/15 pb-5">
-          <div>
-            <p className="text-general-blue mb-1 flex items-center gap-2 text-sm font-semibold tracking-wide">
-              <Music2Icon className="size-4" aria-hidden="true" />
-              MUSIC QUIZ · LIVE GAME
-            </p>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">ทายเพลงให้ทันอินโทร</h1>
-            <p className="mt-2 max-w-2xl text-sm text-white/72 sm:text-base">
-              ฟังตัวอย่างเพลงสั้น ๆ แล้วเลือกคำตอบที่ใช่ให้ทันเวลา
-            </p>
-          </div>
-          <div className="rounded-xl border border-white/15 bg-white/10 px-4 py-2 text-sm text-white/75">
-            <span className="font-semibold text-white">รอบ {String(roundIndex + 1).padStart(2, "0")}</span>
-            <span aria-hidden="true"> / </span>{QUIZ_ROUNDS.length}
-          </div>
-        </header>
-
-        <div className="grid items-center gap-5 sm:grid-cols-[auto_minmax(0,1fr)]">
-          <div className={styles.cover} aria-hidden="true">
-            <Volume2Icon className="relative z-10 size-8 text-white" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm text-white/60">กำลังฟังอินโทร</p>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-              {isAnswered ? round.title : "เพลงนี้ชื่ออะไร?"}
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-white/70">เพลงตัวอย่างสำหรับกิจกรรมนี้</p>
-          </div>
-        </div>
-
-        <div className={cn(styles.wave, isPlaying && styles.wavePlaying)} aria-hidden="true">
-          {WAVE_HEIGHTS.map((height, index) => <span key={index} className={cn(styles.waveBar, height)} />)}
-        </div>
-
-        <div className="space-y-3">
-          <div className="flex items-center gap-3">
-            <Button
-              type="button"
-              size="icon"
-              className="size-12 shrink-0 rounded-full bg-general-purple text-white hover:bg-general-purple/85"
-              onClick={startOrPause}
-              disabled={isAnswered}
-              aria-label={isPlaying ? "หยุดฟังอินโทร" : "เริ่มฟังอินโทร"}
-              data-testid="music-quiz-play"
-            >
-              {isPlaying ? <PauseIcon className="size-5" aria-hidden="true" /> : <PlayIcon className="size-5" aria-hidden="true" />}
-            </Button>
-            <div className="min-w-0 flex-1 space-y-1.5">
-              <Progress value={progress} aria-label="เวลาที่ผ่านไปของอินโทร" className="h-2 bg-white/15 [&>div]:bg-general-blue" />
-              <div className="flex justify-between text-xs tabular-nums text-white/55">
-                <span>{formatTime(ROUND_DURATION_SECONDS - secondsLeft)}</span>
-                <span>{formatTime(ROUND_DURATION_SECONDS)}</span>
-              </div>
+        <div className="my-auto grid gap-7 py-6 lg:grid-cols-[minmax(12rem,0.72fr)_minmax(0,1.28fr)] lg:items-center">
+          <section className="flex flex-col items-center text-center lg:items-start lg:text-left">
+            <div className={cn(styles.cover, isPlaying && styles.coverPlaying)} aria-hidden="true">
+              <div className={styles.record}><Volume2Icon className="relative z-10 size-9 text-white" /></div>
             </div>
-            <span className="flex min-w-14 items-center justify-center gap-1 rounded-lg bg-white/10 px-2 py-2 text-sm font-semibold tabular-nums">
-              <Clock3Icon className="size-4 text-general-yellow" aria-hidden="true" />
-              {secondsLeft}
-            </span>
-          </div>
+            <p className="mt-5 text-sm font-medium text-white/58">MUSIC GUESSING GAME</p>
+            <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">ทายชื่อเพลง</h1>
+            <p className="mt-3 max-w-sm text-sm leading-6 text-white/68">
+              เลือกช่วงเวลาที่อยากให้ฟัง แล้วให้ทุกคนในห้องพิมพ์ชื่อเพลงจากมือถือ
+            </p>
+          </section>
+
+          <section className="min-w-0" aria-labelledby="difficulty-heading">
+            <div className="mb-3 flex items-end justify-between gap-3">
+              <div>
+                <p id="difficulty-heading" className="text-sm font-semibold text-white">เลือกความยาก</p>
+                <p className="mt-1 text-xs text-white/55">ยิ่งฟังสั้น ยิ่งทายยาก</p>
+              </div>
+              {difficulty ? <span className="text-general-blue text-xs font-semibold tabular-nums">{formatTime(secondsLeft)} / {formatTime(duration)}</span> : null}
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2" data-testid="music-quiz-difficulties">
+              {DIFFICULTIES.map((item) => {
+                const Icon = item.icon
+                const isSelected = difficulty?.id === item.id
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => startRound(item)}
+                    disabled={isPlaying || hasFinished}
+                    className={cn(styles.difficultyButton, isSelected && styles.difficultyButtonSelected)}
+                    data-testid={`music-quiz-difficulty-${item.id}`}
+                    aria-label={`${item.label}, ${item.thaiLabel}`}
+                  >
+                    <span className={styles.difficultyIcon} aria-hidden="true"><Icon className="size-5" /></span>
+                    <span className="min-w-0 text-left">
+                      <span className="block text-sm font-bold tracking-wide">{item.label}</span>
+                      <span className="mt-0.5 block text-xs text-white/60">{item.thaiLabel}</span>
+                    </span>
+                    <PlayIcon className="ml-auto size-4 shrink-0 text-white/65" aria-hidden="true" />
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="mt-5 rounded-2xl border border-white/10 bg-black/16 p-4">
+              <div className={cn(styles.wave, isPlaying && styles.wavePlaying)} aria-hidden="true">
+                {WAVE_HEIGHTS.map((height, index) => <span key={index} className={cn(styles.waveBar, height)} />)}
+              </div>
+              <Progress value={progress} aria-label="เวลาที่ผ่านไปของตัวอย่างเพลง" className="mt-2 h-2 bg-white/12 [&>div]:bg-general-blue" />
+            </div>
+          </section>
         </div>
 
-        <div className="border-t border-white/12 pt-5">
-          <p className="mb-3 text-sm font-semibold">เลือกชื่อเพลงที่ตรงกับอินโทรนี้</p>
-          <div className="grid gap-3 sm:grid-cols-2" data-testid="music-quiz-answers">
-            {round.choices.map((choice, index) => {
-              const revealCorrect = isAnswered && index === round.answer
-              const revealWrong = selectedAnswer === index && index !== round.answer
-              return (
-                <button
-                  key={choice}
-                  type="button"
-                  disabled={!isPlaying || isAnswered}
-                  onClick={() => selectAnswer(index)}
-                  className={cn(
-                    "flex min-h-12 items-center gap-3 rounded-xl border border-white/15 bg-white/5 px-3 text-left text-sm font-medium text-white transition-colors duration-200 hover:border-general-blue hover:bg-white/10 disabled:cursor-not-allowed disabled:hover:border-white/15 disabled:hover:bg-white/5",
-                    revealCorrect && styles.answerCorrect,
-                    revealWrong && styles.answerWrong
-                  )}
-                  data-testid={`music-quiz-answer-${index}`}
-                >
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-white/10 text-xs text-white/70">{String.fromCharCode(65 + index)}</span>
-                  <span className="min-w-0 flex-1">{choice}</span>
-                  {revealCorrect ? <CheckCircle2Icon className="size-5 shrink-0 text-general-green" aria-label="คำตอบที่ถูก" /> : null}
-                  {revealWrong ? <XCircleIcon className="size-5 shrink-0 text-general-red" aria-label="คำตอบที่เลือกไม่ถูก" /> : null}
-                </button>
-              )
-            })}
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/6 px-4 py-3">
+          <div className="min-w-0">
+            <p className="flex items-center gap-2 text-sm font-medium text-white" aria-live="polite">
+              <Clock3Icon className="text-general-yellow size-4 shrink-0" aria-hidden="true" />
+              {status}
+            </p>
+            {isPlaying ? <p className="mt-1 text-xs text-white/52">ตอบแล้ว {answeredPlayerIds.length} คน</p> : null}
           </div>
-        </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/15 px-4 py-3">
-          <p ref={announcementRef} className="text-sm text-white/80" aria-live="polite">{status}</p>
-          {isAnswered ? (
-            <Button type="button" onClick={nextRound} className="bg-general-green text-black hover:bg-general-green/85" data-testid="music-quiz-next-round">
+          {hasFinished ? (
+            <Button type="button" onClick={nextRound} className="bg-general-green shrink-0 text-black hover:bg-general-green/85" data-testid="music-quiz-next-round">
               รอบถัดไป
             </Button>
-          ) : (
-            <Button type="button" variant="ghost" onClick={resetRound} className="text-white hover:bg-white/10 hover:text-white">
-              <RotateCcwIcon className="size-4" aria-hidden="true" />เริ่มรอบใหม่
-            </Button>
-          )}
+          ) : null}
         </div>
       </CardContent>
     </Card>

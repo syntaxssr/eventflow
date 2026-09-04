@@ -10,24 +10,25 @@ async function openMusicQuiz(page: Parameters<typeof signIn>[0]) {
 }
 
 test.describe("Music quiz", () => {
-  test("เริ่มฟัง เลือกคำตอบ และไปยังรอบถัดไปได้", async ({ page }) => {
+  test("เลือกเวลาฟังอินโทร แล้วปิดรอบและไปยังรอบถัดไปได้", async ({ page }) => {
     await openMusicQuiz(page)
 
-    const play = page.getByTestId("music-quiz-play")
-    const correctAnswer = page.getByTestId("music-quiz-answer-1")
+    const veryHard = page.getByTestId("music-quiz-difficulty-very-hard")
+    const normal = page.getByTestId("music-quiz-difficulty-normal")
 
-    await expect(correctAnswer).toBeDisabled()
-    await play.click()
-    await expect(correctAnswer).toBeEnabled()
-    await correctAnswer.click()
+    await expect(page.getByTestId("music-quiz-difficulties").getByRole("button")).toHaveCount(4)
+    await expect(veryHard).toContainText("VERY HARD")
+    await expect(normal).toContainText("ฟัง 10 วินาที")
+    await veryHard.click()
 
     await expect(
-      page.getByText("ตอบถูก! ทีมของคุณได้รับ 100 คะแนน")
+      page.getByText("กำลังเล่นตัวอย่าง 1 วินาที", { exact: false })
     ).toBeVisible()
-    await expect(correctAnswer).toBeDisabled()
+    await expect(normal).toBeDisabled()
+    await expect(page.getByTestId("music-quiz-next-round")).toBeVisible({ timeout: 2_500 })
     await page.getByTestId("music-quiz-next-round").click()
     await expect(page.getByText("รอบ 02")).toBeVisible()
-    await expect(correctAnswer).toBeDisabled()
+    await expect(normal).toBeEnabled()
   })
 
   test("หน้าจอไม่ล้นทั้งมือถือแนวตั้งและแนวนอน", async ({ page }) => {
@@ -38,7 +39,7 @@ test.describe("Music quiz", () => {
       { width: 844, height: 390 },
     ]) {
       await page.setViewportSize(viewport)
-      await expect(page.getByTestId("music-quiz-play")).toBeVisible()
+      await expect(page.getByTestId("music-quiz-difficulty-normal")).toBeVisible()
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth
       )
@@ -148,8 +149,8 @@ test.describe("โซนเกมส์ — 3 การ์ดตายตัว"
     })
 
     // เล่นต่อได้ระหว่างเต็มจอ
-    await page.getByTestId("music-quiz-play").click()
-    await expect(page.getByTestId("music-quiz-answer-1")).toBeEnabled()
+    await page.getByTestId("music-quiz-difficulty-normal").click()
+    await expect(page.getByText("กำลังเล่นตัวอย่าง 10 วินาที", { exact: false })).toBeVisible()
 
     // ออกจากเต็มจอได้ทางเดียวคือกด Esc
     await page.keyboard.press("Escape")

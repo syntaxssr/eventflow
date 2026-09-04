@@ -11,11 +11,16 @@ export type QuizPlayer = {
   joinedAt: number
 }
 
-/** รอบที่โฮสต์กำลังเปิดให้ตอบ — ผู้เล่นเห็นแค่ช้อยส์ ไม่เห็นเฉลย */
+/** รอบที่โฮสต์กำลังเปิดให้ตอบ — ผู้เล่นเห็นแค่เวลา ไม่เห็นเฉลย */
 export type QuizRoomRound = {
   index: number
-  choices: string[]
+  durationSeconds: number
   open: boolean
+}
+
+/** ข้อความที่โฮสต์ส่งเข้าห้อง โดยเฉลยจะไม่ถูก broadcast กลับไปให้ผู้เล่น */
+export type QuizRoomHostRound = QuizRoomRound & {
+  answer: string
 }
 
 export type QuizRoomServerMessage =
@@ -25,7 +30,8 @@ export type QuizRoomServerMessage =
       hostOnline: boolean
       round: QuizRoomRound | null
       answeredPlayerIds: string[]
-      myAnswer: number | null
+      myAnswer: string | null
+      myAnswerCorrect: boolean | null
     }
   | { type: "rejected"; reason: "full" | "duplicate-name" | "bad-name" }
   | { type: "kicked" }

@@ -13,7 +13,7 @@ import {
   PARTYKIT_HOST,
   parseServerMessage,
   type QuizPlayer,
-  type QuizRoomRound,
+  type QuizRoomHostRound,
 } from "@/lib/quiz-room"
 
 /**
@@ -51,7 +51,7 @@ export function useQuizRoomHost() {
   })
 
   const publishRound = React.useCallback(
-    (round: QuizRoomRound) => {
+    (round: QuizRoomHostRound) => {
       if (!connected) return
       socket.send(JSON.stringify({ type: "round", round }))
     },
