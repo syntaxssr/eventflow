@@ -5,6 +5,7 @@ import Link from "next/link"
 import {
   ChevronLeftIcon,
   Clock3Icon,
+  EyeIcon,
   FlameIcon,
   Music2Icon,
   PlayIcon,
@@ -21,7 +22,12 @@ import { useQuizRoom } from "@/features/games/quiz-room-provider"
 import { cn } from "@/lib/utils"
 import styles from "./music-quiz.module.css"
 
-type QuizSong = { title: string }
+type QuizSong = {
+  title: string
+  artist: string
+  /** ยังไม่มีไฟล์จริง — ไม่ใส่ค่านี้ไว้ก่อน จะได้เห็น mockup ปกอัลบัม */
+  coverUrl?: string
+}
 
 type Difficulty = {
   id: "very-hard" | "hard" | "normal" | "easy"
@@ -31,11 +37,28 @@ type Difficulty = {
   icon: typeof ZapIcon
 }
 
+/**
+ * ลิสต์เพลงสำหรับกลุ่มอายุ 22–50 — เลือกทีละเพลง เช็คยุคจริงก่อนใส่ทุกเพลง
+ * กำลังทยอยเพิ่มทีละยุค ลำดับตรงกับที่จะใส่รูปปกทีหลัง
+ */
 const QUIZ_SONGS: readonly QuizSong[] = [
-  { title: "แสงแรกของวัน" },
-  { title: "ปลายทางของเรา" },
-  { title: "หัวใจสีฟ้า" },
-  { title: "คืนที่เราร้องเพลง" },
+  // 90s
+  { title: "หมอกหรือควัน", artist: "เบิร์ด ธงไชย" },
+  { title: "เจ็บนิดเดียว", artist: "นิตยา บุญสูงเนิน" },
+  // 2000s
+  { title: "อกหัก", artist: "Bodyslam" },
+  { title: "ดวงดาวแห่งรัก", artist: "Dr.Fuu" },
+  // Kamikaze
+  { title: "ไม่ใช่อิจฉา (Jealous)", artist: "FFK" },
+  // ลูกทุ่ง
+  { title: "แก้บน", artist: "ก้านตอง ทุ่งเงิน" },
+  { title: "ดอกกระเจียวบาน", artist: "ก้อง ห้วยไร่" },
+  // 2010s
+  { title: "มันเป็นใคร", artist: "POLYCAT" },
+  // 2020s
+  { title: "ที่คั่นหนังสือ", artist: "BOWKYLION Ft. NONT TANONT" },
+  // สากล
+  { title: "About You", artist: "The 1975" },
 ]
 
 const DIFFICULTIES: readonly Difficulty[] = [
@@ -61,13 +84,14 @@ export function MusicQuizView() {
   const [difficulty, setDifficulty] = React.useState<Difficulty | null>(null)
   const [secondsLeft, setSecondsLeft] = React.useState(0)
   const [isPlaying, setIsPlaying] = React.useState(false)
-  const [hasFinished, setHasFinished] = React.useState(false)
+  const [revealed, setRevealed] = React.useState(false)
 
   const { answeredPlayerIds, publishRound } = useQuizRoom()
   const song = QUIZ_SONGS[roundIndex % QUIZ_SONGS.length]
   const duration = difficulty?.seconds ?? 0
   const progress = duration > 0 ? ((duration - secondsLeft) / duration) * 100 : 0
 
+  // หมดเวลาแค่หยุดเล่น ไม่เฉลยเอง — โฮสต์กดฟังซ้ำความยาวไหนก็ได้จนกว่าจะกดเฉลยเอง
   React.useEffect(() => {
     if (!isPlaying) return
 
@@ -76,7 +100,6 @@ export function MusicQuizView() {
         if (current <= 1) {
           window.clearInterval(timer)
           setIsPlaying(false)
-          setHasFinished(true)
           return 0
         }
         return current - 1
@@ -90,16 +113,22 @@ export function MusicQuizView() {
     publishRound({
       index: roundIndex,
       durationSeconds: duration,
-      open: isPlaying,
+      open: isPlaying && !revealed,
       answer: song.title,
     })
-  }, [duration, isPlaying, publishRound, roundIndex, song.title])
+  }, [duration, isPlaying, publishRound, revealed, roundIndex, song.title])
 
-  const startRound = (nextDifficulty: Difficulty) => {
-    if (isPlaying || hasFinished) return
+  // กดได้เรื่อย ๆ ไม่จำกัดจำนวนครั้งจนกว่าจะกดเฉลย — สลับความยาวหรือฟังซ้ำได้ตลอด
+  const playDifficulty = (nextDifficulty: Difficulty) => {
+    if (revealed) return
     setDifficulty(nextDifficulty)
     setSecondsLeft(nextDifficulty.seconds)
     setIsPlaying(true)
+  }
+
+  const revealAnswer = () => {
+    setIsPlaying(false)
+    setRevealed(true)
   }
 
   const nextRound = () => {
@@ -107,14 +136,16 @@ export function MusicQuizView() {
     setDifficulty(null)
     setSecondsLeft(0)
     setIsPlaying(false)
-    setHasFinished(false)
+    setRevealed(false)
   }
 
-  const status = isPlaying
-    ? `กำลังเล่นตัวอย่าง ${duration} วินาที — ผู้เล่นพิมพ์ชื่อเพลงจากมือถือได้เลย`
-    : hasFinished
-      ? `หมดเวลา · เฉลยคือ “${song.title}”`
-      : "เลือกเวลาของอินโทรเพื่อเริ่มรอบ"
+  const status = revealed
+    ? "เฉลยแล้ว — กดรอบถัดไปเมื่อพร้อม"
+    : isPlaying
+      ? `กำลังเล่นตัวอย่าง ${duration} วินาที — ผู้เล่นพิมพ์ชื่อเพลงจากมือถือได้เลย`
+      : difficulty
+        ? "ฟังซ้ำความยาวอื่นได้ หรือกดเฉลยเมื่อพร้อม"
+        : "เลือกเวลาของอินโทรเพื่อเริ่มรอบ"
 
   return (
     <Card className={cn(styles.card, "h-full border-white/15 text-white shadow-2xl shadow-black/25")} data-testid="music-quiz-page">
@@ -133,57 +164,86 @@ export function MusicQuizView() {
         </div>
 
         <div className="my-auto grid gap-7 py-6 lg:grid-cols-[minmax(12rem,0.72fr)_minmax(0,1.28fr)] lg:items-center">
-          <section className="flex flex-col items-center text-center lg:items-start lg:text-left">
+          <section className="flex flex-col items-center text-center">
             <div className={cn(styles.cover, isPlaying && styles.coverPlaying)} aria-hidden="true">
               <div className={styles.record}><Volume2Icon className="relative z-10 size-9 text-white" /></div>
             </div>
-            <p className="mt-5 text-sm font-medium text-white/58">MUSIC GUESSING GAME</p>
-            <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">ทายชื่อเพลง</h1>
-            <p className="mt-3 max-w-sm text-sm leading-6 text-white/68">
-              เลือกช่วงเวลาที่อยากให้ฟัง แล้วให้ทุกคนในห้องพิมพ์ชื่อเพลงจากมือถือ
+            <p className="mt-6 text-base font-medium text-white/58">MUSIC GUESSING GAME</p>
+            <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">ทายชื่อเพลง</h1>
+            <p className="mt-4 max-w-sm text-base leading-7 text-white/68">
+              เลือกช่วงเวลาที่อยากให้ฟัง
+              <br />
+              แล้วให้ทุกคนในห้องพิมพ์ชื่อเพลงจากมือถือ
             </p>
           </section>
 
-          <section className="min-w-0" aria-labelledby="difficulty-heading">
-            <div className="mb-3 flex items-end justify-between gap-3">
-              <div>
-                <p id="difficulty-heading" className="text-sm font-semibold text-white">เลือกความยาก</p>
-                <p className="mt-1 text-xs text-white/55">ยิ่งฟังสั้น ยิ่งทายยาก</p>
+          <section
+            className="min-w-0"
+            aria-labelledby={revealed ? undefined : "difficulty-heading"}
+            aria-label={revealed ? "เฉลยเพลง" : undefined}
+          >
+            {revealed ? (
+              <div className={styles.revealPanel} data-testid="music-quiz-reveal-panel">
+                <div className={styles.revealCover}>
+                  {song.coverUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- ปกอัลบัมมาจาก URL ที่ผู้ใช้เพิ่มเอง ไม่ใช่ asset ในโปรเจกต์
+                    <img
+                      src={song.coverUrl}
+                      alt=""
+                      className={styles.revealCoverImage}
+                    />
+                  ) : (
+                    <Music2Icon className={styles.revealCoverIcon} aria-hidden="true" />
+                  )}
+                </div>
+                <div className={styles.revealText}>
+                  <p className="text-sm font-semibold tracking-[0.2em] text-white/55">เฉลย</p>
+                  <p className={styles.revealTitle} data-testid="music-quiz-answer">{song.title} - {song.artist}</p>
+                </div>
               </div>
-              {difficulty ? <span className="text-general-blue text-xs font-semibold tabular-nums">{formatTime(secondsLeft)} / {formatTime(duration)}</span> : null}
-            </div>
+            ) : (
+              <>
+                <div className="mb-3 flex items-end justify-between gap-3">
+                  <div>
+                    <p id="difficulty-heading" className="text-sm font-semibold text-white">เลือกความยาก</p>
+                    <p className="mt-1 text-xs text-white/55">ยิ่งฟังสั้น ยิ่งทายยาก</p>
+                  </div>
+                  {difficulty ? <span className="text-general-blue text-xs font-semibold tabular-nums">{formatTime(secondsLeft)} / {formatTime(duration)}</span> : null}
+                </div>
 
-            <div className="grid gap-3 sm:grid-cols-2" data-testid="music-quiz-difficulties">
-              {DIFFICULTIES.map((item) => {
-                const Icon = item.icon
-                const isSelected = difficulty?.id === item.id
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => startRound(item)}
-                    disabled={isPlaying || hasFinished}
-                    className={cn(styles.difficultyButton, isSelected && styles.difficultyButtonSelected)}
-                    data-testid={`music-quiz-difficulty-${item.id}`}
-                    aria-label={`${item.label}, ${item.thaiLabel}`}
-                  >
-                    <span className={styles.difficultyIcon} aria-hidden="true"><Icon className="size-5" /></span>
-                    <span className="min-w-0 text-left">
-                      <span className="block text-sm font-bold tracking-wide">{item.label}</span>
-                      <span className="mt-0.5 block text-xs text-white/60">{item.thaiLabel}</span>
-                    </span>
-                    <PlayIcon className="ml-auto size-4 shrink-0 text-white/65" aria-hidden="true" />
-                  </button>
-                )
-              })}
-            </div>
+                <div className="grid gap-3 sm:grid-cols-2" data-testid="music-quiz-difficulties">
+                  {DIFFICULTIES.map((item) => {
+                    const Icon = item.icon
+                    const isSelected = difficulty?.id === item.id
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => playDifficulty(item)}
+                        disabled={revealed}
+                        className={cn(styles.difficultyButton, isSelected && styles.difficultyButtonSelected)}
+                        data-testid={`music-quiz-difficulty-${item.id}`}
+                        aria-label={`${item.label}, ${item.thaiLabel}`}
+                      >
+                        <span className={styles.difficultyIcon} aria-hidden="true"><Icon className="size-5" /></span>
+                        <span className="min-w-0 text-left">
+                          <span className="block text-sm font-bold tracking-wide">{item.label}</span>
+                          <span className="mt-0.5 block text-xs text-white/60">{item.thaiLabel}</span>
+                        </span>
+                        <PlayIcon className="ml-auto size-4 shrink-0 text-white/65" aria-hidden="true" />
+                      </button>
+                    )
+                  })}
+                </div>
 
-            <div className="mt-5 rounded-2xl border border-white/10 bg-black/16 p-4">
-              <div className={cn(styles.wave, isPlaying && styles.wavePlaying)} aria-hidden="true">
-                {WAVE_HEIGHTS.map((height, index) => <span key={index} className={cn(styles.waveBar, height)} />)}
-              </div>
-              <Progress value={progress} aria-label="เวลาที่ผ่านไปของตัวอย่างเพลง" className="mt-2 h-2 bg-white/12 [&>div]:bg-general-blue" />
-            </div>
+                <div className="mt-5 rounded-2xl border border-white/10 bg-black/16 p-4">
+                  <div className={cn(styles.wave, isPlaying && styles.wavePlaying)} aria-hidden="true">
+                    {WAVE_HEIGHTS.map((height, index) => <span key={index} className={cn(styles.waveBar, height)} />)}
+                  </div>
+                  <Progress value={progress} aria-label="เวลาที่ผ่านไปของตัวอย่างเพลง" className="mt-2 h-2 bg-white/12 [&>div]:bg-general-blue" />
+                </div>
+              </>
+            )}
           </section>
         </div>
 
@@ -193,11 +253,16 @@ export function MusicQuizView() {
               <Clock3Icon className="text-general-yellow size-4 shrink-0" aria-hidden="true" />
               {status}
             </p>
-            {isPlaying ? <p className="mt-1 text-xs text-white/52">ตอบแล้ว {answeredPlayerIds.length} คน</p> : null}
+            {!revealed && difficulty ? <p className="mt-1 text-xs text-white/52">ตอบแล้ว {answeredPlayerIds.length} คน</p> : null}
           </div>
-          {hasFinished ? (
+          {revealed ? (
             <Button type="button" onClick={nextRound} className="bg-general-green shrink-0 text-black hover:bg-general-green/85" data-testid="music-quiz-next-round">
               รอบถัดไป
+            </Button>
+          ) : difficulty ? (
+            <Button type="button" onClick={revealAnswer} variant="outline" className="shrink-0 border-white/20 text-white hover:bg-white/10 hover:text-white" data-testid="music-quiz-reveal">
+              <EyeIcon className="size-4" aria-hidden="true" />
+              เฉลย
             </Button>
           ) : null}
         </div>

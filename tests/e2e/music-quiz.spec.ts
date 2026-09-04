@@ -10,11 +10,12 @@ async function openMusicQuiz(page: Parameters<typeof signIn>[0]) {
 }
 
 test.describe("Music quiz", () => {
-  test("เลือกเวลาฟังอินโทร แล้วปิดรอบและไปยังรอบถัดไปได้", async ({ page }) => {
+  test("ฟังซ้ำได้ไม่จำกัดจนกว่าจะกดเฉลย แล้วไปรอบถัดไปได้", async ({ page }) => {
     await openMusicQuiz(page)
 
     const veryHard = page.getByTestId("music-quiz-difficulty-very-hard")
     const normal = page.getByTestId("music-quiz-difficulty-normal")
+    const reveal = page.getByTestId("music-quiz-reveal")
 
     await expect(page.getByTestId("music-quiz-difficulties").getByRole("button")).toHaveCount(4)
     await expect(veryHard).toContainText("VERY HARD")
@@ -24,8 +25,21 @@ test.describe("Music quiz", () => {
     await expect(
       page.getByText("กำลังเล่นตัวอย่าง 1 วินาที", { exact: false })
     ).toBeVisible()
-    await expect(normal).toBeDisabled()
-    await expect(page.getByTestId("music-quiz-next-round")).toBeVisible({ timeout: 2_500 })
+
+    // เล่นจบแล้วปุ่มความยากต้องยังกดได้ ไม่ล็อก จนกว่าจะกดเฉลยเอง
+    await expect(reveal).toBeVisible({ timeout: 2_500 })
+    await expect(normal).toBeEnabled()
+    await normal.click()
+    await expect(
+      page.getByText("กำลังเล่นตัวอย่าง 10 วินาที", { exact: false })
+    ).toBeVisible()
+    await expect(veryHard).toBeEnabled()
+
+    await reveal.click()
+    await expect(page.getByTestId("music-quiz-answer")).toContainText("หมอกหรือควัน")
+    // เฉลยแล้ว การ์ดสลับไปโชว์คำตอบตัวใหญ่แทน ปุ่มความยากเลยหายไปทั้งชุด ไม่ใช่แค่ล็อก
+    await expect(normal).toBeHidden()
+    await expect(page.getByTestId("music-quiz-next-round")).toBeVisible()
     await page.getByTestId("music-quiz-next-round").click()
     await expect(page.getByText("รอบ 02")).toBeVisible()
     await expect(normal).toBeEnabled()

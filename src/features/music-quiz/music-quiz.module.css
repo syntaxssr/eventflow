@@ -20,7 +20,7 @@
 .cover {
   position: relative;
   display: grid;
-  width: min(12rem, 52vw);
+  width: min(clamp(14rem, 30dvh, 26rem), 60vw);
   aspect-ratio: 1;
   place-items: center;
   border-radius: 50%;
@@ -38,8 +38,8 @@
 
 .record {
   display: grid;
-  width: 4.5rem;
-  height: 4.5rem;
+  width: clamp(5rem, 11dvh, 9.5rem);
+  height: clamp(5rem, 11dvh, 9.5rem);
   place-items: center;
   border: 1px solid rgb(242 242 240 / 24%);
   border-radius: 50%;
@@ -52,12 +52,12 @@
 
 .difficultyButton {
   display: flex;
-  min-height: 5.75rem;
+  min-height: clamp(5.75rem, 12dvh, 9rem);
   align-items: center;
   gap: 0.75rem;
   border: 1px solid rgb(242 242 240 / 15%);
   border-radius: 1rem;
-  padding: 0.875rem;
+  padding: clamp(0.875rem, 2dvh, 1.5rem);
   color: #f2f2f0;
   background: rgb(242 242 240 / 6%);
   transition: transform 180ms ease-out, background-color 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
@@ -77,8 +77,8 @@
 
 .difficultyIcon {
   display: grid;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: clamp(2.75rem, 5.5dvh, 4.25rem);
+  height: clamp(2.75rem, 5.5dvh, 4.25rem);
   flex: none;
   place-items: center;
   border-radius: 0.8rem;
@@ -86,13 +86,82 @@
   background: rgb(163 222 254 / 13%);
 }
 
-.wave { display: flex; height: 3.5rem; align-items: center; justify-content: center; gap: 0.28rem; }
+.difficultyIcon svg {
+  width: clamp(1.1rem, 2.4dvh, 1.75rem);
+  height: clamp(1.1rem, 2.4dvh, 1.75rem);
+}
+
+.record svg {
+  width: clamp(1.75rem, 3.6dvh, 2.75rem);
+  height: clamp(1.75rem, 3.6dvh, 2.75rem);
+}
+
+.wave { display: flex; height: clamp(3.5rem, 8dvh, 6rem); align-items: center; justify-content: center; gap: 0.28rem; }
 .waveBar { width: 0.28rem; border-radius: 999px; background: #a3defe; opacity: 0.7; }
 .waveBar:nth-child(3n) { background: #73bfa3; }
 .waveBar:nth-child(4n) { opacity: 1; }
 .wavePlaying .waveBar { animation: beat 620ms ease-in-out infinite alternate; }
 .wavePlaying .waveBar:nth-child(2n) { animation-duration: 420ms; }
 .wavePlaying .waveBar:nth-child(3n) { animation-duration: 770ms; }
+
+.revealPanel {
+  container-type: inline-size;
+  display: flex;
+  min-height: clamp(18rem, 46dvh, 32rem);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 3dvh, 1.75rem);
+  padding: clamp(1.5rem, 4dvh, 3rem);
+  text-align: center;
+  border: 1px solid rgb(115 191 163 / 30%);
+  border-radius: 1.5rem;
+  background: radial-gradient(circle at 50% 15%, rgb(115 191 163 / 16%), transparent 65%), rgb(242 242 240 / 4%);
+}
+
+/* คอลัมน์กว้างพอ — วางปกอัลบัมกับข้อความเรียงแนวนอนแทนซ้อนกัน */
+@container (min-width: 26rem) {
+  .revealPanel { flex-direction: row; text-align: left; }
+}
+
+.revealCover {
+  display: grid;
+  overflow: hidden;
+  aspect-ratio: 1;
+  width: clamp(7rem, 32cqw, 13rem);
+  flex: none;
+  place-items: center;
+  border: 1px solid rgb(242 242 240 / 14%);
+  border-radius: 1.1rem;
+  background: linear-gradient(135deg, #7b69cc, #4b3b8d 58%, #1c1c1c);
+  box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 28%);
+}
+
+.revealCoverIcon {
+  width: clamp(2rem, 11cqw, 4rem);
+  height: clamp(2rem, 11cqw, 4rem);
+  color: rgb(242 242 240 / 55%);
+}
+
+.revealCoverImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.revealText { min-width: 0; }
+
+.revealTitle {
+  max-width: 100%;
+  margin-top: 0.25rem;
+  overflow-wrap: break-word;
+  /* อิงความกว้างของกล่องตัวเอง (container query) ไม่ใช่ viewport height —
+     กันข้อความยาวตัวหักบรรทัดละตัวตอนคอลัมน์แคบ (หน้าจอปกติมี sidebar) */
+  font-size: clamp(1.75rem, 11cqw, 4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
 
 @keyframes beat { from { transform: scaleY(0.45); } to { transform: scaleY(1); } }
 @keyframes spin { to { transform: rotate(360deg); } }
