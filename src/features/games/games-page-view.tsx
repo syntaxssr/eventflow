@@ -33,17 +33,21 @@ export function GamesPageView() {
       <CardContent className="grid h-full grid-cols-4 grid-rows-4 gap-3">
         <Link
           href={ROUTES.musicQuiz}
-          className="group focus-visible:ring-ring from-general-purple to-general-purple/70 ring-general-purple/30 relative flex h-full flex-col items-center justify-center gap-2 rounded-xl bg-gradient-to-br p-2 ring-1 transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-lg hover:shadow-general-purple/30 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          className="group focus-visible:ring-ring from-general-purple via-general-purple to-background relative flex h-full flex-col items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br p-3 text-white shadow-lg shadow-general-purple/20 ring-1 ring-general-purple/50 transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-xl hover:shadow-general-purple/40 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transform-none"
         >
           <span
-            className="bg-general-green absolute top-2.5 right-2.5 size-2 rounded-full"
+            className="bg-general-blue/25 absolute -top-7 -right-7 size-24 rounded-full blur-xl transition-transform duration-200 group-hover:scale-125 motion-reduce:transform-none"
             aria-hidden="true"
           />
-          <Music2Icon
-            className="size-9 text-white transition-transform group-hover:scale-110"
-            aria-hidden="true"
-          />
-          <span className="text-center text-xs font-medium text-white">
+          <span
+            className="bg-general-green text-black absolute top-2.5 right-2.5 rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide"
+          >
+            LIVE
+          </span>
+          <span className="relative flex size-14 items-center justify-center rounded-2xl border border-white/30 bg-white/12 shadow-lg shadow-black/15 transition-transform duration-200 ease-out group-hover:scale-110 group-hover:-rotate-3 motion-reduce:transform-none">
+            <Music2Icon className="size-7" aria-hidden="true" />
+          </span>
+          <span className="relative text-center text-sm font-semibold leading-tight">
             {t("games.musicQuizTitle")}
           </span>
         </Link>

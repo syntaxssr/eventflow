@@ -123,15 +123,15 @@ test.describe("โซนเกมส์ — 3 การ์ดตายตัว"
     expect(heights.overflowY).toBe(0)
   })
 
-  test("โหมดเต็มจอซ่อนแถบควบคุม ออกได้ด้วย Esc เท่านั้น", async ({ page }) => {
+  test("โหมดเต็มจอซ่อนปุ่มเต็มจอ และออกได้ด้วย Esc เท่านั้น", async ({ page }) => {
     await openMusicQuiz(page)
 
     const fullscreen = page.getByTestId("games-fullscreen")
     await expect(fullscreen).toBeVisible()
+    await expect(page.getByTestId("games-back")).toHaveCount(0)
     await fullscreen.click()
 
-    // แถบควบคุม (ย้อนกลับ + เต็มจอ) ต้องหายไปทั้งหมด ไม่มีปุ่มให้กดออก
-    await expect(page.getByTestId("games-back")).toBeHidden()
+    // ไม่มีปุ่มออกจากเต็มจอให้กด — ใช้ Esc เท่านั้น
     await expect(page.getByTestId("games-fullscreen")).toBeHidden()
     await expect(page.getByTestId("music-quiz-page")).toBeVisible()
     await expect(page.getByTestId("quiz-room-panel")).toBeVisible()
@@ -153,7 +153,7 @@ test.describe("โซนเกมส์ — 3 การ์ดตายตัว"
 
     // ออกจากเต็มจอได้ทางเดียวคือกด Esc
     await page.keyboard.press("Escape")
-    await expect(page.getByTestId("games-back")).toBeVisible()
+    await expect(page.getByTestId("games-back")).toHaveCount(0)
     await expect(page.getByTestId("games-fullscreen")).toBeVisible()
     await expect(page.getByTestId("music-quiz-page")).toBeVisible()
     await expect(page.getByTestId("quiz-room-panel")).toBeVisible()
