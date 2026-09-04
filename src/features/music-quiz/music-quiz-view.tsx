@@ -155,7 +155,7 @@ export function MusicQuizView() {
       )}
       data-testid="music-quiz-page"
     >
-      <CardContent className="relative z-10 space-y-5 p-5 sm:p-7">
+      <CardContent className="relative z-10 h-full space-y-5 overflow-y-auto p-5 sm:p-7">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Button
             asChild

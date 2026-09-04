@@ -54,17 +54,25 @@ export function isValidPin(raw: string) {
   return normalizePin(raw).length === PIN_LENGTH
 }
 
-/** id ประจำเครื่องของผู้เล่น — ใช้ join กลับห้องเดิมเมื่อเน็ตหลุดหรือรีเฟรช */
+/**
+ * id ประจำแท็บของผู้เล่น — ใช้ join กลับห้องเดิมเมื่อเน็ตหลุดหรือรีเฟรช
+ *
+ * ต้องเป็น sessionStorage ไม่ใช่ localStorage — localStorage ใช้ร่วมกันทุกแท็บ
+ * ในเบราว์เซอร์เดียวกัน เปิด /play สองแท็บทดสอบจะได้ id เดียวกัน ห้องจะเห็น
+ * เป็นผู้เล่นคนเดียวที่เปลี่ยนชื่อ ไม่ใช่ผู้เล่นสองคน (มือถือจริงแต่ละเครื่อง
+ * แยก storage กันอยู่แล้วไม่กระทบ แต่การเปิดหลายแท็บทดสอบบนเครื่องเดียวกัน
+ * ต้องแยก id ต่อแท็บให้ถูก)
+ */
 export function getOrCreatePlayerId() {
   const KEY = "eventflow.quiz.playerId"
   try {
-    const existing = window.localStorage.getItem(KEY)
+    const existing = window.sessionStorage.getItem(KEY)
     if (existing) return existing
     const created = crypto.randomUUID()
-    window.localStorage.setItem(KEY, created)
+    window.sessionStorage.setItem(KEY, created)
     return created
   } catch {
-    // localStorage ถูกปิด — ใช้ id ชั่วคราวต่อ 1 แท็บแทน
+    // sessionStorage ถูกปิด — ใช้ id ชั่วคราวต่อ 1 แท็บแทน
     return crypto.randomUUID()
   }
 }

@@ -1,0 +1,15 @@
+@keyframes countBounce {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.countBounce {
+  animation: countBounce 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countBounce {
+    animation: none;
+  }
+}

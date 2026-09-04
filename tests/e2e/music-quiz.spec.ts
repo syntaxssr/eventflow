@@ -91,6 +91,38 @@ test.describe("โซนเกมส์ — 3 การ์ดตายตัว"
     await expect(page.getByTestId("quiz-room-pin")).toHaveText(pin ?? "")
   })
 
+  test("รายชื่อเกมแสดง 4 ต่อแถว 4 แถว รวม 16 ช่อง และการ์ดสูงเท่ากันเสมอ", async ({
+    page,
+  }) => {
+    await signIn(page)
+    await page.goto("/games")
+
+    const picker = page.getByTestId("games-picker")
+    await expect(picker).toBeVisible()
+    await expect(picker.locator(".grid > *")).toHaveCount(16)
+
+    const heights = await page.evaluate(() => {
+      const picker = document
+        .querySelector('[data-testid="games-picker"]')!
+        .getBoundingClientRect()
+      const room = document
+        .querySelector('[data-testid="quiz-room-panel"]')!
+        .getBoundingClientRect()
+      return {
+        pickerHeight: Math.round(picker.height),
+        roomHeight: Math.round(room.height),
+        pickerTop: Math.round(picker.top),
+        roomTop: Math.round(room.top),
+        overflowY:
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight,
+      }
+    })
+    expect(heights.pickerHeight).toBe(heights.roomHeight)
+    expect(heights.pickerTop).toBe(heights.roomTop)
+    expect(heights.overflowY).toBe(0)
+  })
+
   test("โหมดเต็มจอซ่อนแถบควบคุม ออกได้ด้วย Esc เท่านั้น", async ({ page }) => {
     await openMusicQuiz(page)
 
@@ -168,9 +200,71 @@ test.describe("โซนเกมส์ — 3 การ์ดตายตัว"
     expect(quizGutters.left).toBe(quizGutters.right)
     expect(quizGutters.left).toBe(pickerGutters.left)
   })
+
+  test("ปุ่มขยายเปิด modal แสดง QR แล้ว PIN แล้วลิงก์ตามลำดับ", async ({
+    page,
+  }) => {
+    await signIn(page)
+    await page.goto("/games")
+
+    const pin = await page.getByTestId("quiz-room-pin").textContent()
+    await page.getByRole("button", { name: "ขยาย" }).click()
+
+    const dialog = page.getByRole("dialog")
+    await expect(dialog).toBeVisible()
+    await expect(dialog.locator("svg").last()).toBeVisible()
+    await expect(dialog.getByText(pin ?? "", { exact: true })).toBeVisible()
+    await expect(dialog.getByText(`play?pin=${pin}`)).toBeVisible()
+
+    const order = await dialog.evaluate((el) => {
+      const svg = el.querySelector("svg")
+      const pinEl = [...el.querySelectorAll("p")].find((p) =>
+        /^\d{6}$/.test(p.textContent ?? "")
+      )
+      const linkEl = [...el.querySelectorAll("p")].find((p) =>
+        p.textContent?.includes("play?pin=")
+      )
+      if (!svg || !pinEl || !linkEl) return null
+      const svgTop = svg.getBoundingClientRect().top
+      const pinTop = pinEl.getBoundingClientRect().top
+      const linkTop = linkEl.getBoundingClientRect().top
+      return svgTop < pinTop && pinTop < linkTop
+    })
+    expect(order).toBe(true)
+
+    await page.keyboard.press("Escape")
+    await expect(dialog).toBeHidden()
+  })
 })
 
 test.describe("ห้องเล่นสด", () => {
+  test("สองแท็บในเบราว์เซอร์เดียวกัน join คนละชื่อ ต้องนับเป็นคนละคน ไม่ทับกัน", async ({
+    page,
+    context,
+  }) => {
+    await signIn(page)
+    await page.goto("/games")
+    const pin = await page.getByTestId("quiz-room-pin").textContent()
+
+    const player1 = await context.newPage()
+    await player1.goto(`/play?pin=${pin}`)
+    await player1.getByLabel("ชื่อที่จะให้คนอื่นเห็น").fill("UU")
+    await player1.getByTestId("play-join").click()
+
+    const player2 = await context.newPage()
+    await player2.goto(`/play?pin=${pin}`)
+    await player2.getByLabel("ชื่อที่จะให้คนอื่นเห็น").fill("WW")
+    await player2.getByTestId("play-join").click()
+
+    await expect(page.getByTestId("quiz-room-count")).toHaveText("2")
+    const players = page.getByTestId("quiz-room-players")
+    await expect(players).toContainText("UU")
+    await expect(players).toContainText("WW")
+
+    await player1.close()
+    await player2.close()
+  })
+
   test("การ์ด leaderboard แสดง PIN และเริ่มจากศูนย์คน", async ({ page }) => {
     await openMusicQuiz(page)
 
