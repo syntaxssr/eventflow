@@ -30,6 +30,7 @@ function completionToneClass(value: number): string {
 
 function Progress({
   className,
+  indicatorClassName,
   value,
   tone = "neutral",
   ...props
@@ -39,6 +40,11 @@ function Progress({
    * `neutral` = ความคืบหน้าที่ไม่ได้สื่อว่าดีหรือแย่ (เช่น อัปโหลดไฟล์) ใช้สีเดียว
    */
   tone?: "neutral" | "completion"
+  /**
+   * override transition ของแถบ (default 150ms) — เช่น เคาน์ตดาวน์ที่อัปเดตค่าเป็นช่วง ๆ
+   * ทุก 1 วินาที ต้องใช้ duration-1000 ease-linear ให้แถบไหลลื่นเต็มช่วงแทนกระตุกทีละก้อน
+   */
+  indicatorClassName?: string
 }) {
   const percent = value ?? 0
 
@@ -55,7 +61,8 @@ function Progress({
         data-slot="progress-indicator"
         className={cn(
           "size-full flex-1 transition-all",
-          tone === "completion" ? completionToneClass(percent) : "bg-primary"
+          tone === "completion" ? completionToneClass(percent) : "bg-primary",
+          indicatorClassName
         )}
         style={{ transform: `translateX(-${100 - percent}%)` }}
       />

@@ -68,6 +68,8 @@ const DIFFICULTIES: readonly Difficulty[] = [
   { id: "easy", label: "EASY", thaiLabel: "ฟัง 15 วินาที", seconds: 15, icon: SparklesIcon },
 ]
 
+const MAX_ROUNDS = 10
+
 const WAVE_HEIGHTS = [
   "h-5", "h-11", "h-7", "h-14", "h-9", "h-16", "h-8", "h-12",
   "h-6", "h-15", "h-10", "h-18", "h-8", "h-13", "h-5", "h-16",
@@ -76,6 +78,54 @@ const WAVE_HEIGHTS = [
 
 function formatTime(seconds: number) {
   return `0:${String(seconds).padStart(2, "0")}`
+}
+
+const ARTIST_MIN_PX = 12
+const ARTIST_MAX_PX = 24
+
+/**
+ * ลดขนาดตัวอักษรชื่อศิลปินอัตโนมัติจนจบภายในบรรทัดเดียว — ชื่อวง/ฟีเจอริ่งบางชื่อยาวมาก
+ * (เช่น "BOWKYLION Ft. NONT TANONT") ใช้แค่ clamp(cqw) ของ CSS ไม่พอเพราะไม่รู้ความยาวข้อความจริง
+ * จึงวัดความกว้างด้วย canvas แล้วลดขนาดทีละ 1px จนพอดีกล่อง
+ */
+function useFitOneLine(
+  ref: React.RefObject<HTMLParagraphElement | null>,
+  text: string,
+  active: boolean
+) {
+  const [fontSize, setFontSize] = React.useState(ARTIST_MAX_PX)
+
+  React.useLayoutEffect(() => {
+    // active สลับ false→true ตอนแผงเฉลย mount — ต้องอยู่ใน deps เอง
+    // ไม่งั้น effect นี้จะไม่รันซ้ำตอน ref เพิ่งผูกกับ DOM จริง (ref ว่างตอนรอบก่อนเฉลย)
+    if (!active) return
+    const el = ref.current
+    if (!el) return
+
+    const measure = () => {
+      const width = el.clientWidth
+      if (width <= 0) return
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+      if (!ctx) return
+
+      const nominal = Math.min(Math.max(width * 0.045, ARTIST_MIN_PX), ARTIST_MAX_PX)
+      let size = nominal
+      while (size > ARTIST_MIN_PX) {
+        ctx.font = `600 ${size}px system-ui, sans-serif`
+        if (ctx.measureText(text).width <= width) break
+        size -= 1
+      }
+      setFontSize(size)
+    }
+
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [ref, text, active])
+
+  return fontSize
 }
 
 /** การ์ดโฮสต์: เลือกเวลาของอินโทร แล้วผู้เล่นพิมพ์ชื่อเพลงจากมือถือ */
@@ -88,6 +138,9 @@ export function MusicQuizView() {
 
   const { answeredPlayerIds, publishRound } = useQuizRoom()
   const song = QUIZ_SONGS[roundIndex % QUIZ_SONGS.length]
+  const isLastRound = roundIndex >= MAX_ROUNDS - 1
+  const artistRef = React.useRef<HTMLParagraphElement>(null)
+  const artistFontSize = useFitOneLine(artistRef, song.artist, revealed)
   const duration = difficulty?.seconds ?? 0
   const progress = duration > 0 ? ((duration - secondsLeft) / duration) * 100 : 0
 
@@ -132,6 +185,7 @@ export function MusicQuizView() {
   }
 
   const nextRound = () => {
+    if (isLastRound) return
     setRoundIndex((current) => current + 1)
     setDifficulty(null)
     setSecondsLeft(0)
@@ -140,7 +194,9 @@ export function MusicQuizView() {
   }
 
   const status = revealed
-    ? "เฉลยแล้ว — กดรอบถัดไปเมื่อพร้อม"
+    ? isLastRound
+      ? `จบเกมแล้ว — เล่นครบ ${MAX_ROUNDS} รอบ`
+      : "เฉลยแล้ว — กดรอบถัดไปเมื่อพร้อม"
     : isPlaying
       ? `กำลังเล่นตัวอย่าง ${duration} วินาที — ผู้เล่นพิมพ์ชื่อเพลงจากมือถือได้เลย`
       : difficulty
@@ -198,7 +254,15 @@ export function MusicQuizView() {
                 </div>
                 <div className={styles.revealText}>
                   <p className="text-sm font-semibold tracking-[0.2em] text-white/55">เฉลย</p>
-                  <p className={styles.revealTitle} data-testid="music-quiz-answer">{song.title} - {song.artist}</p>
+                  <p className={styles.revealTitle} data-testid="music-quiz-answer">{song.title}</p>
+                  <p
+                    ref={artistRef}
+                    className={styles.revealArtist}
+                    style={{ fontSize: artistFontSize }}
+                    data-testid="music-quiz-answer-artist"
+                  >
+                    {song.artist}
+                  </p>
                 </div>
               </div>
             ) : (
@@ -240,7 +304,12 @@ export function MusicQuizView() {
                   <div className={cn(styles.wave, isPlaying && styles.wavePlaying)} aria-hidden="true">
                     {WAVE_HEIGHTS.map((height, index) => <span key={index} className={cn(styles.waveBar, height)} />)}
                   </div>
-                  <Progress value={progress} aria-label="เวลาที่ผ่านไปของตัวอย่างเพลง" className="mt-2 h-2 bg-white/12 [&>div]:bg-general-blue" />
+                  <Progress
+                    value={progress}
+                    aria-label="เวลาที่ผ่านไปของตัวอย่างเพลง"
+                    className="mt-2 h-2 bg-white/12 [&>div]:bg-general-blue"
+                    indicatorClassName="duration-1000 ease-linear"
+                  />
                 </div>
               </>
             )}
@@ -255,7 +324,11 @@ export function MusicQuizView() {
             </p>
             {!revealed && difficulty ? <p className="mt-1 text-xs text-white/52">ตอบแล้ว {answeredPlayerIds.length} คน</p> : null}
           </div>
-          {revealed ? (
+          {revealed && isLastRound ? (
+            <Button asChild className="bg-general-green shrink-0 text-black hover:bg-general-green/85" data-testid="music-quiz-back-to-games">
+              <Link href={ROUTES.games}>กลับไปเลือกเกมส์</Link>
+            </Button>
+          ) : revealed ? (
             <Button type="button" onClick={nextRound} className="bg-general-green shrink-0 text-black hover:bg-general-green/85" data-testid="music-quiz-next-round">
               รอบถัดไป
             </Button>

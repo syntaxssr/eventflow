@@ -149,18 +149,38 @@
   object-fit: cover;
 }
 
-.revealText { min-width: 0; }
+/*
+ * revealPanel ใช้ align-items: center ทำให้ flex item หด (shrink-to-fit) ตามเนื้อหาโดย
+ * ปริยาย — ถ้าไม่บังคับให้ยืดเต็มที่ ตัวกล่องจะกว้างเท่าข้อความเสมอ ทำให้ white-space:
+ * nowrap/overflow ไม่มีขอบเขตให้ตัด และ JS วัดความกว้างเพื่อลดขนาดฟอนต์ก็จะวัดผิด (วัด
+ * ความกว้างของตัวเองซึ่งเท่ากับความกว้างข้อความพอดีเสมอ)
+ */
+.revealText { min-width: 0; flex: 1; align-self: stretch; }
 
 .revealTitle {
   max-width: 100%;
   margin-top: 0.25rem;
-  overflow-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   /* อิงความกว้างของกล่องตัวเอง (container query) ไม่ใช่ viewport height —
-     กันข้อความยาวตัวหักบรรทัดละตัวตอนคอลัมน์แคบ (หน้าจอปกติมี sidebar) */
+     ต้องจบใน 1 บรรทัดเสมอ เพราะมีชื่อศิลปินอีกบรรทัดต่อท้าย (รวมห้ามเกิน 2 บรรทัด) */
   font-size: clamp(1.75rem, 11cqw, 4rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.01em;
+}
+
+.revealArtist {
+  max-width: 100%;
+  margin-top: 0.35rem;
+  overflow: hidden;
+  white-space: nowrap;
+  /* กันไว้อีกชั้น เผื่อกล่องแคบจนลดขนาดตัวอักษรถึง ARTIST_MIN_PX แล้วยังไม่พอ */
+  text-overflow: ellipsis;
+  font-weight: 600;
+  line-height: 1.3;
+  color: rgb(242 242 240 / 62%);
 }
 
 @keyframes beat { from { transform: scaleY(0.45); } to { transform: scaleY(1); } }
