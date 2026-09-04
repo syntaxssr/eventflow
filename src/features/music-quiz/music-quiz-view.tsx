@@ -132,7 +132,7 @@ function useFitOneLine(
 export function MusicQuizView() {
   const [roundIndex, setRoundIndex] = React.useState(0)
   const [difficulty, setDifficulty] = React.useState<Difficulty | null>(null)
-  const [secondsLeft, setSecondsLeft] = React.useState(0)
+  const [elapsedMs, setElapsedMs] = React.useState(0)
   const [isPlaying, setIsPlaying] = React.useState(false)
   const [revealed, setRevealed] = React.useState(false)
 
@@ -142,25 +142,36 @@ export function MusicQuizView() {
   const artistRef = React.useRef<HTMLParagraphElement>(null)
   const artistFontSize = useFitOneLine(artistRef, song.artist, revealed)
   const duration = difficulty?.seconds ?? 0
-  const progress = duration > 0 ? ((duration - secondsLeft) / duration) * 100 : 0
+  const progress = duration > 0 ? Math.min(100, (elapsedMs / (duration * 1000)) * 100) : 0
+  const secondsLeft = duration > 0 ? Math.max(0, Math.ceil(duration - elapsedMs / 1000)) : 0
 
-  // หมดเวลาแค่หยุดเล่น ไม่เฉลยเอง — โฮสต์กดฟังซ้ำความยาวไหนก็ได้จนกว่าจะกดเฉลยเอง
+  /**
+   * ขับด้วย requestAnimationFrame อิงเวลาจริงที่ผ่านไป แทน setInterval ทีละ 1 วินาที —
+   * แผ่นเสียง/แท่งคลื่นเสียงหยุดทันทีตอน isPlaying เป็น false โดยไม่มี transition ค้าง
+   * ถ้า progress bar ยังขยับตาม CSS transition ต่ออีก 1 วินาทีหลังจากนั้นจะดูจบไม่พร้อมกัน
+   * จึงต้องอัปเดตค่าเองทุกเฟรมแล้วปิด transition ของ Progress ไปเลย (ดู indicatorClassName ด้านล่าง)
+   */
   React.useEffect(() => {
     if (!isPlaying) return
 
-    const timer = window.setInterval(() => {
-      setSecondsLeft((current) => {
-        if (current <= 1) {
-          window.clearInterval(timer)
-          setIsPlaying(false)
-          return 0
-        }
-        return current - 1
-      })
-    }, 1000)
+    const durationMs = duration * 1000
+    const startedAt = performance.now()
+    let frameId: number
 
-    return () => window.clearInterval(timer)
-  }, [isPlaying])
+    const tick = () => {
+      const elapsed = performance.now() - startedAt
+      if (elapsed >= durationMs) {
+        setElapsedMs(durationMs)
+        setIsPlaying(false)
+        return
+      }
+      setElapsedMs(elapsed)
+      frameId = requestAnimationFrame(tick)
+    }
+
+    frameId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frameId)
+  }, [isPlaying, duration])
 
   React.useEffect(() => {
     publishRound({
@@ -175,7 +186,7 @@ export function MusicQuizView() {
   const playDifficulty = (nextDifficulty: Difficulty) => {
     if (revealed) return
     setDifficulty(nextDifficulty)
-    setSecondsLeft(nextDifficulty.seconds)
+    setElapsedMs(0)
     setIsPlaying(true)
   }
 
@@ -188,7 +199,7 @@ export function MusicQuizView() {
     if (isLastRound) return
     setRoundIndex((current) => current + 1)
     setDifficulty(null)
-    setSecondsLeft(0)
+    setElapsedMs(0)
     setIsPlaying(false)
     setRevealed(false)
   }
@@ -308,7 +319,7 @@ export function MusicQuizView() {
                     value={progress}
                     aria-label="เวลาที่ผ่านไปของตัวอย่างเพลง"
                     className="mt-2 h-2 bg-white/12 [&>div]:bg-general-blue"
-                    indicatorClassName="duration-1000 ease-linear"
+                    indicatorClassName="duration-0"
                   />
                 </div>
               </>

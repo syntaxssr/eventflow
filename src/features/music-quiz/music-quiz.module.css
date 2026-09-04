@@ -100,9 +100,9 @@
 .waveBar { width: 0.28rem; border-radius: 999px; background: #a3defe; opacity: 0.7; }
 .waveBar:nth-child(3n) { background: #73bfa3; }
 .waveBar:nth-child(4n) { opacity: 1; }
+/* ทุกแท่งต้อง duration เท่ากันเป๊ะ — ถ้าไม่เท่ากันจะเริ่มพร้อมกันแค่เฟรมแรก
+   แล้วเพี้ยนเฟสไปเรื่อย ๆ พอหยุดเล่นแต่ละแท่งเลยค้างคนละจังหวะ ไม่พร้อมกัน */
 .wavePlaying .waveBar { animation: beat 620ms ease-in-out infinite alternate; }
-.wavePlaying .waveBar:nth-child(2n) { animation-duration: 420ms; }
-.wavePlaying .waveBar:nth-child(3n) { animation-duration: 770ms; }
 
 .revealPanel {
   container-type: inline-size;
