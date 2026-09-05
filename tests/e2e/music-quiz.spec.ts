@@ -22,17 +22,13 @@ test.describe("Music quiz", () => {
     await expect(normal).toContainText("ฟัง 10 วินาที")
     await veryHard.click()
 
-    await expect(
-      page.getByText("กำลังเล่นตัวอย่าง 1 วินาที", { exact: false })
-    ).toBeVisible()
+    await expect(page.getByTestId("music-quiz-timer")).toContainText("/ 0:01")
 
     // เล่นจบแล้วปุ่มความยากต้องยังกดได้ ไม่ล็อก จนกว่าจะกดเฉลยเอง
     await expect(reveal).toBeVisible({ timeout: 2_500 })
     await expect(normal).toBeEnabled()
     await normal.click()
-    await expect(
-      page.getByText("กำลังเล่นตัวอย่าง 10 วินาที", { exact: false })
-    ).toBeVisible()
+    await expect(page.getByTestId("music-quiz-timer")).toContainText("/ 0:10")
     await expect(veryHard).toBeEnabled()
 
     await reveal.click()
@@ -164,7 +160,7 @@ test.describe("โซนเกมส์ — 3 การ์ดตายตัว"
 
     // เล่นต่อได้ระหว่างเต็มจอ
     await page.getByTestId("music-quiz-difficulty-normal").click()
-    await expect(page.getByText("กำลังเล่นตัวอย่าง 10 วินาที", { exact: false })).toBeVisible()
+    await expect(page.getByTestId("music-quiz-timer")).toContainText("/ 0:10")
 
     // ออกจากเต็มจอได้ทางเดียวคือกด Esc
     await page.keyboard.press("Escape")

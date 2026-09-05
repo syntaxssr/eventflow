@@ -19,13 +19,36 @@
 
 .cover {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: grid;
-  width: min(clamp(14rem, 30dvh, 26rem), 60vw);
+  width: min(clamp(19rem, 40dvh, 33rem), 68vw, 100%);
   aspect-ratio: 1;
   place-items: center;
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, #1c1c1c 0 8%, transparent 8.5%), repeating-radial-gradient(circle at 50% 50%, rgb(242 242 240 / 11%) 0 1px, transparent 2px 11px), linear-gradient(135deg, #7b69cc, #4b3b8d 58%, #1c1c1c);
+  /* สีแผ่นผูกกับหมวดหมู่เพลง (--category-accent จาก .coverStage ที่ห่ออยู่) แทนม่วงตายตัว */
+  background: radial-gradient(circle at 50% 50%, #1c1c1c 0 8%, transparent 8.5%), repeating-radial-gradient(circle at 50% 50%, rgb(242 242 240 / 11%) 0 1px, transparent 2px 11px), linear-gradient(135deg, var(--category-accent, #7b69cc), color-mix(in srgb, var(--category-accent, #7b69cc) 55%, #1c1c1c) 58%, #1c1c1c);
   box-shadow: 0 1.5rem 3.5rem rgb(0 0 0 / 30%);
+  /*
+   * animation ติดไว้ตลอด (ไม่ผูกกับ .coverPlaying) แล้วสลับแค่ play-state แทน —
+   * หยุดเล่นแล้วกลับมาเล่นใหม่จะหมุนต่อจากองศาเดิม ไม่กระตุกกลับไปตำแหน่งเริ่มต้น
+   */
+  animation: spin 5s linear infinite;
+  animation-play-state: paused;
+}
+
+/*
+ * แสงสะท้อนบนแผ่นเสียง — ร่องแผ่น (repeating-radial-gradient) สมมาตรรอบจุดศูนย์กลาง
+ * หมุนแล้วหน้าตาเหมือนเดิมทุกองศา มองไม่ออกว่ากำลังหมุน จึงต้องมีลำแสงที่ไม่สมมาตร
+ * (conic-gradient) มาหมุนไปพร้อมกับแผ่นแทน ให้ตาเห็นการเคลื่อนไหวจริง
+ */
+.cover::before {
+  position: absolute;
+  z-index: -1;
+  inset: -12%;
+  filter: blur(0.4rem);
+  background: conic-gradient(from -40deg, transparent 0deg, transparent 12deg, rgb(255 255 255 / 42%) 34deg, rgb(255 255 255 / 8%) 54deg, transparent 80deg, transparent 195deg, rgb(255 255 255 / 20%) 218deg, transparent 246deg, transparent 360deg);
+  content: "";
 }
 
 .cover::after {
@@ -36,105 +59,273 @@
   content: "";
 }
 
+.coverStage { position: relative; }
+
+/* เลเยอร์ตัวโน้ตอยู่หลังแผ่น (ประกาศก่อน .cover ใน DOM — element ที่ position:relative
+   อย่าง .cover paint ทับ element ที่ position:absolute ซึ่งมาก่อนหน้าใน DOM เสมอ) */
+.notes { position: absolute; inset: 0; pointer-events: none; opacity: 1; transition: opacity 0.45s ease-out; }
+
+/*
+ * ฟังจบแล้วเฟดทั้งชั้นให้เนียนแทนที่จะ unmount ทันที — หยุด animation ของแต่ละตัว
+ * ไว้ที่ตำแหน่งปัจจุบันด้วย (ไม่ใช่กระตุกกลับ) แล้วให้ transition ด้านบนค่อย ๆ จางลง
+ */
+.notesFading { opacity: 0; }
+.notesFading .noteOrbit { animation-play-state: paused; }
+
+.noteOrbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  animation: noteTravel 1.7s ease-out infinite;
+}
+
+.noteOrbit:nth-child(even) .noteIcon { color: #73bfa3; }
+
+.noteIcon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--note-scale, 1) * clamp(1rem, 2.4dvh, 1.5rem));
+  height: calc(var(--note-scale, 1) * clamp(1rem, 2.4dvh, 1.5rem));
+  color: #a3defe;
+  filter: drop-shadow(0 0 0.4rem currentcolor);
+  transform: translate(-50%, -50%) rotate(calc(-1 * var(--note-angle)));
+}
+
+@keyframes noteTravel {
+  0% { transform: rotate(var(--note-angle)) translateY(calc(-1 * clamp(8.5rem, 18dvh, 14.5rem))) scale(0.5); opacity: 0; }
+  22% { opacity: 1; }
+  100% { transform: rotate(var(--note-angle)) translateY(calc(-1 * clamp(14.5rem, 30dvh, 24rem))) scale(1.15); opacity: 0; }
+}
+
 .record {
   display: grid;
-  width: clamp(5rem, 11dvh, 9.5rem);
-  height: clamp(5rem, 11dvh, 9.5rem);
+  width: clamp(6.5rem, 15.5dvh, 13rem);
+  height: clamp(6.5rem, 15.5dvh, 13rem);
   place-items: center;
   border: 1px solid rgb(242 242 240 / 24%);
   border-radius: 50%;
   background: rgb(28 28 28 / 72%);
-  box-shadow: inset 0 0 0 0.5rem rgb(123 105 204 / 28%);
+  box-shadow: inset 0 0 0 0.5rem color-mix(in srgb, var(--category-accent, #7b69cc) 28%, transparent);
+  animation: counter-spin 5s linear infinite;
+  animation-play-state: paused;
 }
 
-.coverPlaying { animation: spin 5s linear infinite; }
-.coverPlaying .record { animation: counter-spin 5s linear infinite; }
+.coverPlaying, .coverPlaying .record { animation-play-state: running; }
 
+/* สีประจำตัวโชว์เลยตั้งแต่แรก ไม่ต้องรอ hover — hover ค่อยเข้มขึ้น+มีแสงเรืองรอบข้างเพิ่ม */
 .difficultyButton {
   display: flex;
-  min-height: clamp(5.75rem, 12dvh, 9rem);
+  min-height: clamp(6.5rem, 14dvh, 10.5rem);
   align-items: center;
   gap: 0.75rem;
-  border: 1px solid rgb(242 242 240 / 15%);
+  border: 1px solid color-mix(in srgb, var(--difficulty-color) 40%, transparent);
   border-radius: 1rem;
-  padding: clamp(0.875rem, 2dvh, 1.5rem);
+  padding: clamp(1rem, 2.4dvh, 1.75rem);
   color: #f2f2f0;
-  background: rgb(242 242 240 / 6%);
-  transition: transform 180ms ease-out, background-color 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
+  background: color-mix(in srgb, var(--difficulty-color) 11%, transparent);
+  transition: transform 180ms ease-out, background-color 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out, color 180ms ease-out;
 }
 
+/*
+ * แต่ละระดับความยากมีสีประจำตัว (--difficulty-color ตั้งจาก inline style ใน JS ตาม
+ * token สีของระบบ) ไล่โทนแดง(ยากสุด) → เหลือง → ฟ้า → เขียว(ง่ายสุด) ให้เห็นความยาก
+ * จากสีได้ทันทีโดยไม่ต้องอ่านป้าย ไม่ใช้สีฟ้าตายตัวเหมือนเดิมที่ทุกระดับหน้าตาเหมือนกัน
+ */
 .difficultyButton:hover:not(:disabled) {
-  border-color: rgb(163 222 254 / 75%);
-  background: rgb(163 222 254 / 12%);
-  box-shadow: 0 0.75rem 1.5rem rgb(0 0 0 / 16%);
-  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--difficulty-color) 85%, black 15%);
+  background: var(--difficulty-color);
+  color: #1c1c1c;
+  box-shadow: 0 0.75rem 1.5rem rgb(0 0 0 / 20%), 0 0 0.6rem color-mix(in srgb, var(--difficulty-color) 30%, transparent);
+  transform: translateY(-2px) scale(1.04);
 }
 
-.difficultyButton:focus-visible { outline: 2px solid #a3defe; outline-offset: 3px; }
+.difficultyButton:hover:not(:disabled) .difficultyIcon {
+  color: #1c1c1c;
+  background: rgb(28 28 28 / 18%);
+}
+
+/*
+ * label หลัก (VERY HARD ฯลฯ) ไม่ตั้งสีเอง เลยเปลี่ยนตาม color ของปุ่มแม่อัตโนมัติอยู่แล้ว
+ * (ขาว → เข้มตอน hover) แต่ป้ายบรรทัดล่าง (ฟัง N วินาที) เดิมล็อกเป็น text-white/60 ตรงๆ
+ * เลยไม่ขยับตาม ใช้ currentColor ผสมแทนค่าคงที่ ให้ตามสี/ความสว่างของปุ่มไปเองทั้ง 2 สถานะ
+ */
+.difficultySubLabel { color: color-mix(in srgb, currentColor 62%, transparent); }
+.difficultyPlayIcon { color: color-mix(in srgb, currentColor 68%, transparent); }
+
+.difficultyButton:focus-visible { outline: 2px solid var(--difficulty-color); outline-offset: 3px; }
 .difficultyButton:active:not(:disabled) { transform: translateY(0) scale(0.98); }
 .difficultyButton:disabled { cursor: not-allowed; opacity: 0.58; }
-.difficultyButtonSelected { border-color: rgb(163 222 254 / 88%); background: rgb(163 222 254 / 16%); }
+/* ปุ่มที่เลือกอยู่ (active) ทึบเหมือนตอน hover ไปเลย ไม่ใช่แค่พื้นจางๆ */
+.difficultyButtonSelected {
+  border-color: color-mix(in srgb, var(--difficulty-color) 85%, black 15%);
+  background: var(--difficulty-color);
+  color: #1c1c1c;
+  box-shadow: 0 0 0.6rem color-mix(in srgb, var(--difficulty-color) 30%, transparent);
+}
+
+.difficultyButtonSelected .difficultyIcon {
+  color: #1c1c1c;
+  background: rgb(28 28 28 / 18%);
+}
 
 .difficultyIcon {
   display: grid;
-  width: clamp(2.75rem, 5.5dvh, 4.25rem);
-  height: clamp(2.75rem, 5.5dvh, 4.25rem);
+  width: clamp(4.5rem, 9dvh, 6.75rem);
+  height: clamp(4.5rem, 9dvh, 6.75rem);
   flex: none;
   place-items: center;
-  border-radius: 0.8rem;
-  color: #a3defe;
-  background: rgb(163 222 254 / 13%);
+  border-radius: 0.9rem;
+  color: var(--difficulty-color);
+  background: color-mix(in srgb, var(--difficulty-color) 16%, transparent);
 }
 
 .difficultyIcon svg {
-  width: clamp(1.1rem, 2.4dvh, 1.75rem);
-  height: clamp(1.1rem, 2.4dvh, 1.75rem);
+  width: clamp(1.9rem, 4dvh, 2.9rem);
+  height: clamp(1.9rem, 4dvh, 2.9rem);
 }
 
 .record svg {
-  width: clamp(1.75rem, 3.6dvh, 2.75rem);
-  height: clamp(1.75rem, 3.6dvh, 2.75rem);
+  width: clamp(2.4rem, 5dvh, 3.9rem);
+  height: clamp(2.4rem, 5dvh, 3.9rem);
+}
+
+/*
+ * สีป้าย + แสงเรืองด้านหลังผูกกับหมวดหมู่เพลง (--category-accent จาก inline style, ค่า
+ * เดียวกับที่ revealPanel ใช้) แต่ละยุค/แนวเพลงเลยได้สีเฉพาะตัว ไม่ใช่ม่วง-ฟ้าตายตัวทุกเพลง
+ */
+/*
+ * ขนาดคงที่ (ไม่ผูก dvh) — เดิมใช้ clamp(...dvh...) ทำให้ป้ายขนาดสั่นตาม viewport height
+ * จริงที่เบราว์เซอร์รายงาน ณ ขณะนั้น (เช่นตอนเพิ่งกดเข้าเต็มจอ แถบ "press ESC" ของเบราว์เซอร์
+ * ทำให้ viewport ที่วัดได้ไม่นิ่งชั่วขณะ) ป้ายเลยดูขยับ/ขนาดเปลี่ยนได้แม้ layout ของเราไม่ได้ขยับ
+ * ยึดขนาดตามที่การ์ดเฉลยเรนเดอร์ตอนจอใหญ่ (ค่า max เดิมของ clamp) เป็นค่าตายตัวแทน
+ */
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--category-accent) 50%, transparent);
+  border-radius: 999px;
+  padding: 1.25rem 2.75rem;
+  color: #fff;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--category-accent) 55%, transparent), color-mix(in srgb, var(--category-accent) 28%, transparent));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--category-accent) 12%, transparent) inset, 0 1.25rem 3rem color-mix(in srgb, var(--category-accent) 40%, transparent), 0 0 3rem color-mix(in srgb, var(--category-accent) 30%, transparent);
+  font-size: 2.15rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  animation: badgeGlow 2.6s ease-in-out infinite;
+}
+
+.categoryBadgeIcon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--category-accent);
+  background: rgb(242 242 240 / 16%);
+}
+
+.categoryBadgeIcon svg { width: 58%; height: 58%; }
+
+@keyframes badgeGlow {
+  0%, 100% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--category-accent) 12%, transparent) inset, 0 1.25rem 3rem color-mix(in srgb, var(--category-accent) 40%, transparent), 0 0 2rem color-mix(in srgb, var(--category-accent) 22%, transparent); }
+  50% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--category-accent) 18%, transparent) inset, 0 1.25rem 3rem color-mix(in srgb, var(--category-accent) 48%, transparent), 0 0 3.75rem color-mix(in srgb, var(--category-accent) 42%, transparent); }
 }
 
 .wave { display: flex; height: clamp(3.5rem, 8dvh, 6rem); align-items: center; justify-content: center; gap: 0.28rem; }
 .waveBar { width: 0.28rem; border-radius: 999px; background: #a3defe; opacity: 0.7; }
 .waveBar:nth-child(3n) { background: #73bfa3; }
 .waveBar:nth-child(4n) { opacity: 1; }
-/* ทุกแท่งต้อง duration เท่ากันเป๊ะ — ถ้าไม่เท่ากันจะเริ่มพร้อมกันแค่เฟรมแรก
-   แล้วเพี้ยนเฟสไปเรื่อย ๆ พอหยุดเล่นแต่ละแท่งเลยค้างคนละจังหวะ ไม่พร้อมกัน */
-.wavePlaying .waveBar { animation: beat 620ms ease-in-out infinite alternate; }
+/*
+ * แต่ละแท่งได้ duration/delay/ระยะยุบ (--bar-min) ไม่เท่ากัน (ตั้งจาก inline style ใน JS
+ * แบบตายตัว ไม่ใช้ Math.random) จงใจให้จังหวะไม่ตรงกัน เหมือนคลื่นความถี่เพลงจริง — เดิมทุก
+ * แท่งใช้ animation เดียวกันเป๊ะ ขึ้นลงพร้อมกันหมด ดูเหมือนแท่งเดียวกระพือ ไม่เหมือนเพลง
+ */
+.wavePlaying .waveBar { animation: beat ease-in-out infinite alternate; }
+
+/*
+ * การ์ดตัวเลือกความยากกับการ์ดเฉลยซ้อนอยู่ในเซลล์กริดเดียวกัน (ทั้งคู่ grid-area: 1/1)
+ * แล้วสลับด้วย visibility — เซลล์เลยสูงเท่ากับตัวที่สูงสุดในสองใบเสมอ (union ของทั้งคู่
+ * ไม่ใช่แค่ตัวที่ active) ป้ายยุคเพลงกับเนื้อหาโดยรวมด้านบนเลยไม่ขยับตอนสลับก่อน/หลังเฉลย
+ */
+.panelStack { display: grid; }
+.panelStack > * { grid-area: 1 / 1; min-width: 0; }
+
+.pickerPanel {
+  display: flex;
+  min-height: clamp(18rem, 46dvh, 32rem);
+  flex-direction: column;
+  justify-content: center;
+}
 
 .revealPanel {
   container-type: inline-size;
+  position: relative;
+  overflow: hidden;
   display: flex;
   min-height: clamp(18rem, 46dvh, 32rem);
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(1rem, 3dvh, 1.75rem);
   padding: clamp(1.5rem, 4dvh, 3rem);
   text-align: center;
-  border: 1px solid rgb(115 191 163 / 30%);
+  /* สีของกรอบ/แสงพื้นหลังผูกกับหมวดหมู่เพลง (--reveal-accent จาก inline style) — แต่ละรอบ
+     จะได้ไม่ซ้ำสีเดิมตลอดเกม */
+  border: 1px solid color-mix(in srgb, var(--reveal-accent) 30%, transparent);
   border-radius: 1.5rem;
-  background: radial-gradient(circle at 50% 15%, rgb(115 191 163 / 16%), transparent 65%), rgb(242 242 240 / 4%);
+  background: radial-gradient(circle at 50% 15%, color-mix(in srgb, var(--reveal-accent) 16%, transparent), transparent 65%), rgb(242 242 240 / 4%);
+}
+
+/* ปกอัลบัม+ข้อความห่อแยกจาก .revealPanel เอง — ปุ่ม CTA (เฉลย/รอบถัดไป) จะได้เป็นแถวเต็ม
+   ความกว้างอยู่ใต้คู่นี้เสมอ ไม่ถูกจัดเป็น flex item แถวเดียวกันตอนคอลัมน์กว้างพอจนสลับเป็นแนวนอน */
+.revealMain {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 3dvh, 1.75rem);
+  text-align: center;
 }
 
 /* คอลัมน์กว้างพอ — วางปกอัลบัมกับข้อความเรียงแนวนอนแทนซ้อนกัน */
 @container (min-width: 26rem) {
-  .revealPanel { flex-direction: row; text-align: left; }
+  .revealMain { flex-direction: row; text-align: left; }
+}
+
+/* คอนเฟตตี้ตกต่อเนื่องตลอดที่อยู่ในหน้าเฉลย — revealPanel mount ใหม่ทุกรอบอยู่แล้ว
+   (conditional render ตาม revealed) จึงเริ่มตกใหม่อัตโนมัติทุกครั้งที่เฉลย และหยุดเองทันที
+   ที่ออกจากรอบ (unmount) ไม่ต้องเก็บ state คุมเอง */
+.confettiLayer { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+
+.confettiPiece {
+  position: absolute;
+  top: -0.75rem;
+  width: 0.5rem;
+  height: 0.9rem;
+  border-radius: 1px;
+  opacity: 0;
+  animation-name: confettiFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
 .revealCover {
   display: grid;
   overflow: hidden;
   aspect-ratio: 1;
-  width: clamp(7rem, 32cqw, 13rem);
+  width: clamp(10.5rem, 48cqw, 19.5rem);
   flex: none;
   place-items: center;
-  border: 1px solid rgb(242 242 240 / 14%);
+  border: 1px solid color-mix(in srgb, var(--reveal-accent) 55%, transparent);
   border-radius: 1.1rem;
-  background: linear-gradient(135deg, #7b69cc, #4b3b8d 58%, #1c1c1c);
-  box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 28%);
+  background: linear-gradient(135deg, var(--reveal-accent), color-mix(in srgb, var(--reveal-accent) 55%, #1c1c1c) 58%, #1c1c1c);
+  /* เรืองแสงรอบขอบตามสีหมวดหมู่เพลง */
+  box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 28%), 0 0 0 3px color-mix(in srgb, var(--reveal-accent) 35%, transparent), 0 0 2.5rem color-mix(in srgb, var(--reveal-accent) 30%, transparent);
 }
 
 .revealCoverIcon {
@@ -154,40 +345,135 @@
  * ปริยาย — ถ้าไม่บังคับให้ยืดเต็มที่ ตัวกล่องจะกว้างเท่าข้อความเสมอ ทำให้ white-space:
  * nowrap/overflow ไม่มีขอบเขตให้ตัด และ JS วัดความกว้างเพื่อลดขนาดฟอนต์ก็จะวัดผิด (วัด
  * ความกว้างของตัวเองซึ่งเท่ากับความกว้างข้อความพอดีเสมอ)
+ * ข้างในใช้ flex column + justify-content: space-between ให้ป้าย/ชื่อเพลง/ชื่อศิลปิน
+ * กระจายเต็มความสูงของการ์ด (เท่าความสูงปกอัลบัม) แทนที่จะกองอยู่กลางๆ เหลือที่ว่างเยอะ
  */
-.revealText { min-width: 0; flex: 1; align-self: stretch; }
+.revealText {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  align-self: stretch;
+}
 
+.revealLabel {
+  color: var(--reveal-accent);
+  font-size: clamp(1.1rem, 3.4cqw, 1.65rem);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+/* ขนาดฟอนต์จริงคุมด้วย JS (useFitOneLine — วัดความกว้างจริงด้วย canvas แล้วลดจนพอดี)
+   ไม่ใช้ text-overflow: ellipsis เด็ดขาด เพราะชื่อเพลงห้ามถูกตัดคำ — overflow:hidden ที่
+   เหลือไว้เป็นตาข่ายกันเหนียวเผื่อ JS ยังวัดไม่เสร็จตอนเฟรมแรกเท่านั้น */
+/*
+ * line-height ต้องเผื่อเยอะกว่าอังกฤษปกติ (1.4 ไม่ใช่ 1.05-1.2) เพราะสระ/วรรณยุกต์ไทย
+ * ที่ลอยเหนือ-ใต้ตัวอักษร (ั ่ ้ ๊ ึ ืฯลฯ) กินพื้นที่เกินกรอบบรรทัดปกติ line-height แน่นไป
+ * จะโดน overflow:hidden ของแกน Y ตัดบนล่าง — ใช้ overflow-x: hidden เพียงแกนเดียว (กัน
+ * ข้อความยาวล้นแนวนอนตอน JS วัดพลาด) ปล่อย overflow-y visible ให้สระ/วรรณยุกต์ไม่โดนตัด
+ */
 .revealTitle {
   max-width: 100%;
-  margin-top: 0.25rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /*
+   * overflow-x: hidden ผสมกับ overflow-y: visible ตาม CSS spec จะทำให้ overflow-y ที่ตั้ง
+   * visible ถูกแปลงเป็น auto อัตโนมัติ (กฎ "ถ้าแกนหนึ่ง visible อีกแกนไม่ visible ให้
+   * visible กลายเป็น auto") กลายเป็นกล่อง scroll แล้วโผล่ scrollbar แนวตั้งตอนบรรทัด
+   * (จาก line-height 1.4) สูงกว่ากล่องนิดหน่อย — ใช้ clip แทน hidden เพราะ clip ไม่ทำให้
+   * เกิด scrollport จึงไม่ทริกเกอร์กฎแปลงเป็น auto และไม่มี scrollbar โผล่มา
+   */
+  overflow-x: clip;
+  overflow-y: visible;
   white-space: nowrap;
-  /* อิงความกว้างของกล่องตัวเอง (container query) ไม่ใช่ viewport height —
-     ต้องจบใน 1 บรรทัดเสมอ เพราะมีชื่อศิลปินอีกบรรทัดต่อท้าย (รวมห้ามเกิน 2 บรรทัด) */
-  font-size: clamp(1.75rem, 11cqw, 4rem);
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.4;
   letter-spacing: -0.01em;
 }
 
 .revealArtist {
   max-width: 100%;
-  margin-top: 0.35rem;
-  overflow: hidden;
+  /*
+   * overflow-x: hidden ผสมกับ overflow-y: visible ตาม CSS spec จะทำให้ overflow-y ที่ตั้ง
+   * visible ถูกแปลงเป็น auto อัตโนมัติ (กฎ "ถ้าแกนหนึ่ง visible อีกแกนไม่ visible ให้
+   * visible กลายเป็น auto") กลายเป็นกล่อง scroll แล้วโผล่ scrollbar แนวตั้งตอนบรรทัด
+   * (จาก line-height 1.4) สูงกว่ากล่องนิดหน่อย — ใช้ clip แทน hidden เพราะ clip ไม่ทำให้
+   * เกิด scrollport จึงไม่ทริกเกอร์กฎแปลงเป็น auto และไม่มี scrollbar โผล่มา
+   */
+  overflow-x: clip;
+  overflow-y: visible;
   white-space: nowrap;
-  /* กันไว้อีกชั้น เผื่อกล่องแคบจนลดขนาดตัวอักษรถึง ARTIST_MIN_PX แล้วยังไม่พอ */
-  text-overflow: ellipsis;
   font-weight: 600;
-  line-height: 1.3;
-  color: rgb(242 242 240 / 62%);
+  line-height: 1.4;
+  color: rgb(242 242 240 / 68%);
 }
 
-@keyframes beat { from { transform: scaleY(0.45); } to { transform: scaleY(1); } }
+/* หัวข้อ/ชื่อเพลง/ศิลปินเด้งเข้าทีละบรรทัด (animation-delay ต่างกันจาก inline style) แทนที่
+   จะโผล่มาทันทีทั้งก้อนตอนเปิดเฉลย */
+.revealPop {
+  animation-name: revealPopIn;
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation-fill-mode: backwards;
+}
+
+@keyframes beat { from { transform: scaleY(var(--bar-min, 0.45)); } to { transform: scaleY(1); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes counter-spin { to { transform: rotate(-360deg); } }
 
+@keyframes revealPopIn {
+  from { transform: scale(0.85) translateY(0.4rem); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes confettiFall {
+  0% { transform: translate(0, 0) rotate(var(--confetti-rotate, 0deg)); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translate(var(--confetti-drift, 0px), 42dvh) rotate(calc(var(--confetti-rotate, 0deg) + 360deg)); opacity: 0; }
+}
+
+/*
+ * ปุ่มหลักของแต่ละการ์ด (เฉลย / รอบถัดไป / กลับไปเลือกเกมส์) — ย้ายมาอยู่กึ่งกลางการ์ดของ
+ * ตัวเอง แทนที่จะแอบอยู่มุมล่างขวาแบบเดิม ให้เด่นชัดว่าเป็น action หลักของขั้นตอนนั้น
+ * สีพื้นฐานเป็นโทนแดง (--cta-accent ค่า default) แต่ปุ่ม "รอบถัดไป" รับสี inline ตาม
+ * หมวดหมู่ของเพลงรอบถัดไปแทน (ดู --cta-accent ที่ตั้งจาก inline style ใน JS) ให้เห็นล่วงหน้า
+ * ว่ารอบต่อไปเป็นเพลงหมวดไหนตั้งแต่ยังไม่กด
+ */
+.primaryCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-top: clamp(1.25rem, 3dvh, 2rem);
+  padding: clamp(0.75rem, 2.5dvh, 1.1rem) clamp(1.5rem, 6vw, 3rem);
+  border: none;
+  border-radius: 999px;
+  color: #1c1c1c;
+  font-size: clamp(1rem, 2.6vw, 1.2rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--cta-accent, #f49a7f) 65%, white), var(--cta-accent, #f49a7f) 55%, color-mix(in srgb, var(--cta-accent, #f49a7f) 75%, black));
+  box-shadow: 0 0.75rem 2rem color-mix(in srgb, var(--cta-accent, #f49a7f) 40%, transparent), 0 0 0 1px color-mix(in srgb, var(--cta-accent, #f49a7f) 30%, transparent) inset;
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 200ms ease-out, filter 200ms ease-out;
+  cursor: pointer;
+}
+
+.primaryCta:hover {
+  transform: translateY(-3px) scale(1.035);
+  box-shadow: 0 1.25rem 2.75rem color-mix(in srgb, var(--cta-accent, #f49a7f) 55%, transparent), 0 0 0 1px color-mix(in srgb, var(--cta-accent, #f49a7f) 45%, transparent) inset;
+  filter: brightness(1.06);
+}
+
+.primaryCta:active { transform: translateY(-1px) scale(0.98); }
+.primaryCta:focus-visible { outline: 2px solid var(--cta-accent, #f49a7f); outline-offset: 3px; }
+.primaryCta:disabled { cursor: not-allowed; opacity: 0.5; transform: none; }
+
 @media (prefers-reduced-motion: reduce) {
-  .coverPlaying, .coverPlaying .record, .wavePlaying .waveBar { animation: none; }
-  .difficultyButton { transition: none; }
+  .cover, .record, .wavePlaying .waveBar, .categoryBadge { animation: none; }
+  .difficultyButton, .primaryCta { transition: none; }
+  .primaryCta:hover { transform: none; }
+  .notes { display: none; }
+  .confettiLayer { display: none; }
+  .revealPop { animation: none; }
 }
