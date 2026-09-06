@@ -160,6 +160,7 @@ export const th = {
     comingSoon: "เร็วๆ นี้",
     turnMusicOn: "เปิดเพลงประกอบ",
     turnMusicOff: "ปิดเพลงประกอบ",
+    musicVolume: "ระดับเสียงเพลงประกอบ",
   },
   employeeLocker: {
     title: "ตำแหน่งล็อกเกอร์พนักงาน",

@@ -6,6 +6,11 @@ import { Maximize2Icon, Volume2Icon, VolumeXIcon } from "lucide-react"
 
 import { PageContainer } from "@/components/common/page-header"
 import { Button } from "@/components/ui/button"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { ROUTES } from "@/constants/app"
 import { useT } from "@/i18n"
 import { cn } from "@/lib/utils"
@@ -14,6 +19,73 @@ import { usePresentationMode } from "./presentation-mode-provider"
 
 const BGM_SRC = "/audio/games-lobby-bgm.mp3"
 const BGM_FADE_MS = 2000
+
+/**
+ * ปุ่มเปิด/ปิดเพลงประกอบ — คลิกไอคอนสลับเล่น/หยุดตามเดิม พร้อมเปิด popover โชว์แถบเลื่อนระดับ
+ * เสียงไปด้วยในตัว (คลิกครั้งเดียวได้ทั้งสองอย่าง — Radix asChild รวม onClick ของปุ่มเข้ากับ
+ * ตัวเปิด popover ให้อัตโนมัติ) แยกเป็น component เพื่อไม่ต้องก็อปโครง JSX ซ้ำสองที่ (ปกติ/เต็มจอ)
+ */
+function MusicToggleButton({
+  className,
+  isMusicPlaying,
+  volume,
+  onToggle,
+  onVolumeChange,
+}: {
+  className?: string
+  isMusicPlaying: boolean
+  volume: number
+  onToggle: () => void
+  onVolumeChange: (value: number) => void
+}) {
+  const t = useT()
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          onClick={onToggle}
+          className={cn(
+            "rounded-full border-2 border-general-purple/60 bg-general-purple/10 text-general-purple shadow-md shadow-general-purple/15 hover:border-general-purple hover:bg-general-purple hover:text-white",
+            className
+          )}
+          aria-label={isMusicPlaying ? t("games.turnMusicOff") : t("games.turnMusicOn")}
+          aria-pressed={isMusicPlaying}
+          data-testid="games-bgm-toggle"
+        >
+          {isMusicPlaying ? (
+            <Volume2Icon className="size-5" aria-hidden="true" />
+          ) : (
+            <VolumeXIcon className="size-5" aria-hidden="true" />
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        side="bottom"
+        align="end"
+        className="z-[70] w-auto flex-row items-center gap-3 p-3"
+      >
+        <span className="text-xs font-medium text-nowrap text-muted-foreground">
+          {t("games.musicVolume")}
+        </span>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.01}
+          value={volume}
+          onChange={(event) => onVolumeChange(Number(event.target.value))}
+          className="h-1.5 w-28 cursor-pointer accent-[#7b69cc]"
+          aria-label={t("games.musicVolume")}
+          data-testid="games-bgm-volume"
+        />
+      </PopoverContent>
+    </Popover>
+  )
+}
 
 /**
  * โครงของโซนเกมส์ — ปุ่มเต็มจอบนสุด, การ์ดเกมซ้าย, การ์ดคนในห้องขวา
@@ -37,6 +109,18 @@ export function GamesShell({ children }: { children: React.ReactNode }) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const fadeFrameRef = useRef<number | null>(null)
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
+  /** ระดับเสียงที่ตั้งไว้ (0-1) — เป็นเป้าหมายตอนเฟดอินด้วย ไม่ใช่แค่ปรับตอนกำลังเล่นเฉย ๆ */
+  const [volume, setVolume] = useState(1)
+  /*
+   * เก็บค่า volume ล่าสุดไว้ใน ref ด้วย — useEffect เล่นเพลงอัตโนมัติด้านล่างตั้งใจให้รันแค่ตอน
+   * isPickerPage เปลี่ยน (ไม่ใช่ทุกครั้งที่ลากแถบเสียง) เลยอ่านผ่าน ref แทนใส่ volume ใน
+   * dependency array ตรง ๆ — ต้อง sync ค่าใน useEffect ของตัวเอง (ห้าม mutate ref กลาง render
+   * ตรง ๆ ตาม eslint rule react-hooks/refs)
+   */
+  const volumeRef = useRef(volume)
+  useEffect(() => {
+    volumeRef.current = volume
+  }, [volume])
 
   /*
    * ออกจากหน้าเลือกเกมส์ (เข้าไปเล่นเกมจริง) แล้วต้องรีเซ็ตปุ่มกลับเป็น "ยังไม่เล่น" — ใช้ pattern
@@ -94,7 +178,7 @@ export function GamesShell({ children }: { children: React.ReactNode }) {
       .play()
       .then(() => {
         if (cancelled) return
-        fadeVolume(audio, 1, BGM_FADE_MS)
+        fadeVolume(audio, volumeRef.current, BGM_FADE_MS)
         setIsMusicPlaying(true)
       })
       .catch(() => {
@@ -114,9 +198,19 @@ export function GamesShell({ children }: { children: React.ReactNode }) {
     } else {
       audio.volume = 0
       void audio.play()
-      fadeVolume(audio, 1, BGM_FADE_MS)
+      fadeVolume(audio, volume, BGM_FADE_MS)
       setIsMusicPlaying(true)
     }
+  }
+
+  /** ลากแถบเลื่อนขณะกำลังเล่นอยู่ — ปรับเสียงทันที ไม่ต้องรอเฟด (ยกเลิก fade ที่ค้างอยู่ด้วยกันสับสน) */
+  function handleVolumeChange(value: number) {
+    setVolume(value)
+    if (fadeFrameRef.current !== null) {
+      clearInterval(fadeFrameRef.current)
+      fadeFrameRef.current = null
+    }
+    if (audioRef.current) audioRef.current.volume = value
   }
 
   return (
@@ -145,29 +239,11 @@ export function GamesShell({ children }: { children: React.ReactNode }) {
       {isPickerPage && <audio ref={audioRef} src={BGM_SRC} loop preload="none" />}
 
       {/*
-        ปุ่มเปิด/ปิดเพลงประกอบ ต้องกดได้ทั้งสองโหมด เพราะพิธีกรอาจอยากปิดเสียงตอนพูดแม้อยู่ใน
-        โหมดเต็มจอ — ต่างจากปุ่มเต็มจอที่ซ่อนไปเลยเพื่อกันกดออกโดยไม่ตั้งใจ โหมดปกติวางไว้ในแถว
-        ควบคุมข้างปุ่มเต็มจอ (ไม่ทับกับ topbar ของแอป) ส่วนโหมดเต็มจอที่ซ่อนแถบควบคุมไปแล้ว
-        ต้องลอยเป็น fixed มุมจอแทน
+        ปุ่มเปิด/ปิดเพลงประกอบ โชว์แค่โหมดปกติ — โหมดเต็มจอซ่อนแถบควบคุมทั้งแถบอยู่แล้ว
+        (กันกดออกโดยไม่ตั้งใจ) เพลงเลยเล่นต่อเรื่อย ๆ เองตาม isPickerPage โดยไม่มีปุ่มให้ปิด
+        จนกว่าจะออกจากเต็มจอ
       */}
-      {presentationMode && isPickerPage ? (
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          onClick={toggleMusic}
-          className="fixed top-4 right-4 z-[60] size-11 rounded-full border-2 border-general-purple/60 bg-general-purple/10 text-general-purple shadow-md shadow-general-purple/15 hover:border-general-purple hover:bg-general-purple hover:text-white"
-          aria-label={isMusicPlaying ? t("games.turnMusicOff") : t("games.turnMusicOn")}
-          aria-pressed={isMusicPlaying}
-          data-testid="games-bgm-toggle"
-        >
-          {isMusicPlaying ? (
-            <Volume2Icon className="size-5" aria-hidden="true" />
-          ) : (
-            <VolumeXIcon className="size-5" aria-hidden="true" />
-          )}
-        </Button>
-      ) : presentationMode ? null : (
+      {presentationMode ? null : (
         <div className="flex shrink-0 items-center justify-center gap-3">
           <Button
             type="button"
@@ -183,22 +259,13 @@ export function GamesShell({ children }: { children: React.ReactNode }) {
             {t("common.fullscreen")}
           </Button>
           {isPickerPage && (
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={toggleMusic}
-              className="size-14 rounded-full border-2 border-general-purple/60 bg-general-purple/10 text-general-purple shadow-md shadow-general-purple/15 hover:border-general-purple hover:bg-general-purple hover:text-white"
-              aria-label={isMusicPlaying ? t("games.turnMusicOff") : t("games.turnMusicOn")}
-              aria-pressed={isMusicPlaying}
-              data-testid="games-bgm-toggle"
-            >
-              {isMusicPlaying ? (
-                <Volume2Icon className="size-5" aria-hidden="true" />
-              ) : (
-                <VolumeXIcon className="size-5" aria-hidden="true" />
-              )}
-            </Button>
+            <MusicToggleButton
+              className="size-14"
+              isMusicPlaying={isMusicPlaying}
+              volume={volume}
+              onToggle={toggleMusic}
+              onVolumeChange={handleVolumeChange}
+            />
           )}
         </div>
       )}

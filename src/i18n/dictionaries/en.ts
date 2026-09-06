@@ -159,6 +159,7 @@ export const en: Dictionary = {
     comingSoon: "Coming soon",
     turnMusicOn: "Turn on background music",
     turnMusicOff: "Turn off background music",
+    musicVolume: "Background music volume",
   },
   employeeLocker: {
     title: "Employee locker locations",
