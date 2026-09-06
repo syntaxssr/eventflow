@@ -157,6 +157,8 @@ export const en: Dictionary = {
     musicQuizTitle: "Music quiz",
     musicQuizDescription: "Listen to the intro and name the song before time runs out",
     comingSoon: "Coming soon",
+    turnMusicOn: "Turn on background music",
+    turnMusicOff: "Turn off background music",
   },
   employeeLocker: {
     title: "Employee locker locations",

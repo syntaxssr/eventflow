@@ -158,6 +158,8 @@ export const th = {
     musicQuizTitle: "เกมส์ทายเพลง",
     musicQuizDescription: "ฟังอินโทร แล้วแข่งกันทายชื่อเพลงให้ทันเวลา",
     comingSoon: "เร็วๆ นี้",
+    turnMusicOn: "เปิดเพลงประกอบ",
+    turnMusicOff: "ปิดเพลงประกอบ",
   },
   employeeLocker: {
     title: "ตำแหน่งล็อกเกอร์พนักงาน",

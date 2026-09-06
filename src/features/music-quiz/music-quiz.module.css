@@ -206,11 +206,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.9rem;
-  border: 1px solid color-mix(in srgb, var(--category-accent) 50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--category-accent) 65%, black 15%);
   border-radius: 999px;
   padding: 1.25rem 2.75rem;
   color: #fff;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--category-accent) 55%, transparent), color-mix(in srgb, var(--category-accent) 28%, transparent));
+  /* พื้นสีทึบ (ผสมดำ 50%) แทน gradient โปร่งเดิม — คุม contrast กับตัวหนังสือขาวให้ ≥4.5:1 ทุกหมวดหมู่ */
+  background: color-mix(in srgb, var(--category-accent) 50%, black 50%);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--category-accent) 12%, transparent) inset, 0 1.25rem 3rem color-mix(in srgb, var(--category-accent) 40%, transparent), 0 0 3rem color-mix(in srgb, var(--category-accent) 30%, transparent);
   font-size: 2.15rem;
   font-weight: 800;
