@@ -8,6 +8,7 @@ import {
   ChevronLeftIcon,
   EyeIcon,
   FlameIcon,
+  Loader2Icon,
   MusicIcon,
   Music2Icon,
   Music3Icon,
@@ -295,8 +296,62 @@ function useFitOneLine(
   return fontSize
 }
 
+/**
+ * โหลดล่วงหน้ารูปปก+เพลงทุกรอบตั้งแต่เข้าเกม (ไม่ใช่รอโหลดทีละรอบตอนถึงคิว) — ตอนเทสจริง
+ * ทีมงานเจอรูปปกยังไม่ขึ้นตอนกดเฉลย/เพลงมาช้าเพราะเบราว์เซอร์ยังไม่เคยโหลดไฟล์นั้นมาก่อน
+ * เลย fetch ทุกไฟล์ทิ้งไว้ก่อน (ผลลัพธ์เข้า HTTP cache ของเบราว์เซอร์เอง — พอ <img>/<audio>
+ * เรียก URL เดียวกันทีหลังเลยได้จากแคชทันที ไม่ต้องโหลดจริงซ้ำ) ไฟล์เดียวกันซ้ำกันหลาย
+ * เพลงไม่ได้ (Set กันซ้ำ) ไฟล์ไหนพลาด/โหลดไม่ได้ก็ไม่บล็อกเกม (catch ทิ้งเงียบ ๆ นับว่า
+ * เสร็จแล้วเหมือนกัน) ดีกว่าเกมค้างเพราะไฟล์เดียวเสีย
+ */
+function useAssetPreload(songs: readonly QuizSong[]) {
+  const [loaded, setLoaded] = React.useState(0)
+  const [total, setTotal] = React.useState(0)
+  const [done, setDone] = React.useState(false)
+
+  React.useEffect(() => {
+    const urls = Array.from(
+      new Set(
+        songs.flatMap((song) => [song.coverUrl, song.audioUrl, song.hookAudioUrl].filter((url): url is string => Boolean(url)))
+      )
+    )
+    if (urls.length === 0) {
+      setDone(true)
+      return
+    }
+
+    let cancelled = false
+    let loadedCount = 0
+    setTotal(urls.length)
+    setLoaded(0)
+    setDone(false)
+
+    Promise.all(
+      urls.map((url) =>
+        fetch(url, { cache: "force-cache" })
+          .then((response) => response.blob())
+          .catch(() => undefined)
+          .finally(() => {
+            if (cancelled) return
+            loadedCount += 1
+            setLoaded(loadedCount)
+          })
+      )
+    ).then(() => {
+      if (!cancelled) setDone(true)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [songs])
+
+  return { loaded, total, done }
+}
+
 /** การ์ดโฮสต์: เลือกเวลาของอินโทร แล้วผู้เล่นพิมพ์ชื่อเพลงจากมือถือ */
 export function MusicQuizView() {
+  const { loaded: assetsLoaded, total: assetsTotal, done: assetsReady } = useAssetPreload(QUIZ_SONGS)
   const [roundIndex, setRoundIndex] = React.useState(0)
   const [difficulty, setDifficulty] = React.useState<Difficulty | null>(null)
   const [elapsedMs, setElapsedMs] = React.useState(0)
@@ -481,6 +536,29 @@ export function MusicQuizView() {
     setElapsedMs(0)
     setIsPlaying(false)
     setRevealed(false)
+  }
+
+  if (!assetsReady) {
+    const preloadProgress = assetsTotal > 0 ? (assetsLoaded / assetsTotal) * 100 : 100
+    return (
+      <Card className={cn(styles.card, "h-full border-white/15 text-white shadow-2xl shadow-black/25")} data-testid="music-quiz-loading">
+        <CardContent className="relative z-10 flex h-full flex-col items-center justify-center gap-5 p-8 text-center">
+          <Loader2Icon className="size-10 animate-spin text-white/70" aria-hidden="true" />
+          <div className="space-y-1">
+            <p className="text-lg font-bold">กำลังเตรียมเพลงและรูปภาพ</p>
+            <p className="text-sm text-white/55">โหลดล่วงหน้าให้ครบก่อนเริ่มเกม กันเพลง/รูปมาช้าตอนเฉลย</p>
+          </div>
+          <Progress
+            value={preloadProgress}
+            aria-label="ความคืบหน้าการโหลดไฟล์เพลงและรูปภาพ"
+            className="h-2 w-full max-w-xs bg-white/12 [&>div]:bg-general-blue"
+          />
+          <p className="text-xs tabular-nums text-white/45" data-testid="music-quiz-loading-count">
+            {assetsLoaded} / {assetsTotal}
+          </p>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
