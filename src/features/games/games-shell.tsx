@@ -109,8 +109,8 @@ export function GamesShell({ children }: { children: React.ReactNode }) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const fadeFrameRef = useRef<number | null>(null)
   const [isMusicPlaying, setIsMusicPlaying] = useState(false)
-  /** ระดับเสียงที่ตั้งไว้ (0-1) — เป็นเป้าหมายตอนเฟดอินด้วย ไม่ใช่แค่ปรับตอนกำลังเล่นเฉย ๆ */
-  const [volume, setVolume] = useState(1)
+  /** ระดับเสียงที่ตั้งไว้ (0-1) — เป็นเป้าหมายตอนเฟดอินด้วย ไม่ใช่แค่ปรับตอนกำลังเล่นเฉย ๆ ค่าเริ่มต้น 50% กันดังเกินไปตอนเข้าหน้าครั้งแรก */
+  const [volume, setVolume] = useState(0.5)
   /*
    * เก็บค่า volume ล่าสุดไว้ใน ref ด้วย — useEffect เล่นเพลงอัตโนมัติด้านล่างตั้งใจให้รันแค่ตอน
    * isPickerPage เปลี่ยน (ไม่ใช่ทุกครั้งที่ลากแถบเสียง) เลยอ่านผ่าน ref แทนใส่ volume ใน
