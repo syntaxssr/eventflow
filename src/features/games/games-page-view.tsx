@@ -117,7 +117,7 @@ export function GamesPageView() {
             */}
             <span
               className={cn(
-                "bg-background rounded-full px-6 py-2 text-center leading-none font-bold whitespace-nowrap text-white shadow-lg shadow-black/25 ring-1 ring-white/10",
+                "rounded-full bg-black/55 px-6 py-2 text-center leading-none font-bold whitespace-nowrap text-white shadow-lg shadow-black/25 ring-1 ring-white/15 backdrop-blur-sm",
                 presentationMode ? "text-5xl" : "text-xl"
               )}
             >

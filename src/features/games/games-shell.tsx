@@ -239,10 +239,19 @@ export function GamesShell({ children }: { children: React.ReactNode }) {
       {isPickerPage && <audio ref={audioRef} src={BGM_SRC} loop preload="none" />}
 
       {/*
-        ปุ่มเปิด/ปิดเพลงประกอบ โชว์แค่โหมดปกติ — โหมดเต็มจอซ่อนแถบควบคุมทั้งแถบอยู่แล้ว
-        (กันกดออกโดยไม่ตั้งใจ) เพลงเลยเล่นต่อเรื่อย ๆ เองตาม isPickerPage โดยไม่มีปุ่มให้ปิด
-        จนกว่าจะออกจากเต็มจอ
+        ปุ่มเปิด/ปิดเพลงประกอบ ต้องกดได้ทั้งสองโหมด — พิธีกรอาจอยากปิดเสียงตอนพูดแม้อยู่ในโหมด
+        เต็มจอ โหมดเต็มจอซ่อนแถบควบคุมทั้งแถบไปแล้ว เลยลอยปุ่มเพลงไว้กลางบนแทน (top-4 กึ่งกลาง
+        แนวนอน หลบการ์ดคนในห้องที่อยู่ขวา + ไม่ชนปุ่ม Esc-only exit)
       */}
+      {presentationMode && isPickerPage && (
+        <MusicToggleButton
+          className="fixed top-4 left-1/2 z-[60] size-14 -translate-x-1/2"
+          isMusicPlaying={isMusicPlaying}
+          volume={volume}
+          onToggle={toggleMusic}
+          onVolumeChange={handleVolumeChange}
+        />
+      )}
       {presentationMode ? null : (
         <div className="flex shrink-0 items-center justify-center gap-3">
           <Button
