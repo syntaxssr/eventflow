@@ -73,8 +73,8 @@ export function GamesPageView() {
           >
             LIVE
           </span>
-          {/* TODO: เส้นแบ่ง 70/30 (border-dashed) เอาไว้ดูสัดส่วนชั่วคราว เอาออกทีหลัง */}
-          <div className="relative flex min-h-0 flex-[7] items-center justify-center border-b-2 border-dashed border-white/50">
+          {/* โซนไอคอน 70% ของความสูงการ์ด ต่อจากนี้คือโซนป้ายชื่อเกมส์ 30% ด้านล่าง (ดู flex-[3] ถัดไป) */}
+          <div className="relative flex min-h-0 flex-[7] items-center justify-center">
             {/*
               ตัวโน้ตลอยออกจากหลังแผ่น — ก็อปเอฟเฟกต์จากหน้าเล่นเกมจริง แต่ตรงนี้ให้ลอยตลอด
               ไม่ผูกกับสถานะ isPlaying (ไม่มี concept "กำลังเล่น" ในหน้ารวมเกม) ต้องอยู่ก่อน
