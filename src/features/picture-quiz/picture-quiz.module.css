@@ -1,0 +1,149 @@
+/*
+ * เวทีภาพเต็มพื้นที่ (แบบ B ที่เลือก) — รูปครองพื้นที่ส่วนใหญ่ของการ์ด เหมาะฉายจอใหญ่ในโหมด
+ * เต็มจอ ป้ายหมวดหมู่/ระดับซูมลอยอยู่มุมบนสองข้าง แถบควบคุมลอยอยู่ด้านล่างแยกกันคนละก้อน —
+ * ส่วนที่เหลือ (คอนเฟตตี้, ปุ่มหลัก) ใช้คลาสร่วมจาก music-quiz.module.css ตรง ๆ เพราะเป็น
+ * สไตล์ทั่วไปของเกมทายคำตอบอยู่แล้ว ไม่ผูกกับเพลง
+ */
+
+.stageFull {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, var(--category-accent, #7b69cc), color-mix(in srgb, var(--category-accent, #7b69cc) 45%, #1c1c1c) 60%, #1c1c1c);
+  box-shadow: 0 1.5rem 3.5rem rgb(0 0 0 / 30%);
+  transition: box-shadow 300ms ease-out;
+}
+
+.stageFullRevealed {
+  box-shadow: 0 1.5rem 3.5rem rgb(0 0 0 / 30%), 0 0 0 3px color-mix(in srgb, var(--category-accent, #7b69cc) 55%, transparent), 0 0 3rem color-mix(in srgb, var(--category-accent, #7b69cc) 45%, transparent);
+}
+
+.stageImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(var(--peek-scale, 1));
+  transition: transform 450ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* กรอบ viewfinder ขนาดเล็ก — ใช้แค่เป็นไอคอนตกแต่งการ์ดเลือกเกมส์ที่หน้ารวมเกม (games-page-view.tsx) */
+.peekFrame {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, var(--category-accent, #7b69cc), color-mix(in srgb, var(--category-accent, #7b69cc) 45%, #1c1c1c) 60%, #1c1c1c);
+  box-shadow: 0 1.5rem 3.5rem rgb(0 0 0 / 30%);
+}
+
+/* ยังไม่มีไฟล์รูปจริง (imageUrl ว่าง) — โชว์ไอคอนแทนเฉย ๆ กึ่งกลางเวที ไม่มีอะไรให้ซูม */
+.peekPlaceholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  gap: 0.5rem;
+  color: rgb(242 242 240 / 55%);
+}
+
+.peekPlaceholderIcon { width: clamp(3rem, 9dvh, 5rem); height: clamp(3rem, 9dvh, 5rem); }
+.peekPlaceholderLabel { font-size: 0.85rem; font-weight: 600; }
+
+.stageBadge {
+  position: absolute;
+  z-index: 1;
+  top: 1rem;
+  left: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  color: #fff;
+  background: rgb(28 28 28 / 55%);
+  backdrop-filter: blur(4px);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.stageBadgeRight { right: 1rem; left: auto; color: color-mix(in srgb, var(--category-accent, #7b69cc) 70%, white 30%); }
+
+/*
+ * มุมกล้อง (viewfinder bracket) ทั้ง 4 มุม — ทำให้เวทีดูเหมือนช่องมองกล้องจริง แต่ละมุมคือ
+ * border สองด้านตัดกันเป็นตัว L
+ */
+.peekCorner {
+  position: absolute;
+  z-index: 1;
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid rgb(242 242 240 / 75%);
+  opacity: 0.85;
+}
+
+.peekCornerTl { top: 1rem; left: 1rem; border-right: none; border-bottom: none; border-top-left-radius: 0.5rem; }
+.peekCornerTr { top: 1rem; right: 1rem; border-bottom: none; border-left: none; border-top-right-radius: 0.5rem; }
+.peekCornerBl { bottom: 1rem; left: 1rem; border-top: none; border-right: none; border-bottom-left-radius: 0.5rem; }
+.peekCornerBr { bottom: 1rem; right: 1rem; border-top: none; border-left: none; border-bottom-right-radius: 0.5rem; }
+
+/* แถบควบคุมลอยด้านล่างเวที — คนละก้อนกับรูป ไม่บังส่วนของภาพ */
+.controlBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1rem;
+  border-radius: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: rgb(242 242 240 / 6%);
+  border: 1px solid rgb(242 242 240 / 10%);
+}
+
+.zoomButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.75rem;
+  color: #1c1c1c;
+  font-size: 1rem;
+  font-weight: 800;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #a3defe, #7b69cc);
+  box-shadow: 0 0.75rem 1.75rem rgb(123 105 204 / 35%);
+  transition: transform 180ms ease-out, box-shadow 180ms ease-out, filter 180ms ease-out;
+  cursor: pointer;
+}
+
+.zoomButton:hover:not(:disabled) { transform: translateY(-2px) scale(1.03); filter: brightness(1.05); }
+.zoomButton:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+.zoomButton:disabled { cursor: not-allowed; opacity: 0.55; box-shadow: none; }
+
+.skipButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: none;
+  background: none;
+  color: rgb(242 242 240 / 62%);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.skipButton:hover { color: rgb(242 242 240 / 90%); }
+
+@media (prefers-reduced-motion: reduce) {
+  .stageFull { transition: none; }
+  .stageImage { transition: none; }
+  .zoomButton { transition: none; }
+  .zoomButton:hover:not(:disabled) { transform: none; }
+}

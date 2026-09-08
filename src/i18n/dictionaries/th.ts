@@ -157,6 +157,7 @@ export const th = {
     subtitle: "รวมเกมส์และกิจกรรมสนุก ๆ สำหรับใช้ภายในงาน",
     musicQuizTitle: "เกมส์ทายเพลง",
     musicQuizDescription: "ฟังอินโทร แล้วแข่งกันทายชื่อเพลงให้ทันเวลา",
+    pictureQuizTitle: "เกมส์ทายภาพ",
     comingSoon: "เร็วๆ นี้",
     turnMusicOn: "เปิดเพลงประกอบ",
     turnMusicOff: "ปิดเพลงประกอบ",

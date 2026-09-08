@@ -305,26 +305,22 @@ function useFitOneLine(
  * เสร็จแล้วเหมือนกัน) ดีกว่าเกมค้างเพราะไฟล์เดียวเสีย
  */
 function useAssetPreload(songs: readonly QuizSong[]) {
+  const urls = React.useMemo(
+    () =>
+      Array.from(
+        new Set(
+          songs.flatMap((song) => [song.coverUrl, song.audioUrl, song.hookAudioUrl].filter((url): url is string => Boolean(url)))
+        )
+      ),
+    [songs]
+  )
   const [loaded, setLoaded] = React.useState(0)
-  const [total, setTotal] = React.useState(0)
-  const [done, setDone] = React.useState(false)
+  const [done, setDone] = React.useState(() => urls.length === 0)
 
   React.useEffect(() => {
-    const urls = Array.from(
-      new Set(
-        songs.flatMap((song) => [song.coverUrl, song.audioUrl, song.hookAudioUrl].filter((url): url is string => Boolean(url)))
-      )
-    )
-    if (urls.length === 0) {
-      setDone(true)
-      return
-    }
-
+    if (urls.length === 0) return
     let cancelled = false
     let loadedCount = 0
-    setTotal(urls.length)
-    setLoaded(0)
-    setDone(false)
 
     Promise.all(
       urls.map((url) =>
@@ -344,9 +340,9 @@ function useAssetPreload(songs: readonly QuizSong[]) {
     return () => {
       cancelled = true
     }
-  }, [songs])
+  }, [urls])
 
-  return { loaded, total, done }
+  return { loaded, total: urls.length, done }
 }
 
 /** การ์ดโฮสต์: เลือกเวลาของอินโทร แล้วผู้เล่นพิมพ์ชื่อเพลงจากมือถือ */
@@ -496,6 +492,7 @@ export function MusicQuizView() {
 
   React.useEffect(() => {
     publishRound({
+      gameType: "music-quiz",
       index: roundIndex,
       durationSeconds: duration,
       open: isPlaying && !revealed,

@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import {
+  ApertureIcon,
   Clock3Icon,
   Music2Icon,
   Music3Icon,
@@ -15,6 +16,7 @@ import { ROUTES } from "@/constants/app"
 import { useT } from "@/i18n"
 import { cn } from "@/lib/utils"
 import recordStyles from "@/features/music-quiz/music-quiz.module.css"
+import pictureStyles from "@/features/picture-quiz/picture-quiz.module.css"
 import { usePresentationMode } from "./presentation-mode-provider"
 
 /**
@@ -22,6 +24,9 @@ import { usePresentationMode } from "./presentation-mode-provider"
  * แยกออกจากพื้นหลัง gradient สีม่วงของ tile ชัดเจน ไม่กลืนไปเป็นสีเดียวกัน
  */
 const RECORD_ACCENT = "#2a2530"
+
+/** สีส้มอุ่น ๆ ของกรอบ viewfinder — ให้ตัด tile สีฟ้าด้านหลังชัดเจน เหมือน record accent ของ tile เพลง */
+const PEEK_ACCENT = "#ff9f5a"
 
 /** มุม/ไอคอน/ขนาดตัวโน้ตที่ลอยออกจากแผ่น — ก็อปมาจากชุดเดียวกับหน้าเล่นเกมจริง (music-quiz-view.tsx) */
 const NOTE_ITEMS = [
@@ -38,8 +43,8 @@ const NOTE_ITEMS = [
 const GAMES_PER_ROW = 2
 const GAME_ROWS = 2
 const TOTAL_TILES = GAMES_PER_ROW * GAME_ROWS
-/** แผนตอนนี้มีแค่ 4 เกมรวม (2x2) — เกมส์ทายเพลงเป็นเกมจริง ที่เหลือคือช่อง "เร็วๆ นี้" */
-const PLACEHOLDER_COUNT = TOTAL_TILES - 1
+/** แผนตอนนี้มีแค่ 4 เกมรวม (2x2) — เกมส์ทายเพลง+ทายภาพเป็นเกมจริง ที่เหลือคือช่อง "เร็วๆ นี้" */
+const PLACEHOLDER_COUNT = TOTAL_TILES - 2
 
 /**
  * เนื้อหาเริ่มต้นของการ์ดเกม (คอลัมน์ซ้ายของ GamesShell) — รายการเกมให้เลือก
@@ -122,6 +127,45 @@ export function GamesPageView() {
               )}
             >
               {t("games.musicQuizTitle")}
+            </span>
+          </div>
+        </Link>
+
+        <Link
+          href={ROUTES.pictureQuiz}
+          className="group focus-visible:ring-ring from-general-blue via-general-blue to-background relative flex h-full flex-col items-stretch overflow-hidden rounded-2xl bg-gradient-to-br p-4 text-white shadow-lg shadow-general-blue/20 ring-1 ring-general-blue/50 transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:shadow-xl hover:shadow-general-blue/40 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none motion-reduce:transform-none"
+        >
+          <span
+            className="bg-general-purple/25 absolute -top-10 -right-10 size-40 rounded-full blur-xl transition-transform duration-200 group-hover:scale-125 motion-reduce:transform-none"
+            aria-hidden="true"
+          />
+          <span
+            className="bg-general-green text-black absolute top-3 right-3 rounded-full px-2.5 py-1 text-xs font-bold tracking-wide"
+          >
+            LIVE
+          </span>
+          {/* โซนไอคอน 70% ของความสูงการ์ด ต่อจากนี้คือโซนป้ายชื่อเกมส์ 30% ด้านล่าง — ให้เท่ากับ tile เพลงเป๊ะ (ดู [[games-hub-tile-layout]]) */}
+          <div className="relative flex min-h-0 flex-[7] items-center justify-center">
+            <div
+              className={cn(pictureStyles.peekFrame, "!w-auto h-[70%] transition-transform duration-200 ease-out group-hover:scale-105 motion-reduce:transform-none")}
+              style={{ "--category-accent": PEEK_ACCENT } as React.CSSProperties}
+              aria-hidden="true"
+            >
+              <span className={cn(pictureStyles.peekCorner, pictureStyles.peekCornerTl)} />
+              <span className={cn(pictureStyles.peekCorner, pictureStyles.peekCornerTr)} />
+              <span className={cn(pictureStyles.peekCorner, pictureStyles.peekCornerBl)} />
+              <span className={cn(pictureStyles.peekCorner, pictureStyles.peekCornerBr)} />
+              <ApertureIcon className="relative z-10 size-9 text-white" />
+            </div>
+          </div>
+          <div className="flex min-h-0 flex-[3] items-center justify-center px-4">
+            <span
+              className={cn(
+                "rounded-full bg-black/55 px-6 py-2 text-center leading-none font-bold whitespace-nowrap text-white shadow-lg shadow-black/25 ring-1 ring-white/15 backdrop-blur-sm",
+                presentationMode ? "text-5xl" : "text-xl"
+              )}
+            >
+              {t("games.pictureQuizTitle")}
             </span>
           </div>
         </Link>

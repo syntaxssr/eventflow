@@ -19,8 +19,12 @@ type Player = {
   joinedAt: number
 }
 
+/** เกมที่กำลังเล่นอยู่ในห้องนี้ — จอผู้เล่นใช้ตัดสินใจว่าจะโชว์ข้อความ/ไอคอนแบบไหน */
+type GameType = "music-quiz" | "picture-quiz"
+
 /** รอบที่กำลังเล่น — เฉลยอยู่ในห้องเท่านั้น ไม่ถูกส่งกลับไปให้ผู้เล่น */
 type Round = {
+  gameType: GameType
   index: number
   durationSeconds: number
   /** true = ยังกดตอบได้ */
@@ -195,6 +199,7 @@ export default class QuizRoom implements Party.Server {
       hostOnline: this.hostOnline(),
       round: this.round
         ? {
+            gameType: this.round.gameType,
             index: this.round.index,
             durationSeconds: this.round.durationSeconds,
             open: this.round.open,

@@ -24,6 +24,7 @@ export const ROUTES = {
   officeSeating: "/hr-section/office-seating",
   games: "/games",
   musicQuiz: "/games/music-quiz",
+  pictureQuiz: "/games/picture-quiz",
   play: "/play",
   forms: "/forms",
   rsvpForm: "/forms/rsvp",

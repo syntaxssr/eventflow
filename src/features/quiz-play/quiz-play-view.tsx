@@ -3,7 +3,9 @@
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import {
+  ApertureIcon,
   CheckCircle2Icon,
+  Gamepad2Icon,
   LoaderCircleIcon,
   Music2Icon,
   SendIcon,
@@ -21,6 +23,7 @@ import {
   isValidPin,
   normalizePin,
   parseServerMessage,
+  type QuizGameType,
   type QuizRoomRound,
 } from "@/lib/quiz-room"
 import { cn } from "@/lib/utils"
@@ -31,6 +34,37 @@ const REJECT_MESSAGE: Record<string, string> = {
   full: "ห้องเต็มแล้ว",
   "duplicate-name": "ชื่อนี้มีคนใช้แล้ว ลองชื่ออื่น",
   "bad-name": "ใส่ชื่ออย่างน้อย 2 ตัวอักษร",
+}
+
+/**
+ * ข้อความ/ไอคอนต่างกันตามเกมที่ห้องนี้กำลังเล่น — จอนี้ใช้ร่วมกันทุกเกมผ่านห้องเดียวกัน
+ * (useQuizRoom) เดิมล็อกไว้แค่คำของเกมทายเพลง พอมีเกมทายภาพเพิ่มมาแล้วข้อความเดิมผิดบริบท
+ * (บอก "อินโทรกำลังเล่น" ทั้งที่เกมทายภาพไม่มีเสียง) จึงแยกเป็นตารางต่อเกมแทน
+ */
+const GAME_COPY: Record<
+  QuizGameType,
+  {
+    icon: typeof Music2Icon
+    title: string
+    inputLabel: string
+    inputPlaceholder: string
+    playingStatus: (round: QuizRoomRound) => string
+  }
+> = {
+  "music-quiz": {
+    icon: Music2Icon,
+    title: "ทายชื่อเพลง",
+    inputLabel: "ชื่อเพลงที่คุณได้ยิน",
+    inputPlaceholder: "พิมพ์ชื่อเพลง",
+    playingStatus: (round) => `อินโทรกำลังเล่น ${round.durationSeconds} วินาที · พิมพ์คำตอบของคุณ`,
+  },
+  "picture-quiz": {
+    icon: ApertureIcon,
+    title: "ทายภาพปริศนา",
+    inputLabel: "คำตอบของคุณ",
+    inputPlaceholder: "พิมพ์คำตอบ",
+    playingStatus: () => "ผู้ดำเนินรายการกำลังซูมภาพออก · พิมพ์คำตอบของคุณ",
+  },
 }
 
 /**
@@ -148,6 +182,8 @@ export function QuizPlayView() {
 
   if (phase === "playing") {
     const canAnswer = round?.open === true && myAnswer === null
+    const copy = round ? GAME_COPY[round.gameType] : null
+    const GameIcon = copy?.icon ?? Gamepad2Icon
 
     return (
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 p-5">
@@ -174,14 +210,14 @@ export function QuizPlayView() {
           </p>
         )}
 
-        {round ? (
+        {round && copy ? (
           <div className="flex flex-1 flex-col justify-center gap-4" data-testid="play-song-answer">
             <div className="rounded-3xl border border-general-blue/20 bg-general-blue/8 p-5 text-center">
-              <Music2Icon className="text-general-blue mx-auto size-8" aria-hidden="true" />
-              <p className="mt-3 text-lg font-bold">ทายชื่อเพลง</p>
+              <GameIcon className="text-general-blue mx-auto size-8" aria-hidden="true" />
+              <p className="mt-3 text-lg font-bold">{copy.title}</p>
               <p className="text-muted-foreground mt-1 text-sm" aria-live="polite">
                 {canAnswer
-                  ? `อินโทรกำลังเล่น ${round.durationSeconds} วินาที · พิมพ์คำตอบของคุณ`
+                  ? copy.playingStatus(round)
                   : myAnswer !== null
                     ? myAnswerCorrect
                       ? "ตอบถูกแล้ว! รอเฉลยบนจอใหญ่"
@@ -191,7 +227,7 @@ export function QuizPlayView() {
             </div>
 
             <form className="space-y-2" onSubmit={answer}>
-              <Label htmlFor="play-song-title">ชื่อเพลงที่คุณได้ยิน</Label>
+              <Label htmlFor="play-song-title">{copy.inputLabel}</Label>
               <div className="flex gap-2">
                 <Input
                   id="play-song-title"
@@ -200,7 +236,7 @@ export function QuizPlayView() {
                   disabled={!canAnswer}
                   autoComplete="off"
                   maxLength={120}
-                  placeholder="พิมพ์ชื่อเพลง"
+                  placeholder={copy.inputPlaceholder}
                   className="h-12 min-w-0 flex-1"
                 />
                 <Button
@@ -241,8 +277,8 @@ export function QuizPlayView() {
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-6 p-5">
       <header className="text-center">
         <p className="text-general-blue mb-1 flex items-center justify-center gap-2 text-sm font-semibold">
-          <Music2Icon className="size-4" aria-hidden="true" />
-          MUSIC QUIZ
+          <Gamepad2Icon className="size-4" aria-hidden="true" />
+          EVENTFLOW GAMES
         </p>
         <h1 className="text-3xl font-bold tracking-tight">เข้าห้องเล่นเกม</h1>
       </header>

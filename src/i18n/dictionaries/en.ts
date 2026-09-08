@@ -156,6 +156,7 @@ export const en: Dictionary = {
     subtitle: "Games and fun activities for events",
     musicQuizTitle: "Music quiz",
     musicQuizDescription: "Listen to the intro and name the song before time runs out",
+    pictureQuizTitle: "Picture quiz",
     comingSoon: "Coming soon",
     turnMusicOn: "Turn on background music",
     turnMusicOff: "Turn off background music",

@@ -11,8 +11,12 @@ export type QuizPlayer = {
   joinedAt: number
 }
 
+/** เกมที่กำลังเล่นอยู่ในห้องนี้ — จอผู้เล่นใช้ตัดสินใจว่าจะโชว์ข้อความ/ไอคอนแบบไหน */
+export type QuizGameType = "music-quiz" | "picture-quiz"
+
 /** รอบที่โฮสต์กำลังเปิดให้ตอบ — ผู้เล่นเห็นแค่เวลา ไม่เห็นเฉลย */
 export type QuizRoomRound = {
+  gameType: QuizGameType
   index: number
   durationSeconds: number
   open: boolean
